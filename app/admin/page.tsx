@@ -381,6 +381,12 @@ export default function AdminOrgs() {
         .filter(org => org.website)
         .map(async (org) => {
           const metadata = await getWebsiteMetadata(org.website!);
+          
+          // ADD THIS DEBUG LOG
+          if (org.org_name.includes('350 Canada')) {
+            console.log('350 Canada metadata:', metadata);
+          }
+          
           return { id: org.id, metadata };
         });
       
@@ -482,20 +488,34 @@ export default function AdminOrgs() {
                 {/* Header with favicon and badges */}
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-start gap-3 flex-1">
-                    {/* Only show favicon if it exists and isn't a placeholder */}
-                    {websiteMetadata[org.id]?.favicon && 
-                     !websiteMetadata[org.id]?.favicon?.includes('placeholder') && 
-                     !websiteMetadata[org.id]?.favicon?.includes('google.com/s2/favicons') && (
+                    {/* Show favicon - be more permissive about what we display */}
+                    {websiteMetadata[org.id]?.favicon && !websiteMetadata[org.id]?.favicon?.includes('placeholder') ? (
                       <img
                         src={websiteMetadata[org.id].favicon}
                         alt=""
-                        className="w-8 h-8 rounded-lg flex-shrink-0"
+                        className="w-8 h-8 rounded-lg flex-shrink-0 bg-white/10 p-1"
                         onError={(e) => {
                           // Hide the favicon if it fails to load
                           e.currentTarget.style.display = 'none';
                         }}
                       />
-                    )}
+                    ) : org.website ? (
+                      // Fallback to Google favicon service if no favicon found
+                      <img
+                        src={`https://www.google.com/s2/favicons?domain=${(() => {
+                          try {
+                            return new URL(org.website.startsWith('http') ? org.website : `https://${org.website}`).hostname;
+                          } catch {
+                            return org.website.replace(/^https?:\/\//, '').split('/')[0];
+                          }
+                        })()}&sz=64`}
+                        alt=""
+                        className="w-8 h-8 rounded-lg flex-shrink-0 bg-white/10 p-1"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    ) : null}
                     <div className="flex-1 min-w-0">
                       <h3 className="text-xl font-bold text-white mb-1 break-words">
                         {org.org_name}
