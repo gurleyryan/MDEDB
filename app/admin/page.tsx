@@ -65,6 +65,9 @@ export default function AdminOrgs() {
   });
   const [showRejected, setShowRejected] = useState(false);
 
+  // New state variable for scroll-to-top button
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
   // Scoring criteria with descriptions
   const scoringCriteria = [
     { 
@@ -530,61 +533,83 @@ export default function AdminOrgs() {
     setNewOrgForm(prev => ({ ...prev, [field]: value }));
   };
 
+  // Scroll detection effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Scroll to top function
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   if (loading) return <div className="p-4 bg-gray-900 text-white min-h-screen">Loading orgs…</div>;
   if (error) return <div className="p-4 bg-gray-900 text-red-400 min-h-screen">Error: {error}</div>;
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      <div className="p-4 max-w-7xl mx-auto">
-        {/* Header with logout and controls */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">Admin: Manage Organizations</h1>
-          <div className="flex flex-wrap gap-2">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setShowAddForm(true)}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-500 transition-colors shadow-lg"
-            >
-              ➕ Add New Org
-            </motion.button>
-            <button
-              onClick={() => setShowRejected(!showRejected)}
-              className={`px-3 py-2 rounded text-sm ${
-                showRejected 
-                  ? 'bg-red-600 text-white hover:bg-red-500' 
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-              } transition-colors`}
-            >
-              {showRejected ? '🙈 Hide Rejected' : '👁️ Show Rejected'}
-            </button>
-            <button
-              onClick={handleLogout}
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 text-sm"
-            >
-              Logout
-            </button>
+      {/* Sticky Header with logout and controls */}
+      <div className="sticky top-0 z-40 bg-gray-900/95 backdrop-blur-md border-b border-gray-700/50">
+        <div className="p-4 max-w-7xl mx-auto">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">Admin: Manage Organizations</h1>
+            <div className="flex flex-wrap gap-2">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowAddForm(true)}
+                className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-500 transition-colors shadow-lg"
+              >
+                ➕ Add New Org
+              </motion.button>
+              <button
+                onClick={() => setShowRejected(!showRejected)}
+                className={`px-3 py-2 rounded text-sm ${
+                  showRejected 
+                    ? 'bg-red-600 text-white hover:bg-red-500' 
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                } transition-colors`}
+              >
+                {showRejected ? '🙈 Hide Rejected' : '👁️ Show Rejected'}
+              </button>
+              <button
+                onClick={handleLogout}
+                className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 text-sm"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+
+          {/* Filter buttons - now inside the sticky header */}
+          <div className="flex flex-wrap gap-2 mt-4">
+            {(['all', 'pending', 'approved', 'rejected'] as const).map((status) => (
+              <button
+                key={status}
+                onClick={() => setFilter(status)}
+                className={`px-3 py-2 rounded capitalize text-sm sm:text-base ${
+                  filter === status
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                } transition-colors`}
+              >
+                {status} ({status === 'all' ? orgs.length : orgs.filter(org => org.approval_status === status).length})
+              </button>
+            ))}
           </div>
         </div>
+      </div>
 
-        {/* Filter buttons */}
-        <div className="mb-6 flex flex-wrap gap-2">
-          {(['all', 'pending', 'approved', 'rejected'] as const).map((status) => (
-            <button
-              key={status}
-              onClick={() => setFilter(status)}
-              className={`px-3 py-2 rounded capitalize text-sm sm:text-base ${
-                filter === status
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-              }`}
-            >
-              {status} ({status === 'all' ? orgs.length : orgs.filter(org => org.approval_status === status).length})
-            </button>
-          ))}
-        </div>
-
-        {/* Organization Cards */}
+      {/* Organization Cards */}
+      <div className="p-4 max-w-7xl mx-auto">
         <div className="space-y-6">
           {filteredOrgs.map((org, index) => (
             <motion.div
@@ -1147,6 +1172,34 @@ export default function AdminOrgs() {
             </div>
           </motion.div>
         </motion.div>
+      )}
+
+      {/* Scroll to Top Button */}
+      {showScrollTop && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 z-50 bg-blue-600 hover:bg-blue-500 text-white p-3 rounded-full shadow-lg transition-colors"
+          title="Scroll to top"
+        >
+          <svg 
+            className="w-6 h-6" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={2} 
+              d="M5 10l7-7m0 0l7 7m-7-7v18" 
+            />
+          </svg>
+        </motion.button>
       )}
     </div>
   );
