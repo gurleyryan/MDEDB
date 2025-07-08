@@ -186,10 +186,25 @@ export function OrganizationCard({
           
           {/* Mission Statement Overlay */}
           {org.mission_statement && !isMetadataLoading && (
-            <div className="absolute bottom-4 left-4 right-4">
-              <blockquote className="text-white text-base font-medium italic leading-relaxed line-clamp-2">
-                "{org.mission_statement}"
-              </blockquote>
+            <div className="absolute bottom-0 left-0 right-0 group cursor-default">
+              {/* Progressive gradient darkening */}
+              <div className="bg-gradient-to-t from-black/80 via-black/50 to-transparent group-hover:from-black/95 group-hover:via-black/80 transition-all duration-500 ease-out p-6 pb-4">
+                
+                {/* Header */}
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-blue-400 group-hover:text-blue-300 text-lg transition-colors duration-300">💭</span>
+                  <span className="text-blue-300 group-hover:text-blue-200 text-xs font-medium uppercase tracking-wide transition-colors duration-300">
+                    Mission Statement
+                  </span>
+                </div>
+                
+                {/* Mission text with subtle scale and enhanced typography on hover */}
+                <blockquote className="text-white/90 group-hover:text-white text-sm group-hover:text-base font-medium leading-relaxed group-hover:leading-relaxed transition-all duration-300 transform group-hover:scale-[1.02] origin-bottom-left">
+                  <span className="text-blue-300 group-hover:text-blue-200 text-lg leading-none transition-colors duration-300">"</span>
+                  {org.mission_statement}
+                  <span className="text-blue-300 group-hover:text-blue-200 text-lg leading-none transition-colors duration-300">"</span>
+                </blockquote>
+              </div>
             </div>
           )}
         </div>
