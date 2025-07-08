@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { Org } from '@/models/org';
+import { OrgWithScore } from '@/models/orgWithScore';
 
 // Add this interface for scoring
 interface OrgScoring {
@@ -26,7 +27,7 @@ interface OrgScoring {
 
 export default function AdminOrgs() {
   const router = useRouter();
-  const [orgs, setOrgs] = useState<Org[]>([]);
+  const [orgs, setOrgs] = useState<OrgWithScore[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -130,10 +131,19 @@ export default function AdminOrgs() {
     }
   };
 
+  // Add function to get alignment score color
+  const getAlignmentScoreColor = (score?: number) => {
+    if (score === undefined || score === null) return 'text-gray-200 bg-gray-700';
+    if (score <= 12) return 'text-red-200 bg-red-800';
+    if (score <= 20) return 'text-orange-200 bg-orange-800';
+    return 'text-green-200 bg-green-800';
+  };
+
+  // Update fetchOrgs to include alignment_score from the view
   async function fetchOrgs() {
     setLoading(true);
     const { data, error } = await supabase
-      .from('org')
+      .from('org_with_score') // Use the view that includes calculated alignment_score
       .select('*')
       .order('org_name');
 
@@ -298,6 +308,11 @@ export default function AdminOrgs() {
                     <p className="text-gray-300 text-sm sm:text-base">{org.country_code} • {org.type_of_work}</p>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
+                    {/* Alignment Score Badge */}
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
+                      Score: {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
+                    </span>
+                    {/* Status Badge */}
                     <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(org.approval_status)}`}>
                       {org.approval_status}
                     </span>
@@ -381,9 +396,24 @@ export default function AdminOrgs() {
               {/* Expanded scoring section */}
               {expandedOrg === org.id && (
                 <div className="border-t border-gray-700 bg-gray-800 p-4">
-                  <h4 className="text-lg font-semibold mb-4 text-white">Scoring & Evaluation</h4>
+                  <div className="flex justify-between items-center mb-4">
+                    <h4 className="text-lg font-semibold text-white">Scoring & Evaluation</h4>
+                    {/* Current alignment score display */}
+                    <div className="text-sm text-gray-300">
+                      Current Score: 
+                      <span className={`ml-2 px-2 py-1 rounded text-xs font-medium ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
+                        {org.alignment_score !== undefined && org.alignment_score !== null ? `${org.alignment_score}/26` : 'Not scored'}
+                      </span>
+                    </div>
+                  </div>
+                  
                   <p className="text-sm text-gray-300 mb-4">
                     <strong>Scoring Scale:</strong> 0 = Does not meet criteria, 1 = Unclear/questionable, 2 = Clearly meets criteria
+                    <br />
+                    <strong>Score Ranges:</strong> 
+                    <span className="text-red-300 ml-2">0-12 (Low)</span>
+                    <span className="text-orange-300 ml-2">13-20 (Medium)</span>
+                    <span className="text-green-300 ml-2">21-26 (High)</span>
                   </p>
                   
                   {orgScores[org.id] ? (
