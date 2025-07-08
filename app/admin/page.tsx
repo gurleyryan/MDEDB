@@ -39,7 +39,19 @@ export default function AdminOrgs() {
     fetchOrgScoring
   } = useScoring();
 
-  const { websiteMetadata } = useAutoWebsiteMetadata(orgs);
+  const { 
+    websiteMetadata, 
+    loadingMetadata, 
+    error: metadataError,
+    retryAttempts 
+  } = useAutoWebsiteMetadata(orgs);
+
+  // Calculate metadata loading progress
+  const orgsWithWebsites = orgs.filter(org => org.website);
+  const loadingCount = Object.values(loadingMetadata).filter(Boolean).length;
+  const loadedCount = orgsWithWebsites.filter(org => websiteMetadata[org.id]).length;
+  const totalCount = orgsWithWebsites.length;
+  const progressPercentage = totalCount > 0 ? Math.round((loadedCount / totalCount) * 100) : 100;
 
   // Local state
   const [filter, setFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
@@ -156,7 +168,7 @@ export default function AdminOrgs() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      {/* Admin Header */}
+      {/* Admin Header with Metadata Progress */}
       <AdminHeader
         filter={filter}
         onFilterChange={setFilter}
@@ -166,7 +178,67 @@ export default function AdminOrgs() {
         onLogout={handleLogout}
         orgCounts={orgCounts}
         isLoading={loading}
+        metadataProgress={{
+          loaded: loadedCount,
+          total: totalCount,
+          loading: loadingCount,
+          percentage: progressPercentage
+        }}
       />
+
+      {/* Metadata Loading Banner */}
+      {loadingCount > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="bg-blue-600/20 border-b border-blue-500/30 p-3"
+        >
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+              <span className="text-sm text-blue-200">
+                Loading website details... {loadedCount}/{totalCount} complete
+              </span>
+            </div>
+            
+            {/* Progress Bar */}
+            <div className="flex items-center gap-2">
+              <div className="w-32 h-2 bg-gray-700 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progressPercentage}%` }}
+                  transition={{ duration: 0.3 }}
+                  className="h-full bg-blue-500 rounded-full"
+                />
+              </div>
+              <span className="text-xs text-blue-300">{progressPercentage}%</span>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {/* Metadata Error Banner */}
+      {metadataError && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-orange-600/20 border-b border-orange-500/30 p-3"
+        >
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-orange-400">⚠️</span>
+              <span className="text-sm text-orange-200">{metadataError}</span>
+            </div>
+            <button
+              onClick={() => window.location.reload()}
+              className="text-xs text-orange-300 hover:text-orange-100 underline"
+            >
+              Retry
+            </button>
+          </div>
+        </motion.div>
+      )}
 
       {/* Main Content */}
       <div className="p-4 max-w-7xl mx-auto">
@@ -230,7 +302,7 @@ export default function AdminOrgs() {
           </motion.div>
         )}
 
-        {/* Quick Stats */}
+        {/* Enhanced Quick Stats with Metadata Info */}
         {filteredOrgs.length > 0 && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -240,7 +312,7 @@ export default function AdminOrgs() {
             <h3 className="text-lg font-semibold mb-3 text-gray-200">
               📊 Quick Stats for {filter === 'all' ? 'All Organizations' : `${filter.charAt(0).toUpperCase() + filter.slice(1)} Organizations`}
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-sm">
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-400">{filteredOrgs.length}</div>
                 <div className="text-gray-400">Showing</div>
@@ -262,6 +334,12 @@ export default function AdminOrgs() {
                   {filteredOrgs.filter(org => org.alignment_score && org.alignment_score >= 21).length}
                 </div>
                 <div className="text-gray-400">Strong Candidates</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-cyan-400">
+                  {loadedCount}/{totalCount}
+                </div>
+                <div className="text-gray-400">Metadata Loaded</div>
               </div>
             </div>
           </motion.div>

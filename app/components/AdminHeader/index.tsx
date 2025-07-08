@@ -17,6 +17,12 @@ interface AdminHeaderProps {
   onLogout: () => void;
   orgCounts: OrgCounts;
   isLoading?: boolean;
+  metadataProgress?: {
+    loaded: number;
+    total: number;
+    loading: number;
+    percentage: number;
+  };
 }
 
 export function AdminHeader({
@@ -27,7 +33,8 @@ export function AdminHeader({
   onAddNew,
   onLogout,
   orgCounts,
-  isLoading = false
+  isLoading = false,
+  metadataProgress
 }: AdminHeaderProps) {
   
   const filterButtons = [
@@ -160,6 +167,9 @@ export function AdminHeader({
             Pending: {Math.round((orgCounts.pending / orgCounts.all) * 100)}%
             {orgCounts.rejected > 0 && (
               <> • Rejected: {Math.round((orgCounts.rejected / orgCounts.all) * 100)}%</>
+            )}
+            {metadataProgress && metadataProgress.total > 0 && (
+              <> • Metadata: {metadataProgress.percentage}%</>
             )}
           </div>
         )}

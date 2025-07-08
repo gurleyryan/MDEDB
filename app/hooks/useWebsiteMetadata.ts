@@ -13,15 +13,18 @@ export function useWebsiteMetadata() {
   const [websiteMetadata, setWebsiteMetadata] = useState<Record<string, WebsiteMetadata>>({});
   const [loadingMetadata, setLoadingMetadata] = useState<Record<string, boolean>>({});
   const [error, setError] = useState<string | null>(null);
+  const [retryAttempts, setRetryAttempts] = useState<Record<string, number>>({});
 
-  // Function to get website metadata for a single URL
-  const getWebsiteMetadata = async (url: string): Promise<WebsiteMetadata> => {
+  // Enhanced function with retry logic
+  const getWebsiteMetadata = async (url: string, retryCount = 0): Promise<WebsiteMetadata> => {
+    const MAX_RETRIES = 2;
+    
     try {
       // Validate URL first
       let validUrl: string;
       try {
         validUrl = url.startsWith('http') ? url : `https://${url}`;
-        new URL(validUrl); // Validate URL format
+        new URL(validUrl);
       } catch (urlError) {
         console.error('Invalid URL:', url);
         return {
@@ -32,14 +35,28 @@ export function useWebsiteMetadata() {
         };
       }
 
-      // Call our API route
-      const response = await fetch(`/api/metadata?url=${encodeURIComponent(url)}`);
+      // Call our API route with timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+
+      const response = await fetch(`/api/metadata?url=${encodeURIComponent(url)}`, {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
       
       if (!response.ok) {
         throw new Error(`API responded with ${response.status}`);
       }
       
       const metadata = await response.json();
+      
+      // Reset retry count on success
+      setRetryAttempts(prev => {
+        const newAttempts = { ...prev };
+        delete newAttempts[url];
+        return newAttempts;
+      });
       
       return {
         title: metadata.title,
@@ -51,7 +68,18 @@ export function useWebsiteMetadata() {
     } catch (error) {
       console.error('Error fetching metadata:', error);
       
-      // Return fallback metadata
+      // Retry logic
+      const currentAttempts = retryAttempts[url] || 0;
+      if (retryCount < MAX_RETRIES && currentAttempts < MAX_RETRIES) {
+        setRetryAttempts(prev => ({ ...prev, [url]: currentAttempts + 1 }));
+        console.log(`Retrying metadata fetch for ${url} (attempt ${retryCount + 1}/${MAX_RETRIES})`);
+        
+        // Exponential backoff: wait 1s, then 2s, then 4s
+        await new Promise(resolve => setTimeout(resolve, Math.pow(2, retryCount) * 1000));
+        return getWebsiteMetadata(url, retryCount + 1);
+      }
+      
+      // Return fallback metadata after all retries exhausted
       const domain = url.replace(/^https?:\/\//, '').split('/')[0];
       return {
         title: domain,
@@ -59,6 +87,91 @@ export function useWebsiteMetadata() {
         image: `https://via.placeholder.com/1200x630/059669/ffffff?text=${encodeURIComponent(domain)}`,
         favicon: `https://www.google.com/s2/favicons?domain=${domain}&sz=64`,
       };
+    }
+  };
+
+  // Enhanced batch fetching with progressive loading
+  const fetchMetadataForOrgs = async (orgs: OrgWithScore[]) => {
+    if (orgs.length === 0) return;
+
+    const orgsWithWebsites = orgs.filter(org => 
+      org.website && !websiteMetadata[org.id] && !loadingMetadata[org.id]
+    );
+    
+    if (orgsWithWebsites.length === 0) return;
+
+    // Set loading state for all orgs
+    const loadingState = orgsWithWebsites.reduce((acc, org) => {
+      acc[org.id] = true;
+      return acc;
+    }, {} as Record<string, boolean>);
+    setLoadingMetadata(prev => ({ ...prev, ...loadingState }));
+
+    // Process in smaller batches to avoid overwhelming the API
+    const BATCH_SIZE = 3;
+    const batches = [];
+    for (let i = 0; i < orgsWithWebsites.length; i += BATCH_SIZE) {
+      batches.push(orgsWithWebsites.slice(i, i + BATCH_SIZE));
+    }
+
+    try {
+      // Process batches sequentially with delay between batches
+      for (const [batchIndex, batch] of batches.entries()) {
+        console.log(`Processing metadata batch ${batchIndex + 1}/${batches.length} (${batch.length} orgs)`);
+        
+        const batchPromises = batch.map(async (org) => {
+          try {
+            const metadata = await getWebsiteMetadata(org.website!);
+            return { id: org.id, metadata, success: true };
+          } catch (error) {
+            console.error(`Failed to fetch metadata for ${org.org_name}:`, error);
+            return { 
+              id: org.id, 
+              metadata: null, 
+              success: false,
+              error: error instanceof Error ? error.message : 'Unknown error'
+            };
+          }
+        });
+        
+        const batchResults = await Promise.allSettled(batchPromises);
+        
+        // Update metadata as each batch completes
+        batchResults.forEach((result, index) => {
+          const org = batch[index];
+          
+          if (result.status === 'fulfilled' && result.value.success && result.value.metadata) {
+            setWebsiteMetadata(prev => ({
+              ...prev,
+              [result.value.id]: result.value.metadata!
+            }));
+          }
+          
+          // Clear loading state for this org
+          setLoadingMetadata(prev => {
+            const newState = { ...prev };
+            delete newState[org.id];
+            return newState;
+          });
+        });
+        
+        // Small delay between batches to be respectful to the API
+        if (batchIndex < batches.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+      }
+      
+      setError(null);
+    } catch (err) {
+      console.error('Error in batch metadata fetching:', err);
+      setError('Failed to fetch some website metadata');
+      
+      // Clear loading state for all orgs in case of error
+      const clearedLoadingState = orgsWithWebsites.reduce((acc, org) => {
+        acc[org.id] = false;
+        return acc;
+      }, {} as Record<string, boolean>);
+      setLoadingMetadata(prev => ({ ...prev, ...clearedLoadingState }));
     }
   };
 
@@ -87,51 +200,6 @@ export function useWebsiteMetadata() {
       setError(`Failed to fetch metadata for ${org.org_name}`);
     } finally {
       setLoadingMetadata(prev => ({ ...prev, [org.id]: false }));
-    }
-  };
-
-  // Fetch metadata for multiple organizations
-  const fetchMetadataForOrgs = async (orgs: OrgWithScore[]) => {
-    if (orgs.length === 0) return;
-
-    const orgsWithWebsites = orgs.filter(org => org.website);
-    
-    if (orgsWithWebsites.length === 0) return;
-
-    // Set loading state for all orgs
-    const loadingState = orgsWithWebsites.reduce((acc, org) => {
-      acc[org.id] = true;
-      return acc;
-    }, {} as Record<string, boolean>);
-    setLoadingMetadata(prev => ({ ...prev, ...loadingState }));
-
-    try {
-      // Fetch metadata for all organizations in parallel
-      const metadataPromises = orgsWithWebsites.map(async (org) => {
-        const metadata = await getWebsiteMetadata(org.website!);
-        return { id: org.id, metadata };
-      });
-      
-      const results = await Promise.all(metadataPromises);
-      
-      // Convert results to metadata map
-      const metadataMap = results.reduce((acc, { id, metadata }) => {
-        acc[id] = metadata;
-        return acc;
-      }, {} as Record<string, WebsiteMetadata>);
-      
-      setWebsiteMetadata(prev => ({ ...prev, ...metadataMap }));
-      setError(null);
-    } catch (err) {
-      console.error('Error fetching bulk metadata:', err);
-      setError('Failed to fetch website metadata');
-    } finally {
-      // Clear loading state for all orgs
-      const clearedLoadingState = orgsWithWebsites.reduce((acc, org) => {
-        acc[org.id] = false;
-        return acc;
-      }, {} as Record<string, boolean>);
-      setLoadingMetadata(prev => ({ ...prev, ...clearedLoadingState }));
     }
   };
 
@@ -253,6 +321,7 @@ export function useWebsiteMetadata() {
     websiteMetadata,
     loadingMetadata,
     error,
+    retryAttempts,
     
     // Actions
     fetchMetadataForOrg,

@@ -150,6 +150,9 @@ export function OrganizationCard({
 
   const recommendation = getScoreRecommendation(totalScore);
 
+  // Add loading state awareness
+  const isMetadataLoading = !metadata && org.website; // Loading if no metadata but has website
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -157,22 +160,32 @@ export function OrganizationCard({
       transition={{ duration: 0.5 }}
       className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${getRegionalTheme(org.country_code)} backdrop-blur-sm border ${getAccentColor(org.country_code)} shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-[1.02]`}
     >
-      {/* Banner Image */}
-      {metadata?.image && !isPlaceholderUrl(metadata.image) && (
+      {/* Banner Image with Loading State */}
+      {org.website && (
         <div className="relative h-48 overflow-hidden">
-          <img
-            src={metadata.image}
-            alt={`${org.org_name} banner`}
-            className="w-full h-full object-cover opacity-60"
-            onError={(e) => {
-              const container = e.currentTarget.parentElement;
-              if (container) container.style.display = 'none';
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/40 to-transparent" />
+          {isMetadataLoading ? (
+            // Skeleton loader for banner
+            <div className="w-full h-full bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 animate-pulse">
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/40 to-transparent" />
+              <div className="absolute bottom-4 left-4 right-4">
+                <div className="h-4 bg-gray-600 rounded animate-pulse mb-2"></div>
+                <div className="h-4 bg-gray-600 rounded w-3/4 animate-pulse"></div>
+              </div>
+            </div>
+          ) : metadata?.image && !isPlaceholderUrl(metadata.image) ? (
+            <img
+              src={metadata.image}
+              alt={`${org.org_name} banner`}
+              className="w-full h-full object-cover opacity-60"
+              onError={(e) => {
+                const container = e.currentTarget.parentElement;
+                if (container) container.style.display = 'none';
+              }}
+            />
+          ) : null}
           
           {/* Mission Statement Overlay */}
-          {org.mission_statement && (
+          {org.mission_statement && !isMetadataLoading && (
             <div className="absolute bottom-4 left-4 right-4">
               <blockquote className="text-white text-base font-medium italic leading-relaxed line-clamp-2">
                 "{org.mission_statement}"
@@ -365,27 +378,34 @@ export function OrganizationCard({
             {/* Header with favicon and badges */}
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-start gap-3 flex-1">
-                {/* Favicon */}
-                {metadata?.favicon && !isPlaceholderUrl(metadata.favicon) ? (
-                  <img
-                    src={metadata.favicon}
-                    alt=""
-                    className="w-8 h-8 rounded-lg flex-shrink-0 bg-white/10 p-1"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                ) : org.website ? (
-                  <img
-                    src={getGoogleFaviconUrl(org.website)}
-                    alt=""
-                    className="w-8 h-8 rounded-lg flex-shrink-0 bg-white/10 p-1"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                    }}
-                  />
-                ) : null}
+                {/* Favicon with Loading State */}
+                {org.website && (
+                  <div className="w-8 h-8 rounded-lg flex-shrink-0 bg-white/10 p-1">
+                    {isMetadataLoading ? (
+                      <div className="w-full h-full bg-gray-600 rounded animate-pulse"></div>
+                    ) : metadata?.favicon && !isPlaceholderUrl(metadata.favicon) ? (
+                      <img
+                        src={metadata.favicon}
+                        alt=""
+                        className="w-full h-full rounded"
+                        onError={(e) => {
+                          e.currentTarget.src = getGoogleFaviconUrl(org.website!);
+                        }}
+                      />
+                    ) : (
+                      <img
+                        src={getGoogleFaviconUrl(org.website)}
+                        alt=""
+                        className="w-full h-full rounded"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                        }}
+                      />
+                    )}
+                  </div>
+                )}
                 
+                {/* Organization name and info */}
                 <div className="flex-1 min-w-0">
                   <h3 className="text-xl font-bold text-white mb-1 break-words">
                     {org.org_name}
@@ -393,6 +413,14 @@ export function OrganizationCard({
                   <p className="text-gray-300 text-sm">
                     {org.country_code} • {org.type_of_work}
                   </p>
+                  
+                  {/* Loading indicator for metadata */}
+                  {isMetadataLoading && (
+                    <div className="flex items-center gap-1 mt-1">
+                      <div className="w-3 h-3 border border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+                      <span className="text-xs text-blue-400">Loading details...</span>
+                    </div>
+                  )}
                 </div>
               </div>
               
