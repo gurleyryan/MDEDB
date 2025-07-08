@@ -570,14 +570,24 @@ export default function AdminOrgs() {
                   )}
                   
                   {org.email && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-green-400">📧</span>
-                      <a
-                        href={`mailto:${org.email}`}
-                        className="text-sm text-green-400 hover:text-green-300 hover:underline truncate"
-                      >
-                        {org.email}
-                      </a>
+                    <div className="flex items-start gap-2">
+                      <span className="text-green-400 mt-0.5">📧</span>
+                      <div className="flex flex-col gap-1 min-w-0 flex-1">
+                        {org.email
+                          .split(/[\s,\n\r]+/) // Split on whitespace, commas, and line breaks
+                          .map(email => email.trim())
+                          .filter(email => email && email.includes('@')) // Only keep valid-looking emails
+                          .map((email, index) => (
+                            <a
+                              key={index}
+                              href={`mailto:${email}`}
+                              className="text-sm text-green-400 hover:text-green-300 hover:underline break-all"
+                              title={email}
+                            >
+                              {email}
+                            </a>
+                          ))}
+                      </div>
                     </div>
                   )}
                   
