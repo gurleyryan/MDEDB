@@ -1,36 +1,131 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Climate Org Directory & Scoring Dashboard
 
-## Getting Started
+<!-- Uncomment once you select a license -->
+<!-- [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/license/mit/) -->
 
-First, run the development server:
+## Table of Contents
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- [Description](#description)
+- [Tech Stack](#tech-stack)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Admin Dashboard](#admin-dashboard)
+- [Contributing](#contributing)
+- [Credits](#credits)
+- [Tests](#tests)
+- [License](#license)
+- [Questions](#questions)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Description
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+A centralized platform to catalog, score, and assess grassroots climate organizations based on a shared rubric. Admins can review submitted orgs, assign structured impact scores across 13 criteria, and approve or reject entries. The goal is to support a transparent, collective, and scalable ecosystem for climate action, aligned with Music Declares Emergency.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Tech Stack
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Next.js** with App Router
+- **Supabase** (PostgreSQL, Auth, RLS, Storage)
+- **Tailwind CSS** for UI
+- **Google Apps Script** for sheet-to-DB syncing
+- **JWT Custom Claims & Auth Hooks** for secure RBAC
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Installation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+> ⚠️ *In development — not yet deploy-ready for public use.*
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Clone the repo:
+   ```bash
+   git clone https://github.com/[your-username]/climate-org-directory.git
+   cd climate-org-directory
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Set up your `.env.local` with Supabase project URL and anon key:
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=your-url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-key
+   ```
+
+4. Run the dev server:
+   ```bash
+   npm run dev
+   ```
+
+---
+
+## Usage
+
+Basic public view and scoring summaries coming soon.
+
+For now, the **admin dashboard** includes:
+
+- Full organization list with filters by approval status
+- Ability to **approve**, **reject**, or **set to pending**
+- Live synced Supabase RLS and auth-based permissions
+
+> ✅ Admin access requires valid Supabase login with associated `admin` role injected into JWT.
+
+---
+
+## Admin Dashboard
+
+![screenshot-coming-soon](#)
+
+Features:
+
+- Custom claim-based access control
+- Realtime updates to org approval state
+- RLS-secured view of climate orgs
+- Simple filters for `pending`, `approved`, and `rejected`
+
+---
+
+## Contributing
+
+Contributors:
+
+- [Ryan Gurley](https://github.com/gurleyryan)
+
+Pull requests welcome as the project evolves into public submission + scoring.
+
+---
+
+## Credits
+
+- [Supabase](https://supabase.com/)
+- [Next.js](https://nextjs.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [PostgreSQL RLS](https://supabase.com/docs/guides/database/postgres/row-level-security)
+- [Music Declares Emergency](https://musicdeclares.net/)
+
+---
+
+## Tests
+
+N/A at this stage.
+
+---
+
+## License
+
+No license selected yet.
+
+If you're planning on open-sourcing, MIT is a good default. Otherwise you can wait until the project’s shape becomes clearer.
+
+---
+
+## Questions
+
+Reach out with feedback, interest, or questions:
+
+- [GitHub](https://github.com/gurleyryan)
+- <a href="mailto:gurleyryan@gmail.com">gurleyryan@gmail.com</a>
