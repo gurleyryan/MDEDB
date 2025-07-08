@@ -46,6 +46,25 @@ export default function AdminOrgs() {
   const [savingScores, setSavingScores] = useState<string | null>(null);
   const [websiteMetadata, setWebsiteMetadata] = useState<Record<string, WebsiteMetadata>>({});
 
+  // New state variables for editing and adding organizations
+  const [editingOrg, setEditingOrg] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<Partial<Org>>({});
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newOrgForm, setNewOrgForm] = useState<Partial<Org>>({
+    org_name: '',
+    website: '',
+    email: '',
+    country_code: '',
+    type_of_work: '',
+    mission_statement: '',
+    notable_success: '',
+    cta_notes: '',
+    years_active: '',
+    capacity: '',
+    approval_status: 'pending'
+  });
+  const [showRejected, setShowRejected] = useState(false);
+
   // Scoring criteria with descriptions
   const scoringCriteria = [
     { 
@@ -361,9 +380,22 @@ export default function AdminOrgs() {
     }));
   };
 
-  const filteredOrgs = filter === 'all'
-    ? orgs
-    : orgs.filter(org => org.approval_status === filter);
+  // Update the filter logic to handle rejected orgs visibility:
+  const filteredOrgs = (() => {
+    let filtered = orgs;
+    
+    // Apply status filter
+    if (filter !== 'all') {
+      filtered = filtered.filter(org => org.approval_status === filter);
+    }
+    
+    // Hide rejected orgs unless specifically showing them
+    if (!showRejected && filter !== 'rejected') {
+      filtered = filtered.filter(org => org.approval_status !== 'rejected');
+    }
+    
+    return filtered;
+  })();
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -404,21 +436,135 @@ export default function AdminOrgs() {
     }
   }, [orgs]);
 
+  // Function to start editing an org
+  const startEdit = (org: OrgWithScore) => {
+    setEditingOrg(org.id);
+    setEditForm({
+      org_name: org.org_name,
+      website: org.website || '',
+      email: org.email || '',
+      country_code: org.country_code,
+      type_of_work: org.type_of_work || '',
+      mission_statement: org.mission_statement || '',
+      notable_success: org.notable_success || '',
+      cta_notes: org.cta_notes || '',
+      years_active: org.years_active || '',
+      capacity: org.capacity || ''
+    });
+  };
+
+  // Function to cancel editing
+  const cancelEdit = () => {
+    setEditingOrg(null);
+    setEditForm({});
+  };
+
+  // Function to save edited org
+  const saveEdit = async () => {
+    if (!editingOrg) return;
+    
+    setUpdatingId(editingOrg);
+    const { error } = await supabase
+      .from('org')
+      .update(editForm)
+      .eq('id', editingOrg);
+
+    setUpdatingId(null);
+    if (error) {
+      setError('Error updating organization: ' + error.message);
+    } else {
+      // Update local state
+      setOrgs(prevOrgs =>
+        prevOrgs.map(org =>
+          org.id === editingOrg ? { ...org, ...editForm } : org
+        )
+      );
+      setEditingOrg(null);
+      setEditForm({});
+    }
+  };
+
+  // Function to add new org
+  const addNewOrg = async () => {
+    if (!newOrgForm.org_name || !newOrgForm.country_code) {
+      setError('Organization name and country are required');
+      return;
+    }
+
+    setUpdatingId('new');
+    const { data, error } = await supabase
+      .from('org')
+      .insert([newOrgForm])
+      .select()
+      .single();
+
+    setUpdatingId(null);
+    if (error) {
+      setError('Error adding organization: ' + error.message);
+    } else {
+      // Add to local state
+      setOrgs(prevOrgs => [{ ...data, alignment_score: null }, ...prevOrgs]);
+      setShowAddForm(false);
+      setNewOrgForm({
+        org_name: '',
+        website: '',
+        email: '',
+        country_code: '',
+        type_of_work: '',
+        mission_statement: '',
+        notable_success: '',
+        cta_notes: '',
+        years_active: '',
+        capacity: '',
+        approval_status: 'pending'
+      });
+    }
+  };
+
+  // Function to handle form field changes
+  const handleEditFieldChange = (field: keyof Org, value: string) => {
+    setEditForm(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleNewOrgFieldChange = (field: keyof Org, value: string) => {
+    setNewOrgForm(prev => ({ ...prev, [field]: value }));
+  };
+
   if (loading) return <div className="p-4 bg-gray-900 text-white min-h-screen">Loading orgs…</div>;
   if (error) return <div className="p-4 bg-gray-900 text-red-400 min-h-screen">Error: {error}</div>;
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <div className="p-4 max-w-7xl mx-auto">
-        {/* Header with logout */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        {/* Header with logout and controls */}
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-white">Admin: Manage Organizations</h1>
-          <button
-            onClick={handleLogout}
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 text-sm sm:text-base"
-          >
-            Logout
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setShowAddForm(true)}
+              className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-500 transition-colors shadow-lg"
+            >
+              ➕ Add New Org
+            </motion.button>
+            <button
+              onClick={() => setShowRejected(!showRejected)}
+              className={`px-3 py-2 rounded text-sm ${
+                showRejected 
+                  ? 'bg-red-600 text-white hover:bg-red-500' 
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              } transition-colors`}
+            >
+              {showRejected ? '🙈 Hide Rejected' : '👁️ Show Rejected'}
+            </button>
+            <button
+              onClick={handleLogout}
+              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 text-sm"
+            >
+              Logout
+            </button>
+          </div>
         </div>
 
         {/* Filter buttons */}
@@ -476,190 +622,336 @@ export default function AdminOrgs() {
 
               {/* Card Content */}
               <div className="p-6 bg-gray-800/80 backdrop-blur">
-                {/* Mission Statement as header if no banner - show full text */}
-                {org.mission_statement && (!websiteMetadata[org.id]?.image || websiteMetadata[org.id]?.image?.includes('placeholder')) && (
-                  <div className="mb-4 p-4 bg-gray-700/50 rounded-lg border-l-4 border-blue-500">
-                    <blockquote className="text-blue-100 text-sm font-medium italic leading-relaxed">
-                      "{org.mission_statement}"
-                    </blockquote>
-                  </div>
-                )}
-
-                {/* Header with favicon and badges */}
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-start gap-3 flex-1">
-                    {/* Show favicon - be more permissive about what we display */}
-                    {websiteMetadata[org.id]?.favicon && !websiteMetadata[org.id]?.favicon?.includes('placeholder') ? (
-                      <img
-                        src={websiteMetadata[org.id].favicon}
-                        alt=""
-                        className="w-8 h-8 rounded-lg flex-shrink-0 bg-white/10 p-1"
-                        onError={(e) => {
-                          // Hide the favicon if it fails to load
-                          e.currentTarget.style.display = 'none';
-                        }}
+                {editingOrg === org.id ? (
+                  // Edit mode - inline form
+                  <div className="space-y-4 mb-6">
+                    <div>
+                      <label className="block text-xs text-gray-400 mb-1">Organization Name</label>
+                      <input
+                        type="text"
+                        value={editForm.org_name || ''}
+                        onChange={(e) => handleEditFieldChange('org_name', e.target.value)}
+                        className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white text-xl font-bold focus:border-blue-500 focus:outline-none"
                       />
-                    ) : org.website ? (
-                      // Fallback to Google favicon service if no favicon found
-                      <img
-                        src={`https://www.google.com/s2/favicons?domain=${(() => {
-                          try {
-                            return new URL(org.website.startsWith('http') ? org.website : `https://${org.website}`).hostname;
-                          } catch {
-                            return org.website.replace(/^https?:\/\//, '').split('/')[0];
-                          }
-                        })()}&sz=64`}
-                        alt=""
-                        className="w-8 h-8 rounded-lg flex-shrink-0 bg-white/10 p-1"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
-                    ) : null}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-xl font-bold text-white mb-1 break-words">
-                        {org.org_name}
-                      </h3>
-                      <p className="text-gray-300 text-sm">
-                        {org.country_code} • {org.type_of_work}
-                      </p>
                     </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    {/* Alignment Score Badge */}
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
-                      {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
-                    </span>
-                    {/* Status Badge */}
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold capitalize ${getStatusColor(org.approval_status)}`}>
-                      {org.approval_status}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Quick Info Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                  {org.website && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-blue-400">🌐</span>
-                      {(() => {
-                        try {
-                          // Try to create a URL object to validate the URL
-                          const url = new URL(org.website.startsWith('http') ? org.website : `https://${org.website}`);
-                          return (
-                            <a
-                              href={org.website.startsWith('http') ? org.website : `https://${org.website}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate"
-                            >
-                              {url.hostname}
-                            </a>
-                          );
-                        } catch (error) {
-                          // If URL is invalid, just display the text without making it a link
-                          return (
-                            <span className="text-sm text-gray-400 truncate">
-                              {org.website} (invalid URL)
-                            </span>
-                          );
-                        }
-                      })()}
-                    </div>
-                  )}
-                  
-                  {org.email && (
-                    <div className="flex items-start gap-2">
-                      <span className="text-green-400 mt-0.5">📧</span>
-                      <div className="flex flex-col gap-1 min-w-0 flex-1">
-                        {org.email
-                          .split(/[\s,\n\r]+/) // Split on whitespace, commas, and line breaks
-                          .map(email => email.trim())
-                          .filter(email => email && email.includes('@')) // Only keep valid-looking emails
-                          .map((email, index) => (
-                            <a
-                              key={index}
-                              href={`mailto:${email}`}
-                              className="text-sm text-green-400 hover:text-green-300 hover:underline break-all"
-                              title={email}
-                            >
-                              {email}
-                            </a>
-                          ))}
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs text-gray-400 mb-1">Website</label>
+                        <input
+                          type="url"
+                          value={editForm.website || ''}
+                          onChange={(e) => handleEditFieldChange('website', e.target.value)}
+                          className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:border-blue-500 focus:outline-none"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-xs text-gray-400 mb-1">Email</label>
+                        <textarea
+                          value={editForm.email || ''}
+                          onChange={(e) => handleEditFieldChange('email', e.target.value)}
+                          className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:border-blue-500 focus:outline-none h-20 resize-none"
+                          placeholder="Multiple emails separated by commas or line breaks"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-xs text-gray-400 mb-1">Country Code</label>
+                        <input
+                          type="text"
+                          value={editForm.country_code || ''}
+                          onChange={(e) => handleEditFieldChange('country_code', e.target.value.toUpperCase())}
+                          className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:border-blue-500 focus:outline-none"
+                          maxLength={2}
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-xs text-gray-400 mb-1">Type of Work</label>
+                        <input
+                          type="text"
+                          value={editForm.type_of_work || ''}
+                          onChange={(e) => handleEditFieldChange('type_of_work', e.target.value)}
+                          className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:border-blue-500 focus:outline-none"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-xs text-gray-400 mb-1">Years Active</label>
+                        <input
+                          type="text"
+                          value={editForm.years_active || ''}
+                          onChange={(e) => handleEditFieldChange('years_active', e.target.value)}
+                          className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:border-blue-500 focus:outline-none"
+                          placeholder="e.g., 2013–present, 2018–2023"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-xs text-gray-400 mb-1">Capacity</label>
+                        <input
+                          type="text"
+                          value={editForm.capacity || ''}
+                          onChange={(e) => handleEditFieldChange('capacity', e.target.value)}
+                          className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:border-blue-500 focus:outline-none"
+                        />
                       </div>
                     </div>
-                  )}
-                  
-                  {org.years_active && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-yellow-400">⏱️</span>
-                      <span className="text-sm text-gray-300">{org.years_active} years active</span>
+                    
+                    <div>
+                      <label className="block text-xs text-gray-400 mb-1">Mission Statement</label>
+                      <textarea
+                        value={editForm.mission_statement || ''}
+                        onChange={(e) => handleEditFieldChange('mission_statement', e.target.value)}
+                        className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:border-blue-500 focus:outline-none h-20 resize-none"
+                      />
                     </div>
-                  )}
-                  
-                  {org.capacity && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-purple-400">👥</span>
-                      <span className="text-sm text-gray-300">{org.capacity}</span>
+                    
+                    <div>
+                      <label className="block text-xs text-gray-400 mb-1">Notable Success</label>
+                      <textarea
+                        value={editForm.notable_success || ''}
+                        onChange={(e) => handleEditFieldChange('notable_success', e.target.value)}
+                        className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:border-blue-500 focus:outline-none h-20 resize-none"
+                      />
                     </div>
-                  )}
-                </div>
-
-                {/* Notable Success Highlight */}
-                {org.notable_success && (
-                  <div className="mb-6 p-4 bg-emerald-500/10 border-l-4 border-emerald-500 rounded-r-lg">
-                    <p className="text-sm text-emerald-200 font-medium">🏆 Notable Success</p>
-                    <p className="text-sm text-gray-300 mt-1">{org.notable_success}</p>
+                    
+                    <div>
+                      <label className="block text-xs text-gray-400 mb-1">CTA Notes</label>
+                      <textarea
+                        value={editForm.cta_notes || ''}
+                        onChange={(e) => handleEditFieldChange('cta_notes', e.target.value)}
+                        className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white text-sm focus:border-blue-500 focus:outline-none h-20 resize-none"
+                      />
+                    </div>
                   </div>
-                )}
+                ) : (
+                  // Normal display mode
+                  <>
+                    {/* Mission Statement as header if no banner - show full text */}
+                    {org.mission_statement && (!websiteMetadata[org.id]?.image || websiteMetadata[org.id]?.image?.includes('placeholder')) && (
+                      <div className="mb-4 p-4 bg-gray-700/50 rounded-lg border-l-4 border-blue-500">
+                        <blockquote className="text-blue-100 text-sm font-medium italic leading-relaxed">
+                          "{org.mission_statement}"
+                        </blockquote>
+                      </div>
+                    )}
 
-                {/* CTA Notes */}
-                {org.cta_notes && (
-                  <div className="mb-6 p-4 bg-blue-500/10 border-l-4 border-blue-500 rounded-r-lg">
-                    <p className="text-sm text-blue-200 font-medium">📢 Call to Action</p>
-                    <p className="text-sm text-gray-300 mt-1">{org.cta_notes}</p>
-                  </div>
+                    {/* Header with favicon and badges */}
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex items-start gap-3 flex-1">
+                        {/* Show favicon - be more permissive about what we display */}
+                        {websiteMetadata[org.id]?.favicon && !websiteMetadata[org.id]?.favicon?.includes('placeholder') ? (
+                          <img
+                            src={websiteMetadata[org.id].favicon}
+                            alt=""
+                            className="w-8 h-8 rounded-lg flex-shrink-0 bg-white/10 p-1"
+                            onError={(e) => {
+                              // Hide the favicon if it fails to load
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        ) : org.website ? (
+                          // Fallback to Google favicon service if no favicon found
+                          <img
+                            src={`https://www.google.com/s2/favicons?domain=${(() => {
+                              try {
+                                return new URL(org.website.startsWith('http') ? org.website : `https://${org.website}`).hostname;
+                              } catch {
+                                return org.website.replace(/^https?:\/\//, '').split('/')[0];
+                              }
+                            })()}&sz=64`}
+                            alt=""
+                            className="w-8 h-8 rounded-lg flex-shrink-0 bg-white/10 p-1"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                            }}
+                          />
+                        ) : null}
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-xl font-bold text-white mb-1 break-words">
+                            {org.org_name}
+                          </h3>
+                          <p className="text-gray-300 text-sm">
+                            {org.country_code} • {org.type_of_work}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {/* Alignment Score Badge */}
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
+                          {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
+                        </span>
+                        {/* Status Badge */}
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold capitalize ${getStatusColor(org.approval_status)}`}>
+                          {org.approval_status}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Quick Info Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                      {org.website && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-blue-400">🌐</span>
+                          {(() => {
+                            try {
+                              // Try to create a URL object to validate the URL
+                              const url = new URL(org.website.startsWith('http') ? org.website : `https://${org.website}`);
+                              return (
+                                <a
+                                  href={org.website.startsWith('http') ? org.website : `https://${org.website}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate"
+                                >
+                                  {url.hostname}
+                                </a>
+                              );
+                            } catch (error) {
+                              // If URL is invalid, just display the text without making it a link
+                              return (
+                                <span className="text-sm text-gray-400 truncate">
+                                  {org.website} (invalid URL)
+                                </span>
+                              );
+                            }
+                          })()}
+                        </div>
+                      )}
+                      
+                      {org.email && (
+                        <div className="flex items-start gap-2">
+                          <span className="text-green-400 mt-0.5">📧</span>
+                          <div className="flex flex-col gap-1 min-w-0 flex-1">
+                            {org.email
+                              .split(/[\s,\n\r]+/) // Split on whitespace, commas, and line breaks
+                              .map(email => email.trim())
+                              .filter(email => email && email.includes('@')) // Only keep valid-looking emails
+                              .map((email, index) => (
+                                <a
+                                  key={index}
+                                  href={`mailto:${email}`}
+                                  className="text-sm text-green-400 hover:text-green-300 hover:underline break-all"
+                                  title={email}
+                                >
+                                  {email}
+                                </a>
+                              ))}
+                          </div>
+                        </div>
+                      )}
+                      
+                      {org.years_active && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-yellow-400">📅</span>
+                          <span className="text-sm text-gray-300">Active: {org.years_active}</span>
+                        </div>
+                      )}
+                      
+                      {org.capacity && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-purple-400">👥</span>
+                          <span className="text-sm text-gray-300">{org.capacity}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Notable Success Highlight */}
+                    {org.notable_success && (
+                      <div className="mb-6 p-4 bg-emerald-500/10 border-l-4 border-emerald-500 rounded-r-lg">
+                        <p className="text-sm text-emerald-200 font-medium">🏆 Notable Success</p>
+                        <p className="text-sm text-gray-300 mt-1">{org.notable_success}</p>
+                      </div>
+                    )}
+
+                    {/* CTA Notes */}
+                    {org.cta_notes && (
+                      <div className="mb-6 p-4 bg-blue-500/10 border-l-4 border-blue-500 rounded-r-lg">
+                        <p className="text-sm text-blue-200 font-medium">📢 Call to Action</p>
+                        <p className="text-sm text-gray-300 mt-1">{org.cta_notes}</p>
+                      </div>
+                    )}
+                  </>
                 )}
 
                 {/* Action Buttons - same as before */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div className="flex flex-wrap gap-2">
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      disabled={updatingId === org.id || org.approval_status === 'approved'}
-                      onClick={() => updateStatus(org.id, 'approved')}
-                      className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-500 transition-colors shadow-lg"
-                    >
-                      {updatingId === org.id ? '...' : '✓ Approve'}
-                    </motion.button>
-                    
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      disabled={updatingId === org.id || org.approval_status === 'rejected'}
-                      onClick={() => updateStatus(org.id, 'rejected')}
-                      className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-500 transition-colors shadow-lg"
-                    >
-                      {updatingId === org.id ? '...' : '✗ Reject'}
-                    </motion.button>
-                    
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      disabled={updatingId === org.id || org.approval_status === 'pending'}
-                      onClick={() => updateStatus(org.id, 'pending')}
-                      className="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-500 transition-colors shadow-lg"
-                    >
-                      {updatingId === org.id ? '...' : '⏳ Pending'}
-                    </motion.button>
+                    {editingOrg === org.id ? (
+                      // Edit mode buttons
+                      <>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={saveEdit}
+                          disabled={updatingId === org.id}
+                          className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-500 transition-colors shadow-lg"
+                        >
+                          {updatingId === org.id ? 'Saving...' : '💾 Save'}
+                        </motion.button>
+                        
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={cancelEdit}
+                          className="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-500 transition-colors shadow-lg"
+                        >
+                          ❌ Cancel
+                        </motion.button>
+                      </>
+                    ) : (
+                      // Normal mode buttons
+                      <>
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          disabled={updatingId === org.id || org.approval_status === 'approved'}
+                          onClick={() => updateStatus(org.id, 'approved')}
+                          className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-500 transition-colors shadow-lg"
+                        >
+                          {updatingId === org.id ? '...' : '✓ Approve'}
+                        </motion.button>
+                        
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          disabled={updatingId === org.id || org.approval_status === 'rejected'}
+                          onClick={() => updateStatus(org.id, 'rejected')}
+                          className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-500 transition-colors shadow-lg"
+                        >
+                          {updatingId === org.id ? '...' : '✗ Reject'}
+                        </motion.button>
+                        
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          disabled={updatingId === org.id || org.approval_status === 'pending'}
+                          onClick={() => updateStatus(org.id, 'pending')}
+                          className="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-500 transition-colors shadow-lg"
+                        >
+                          {updatingId === org.id ? '...' : '⏳ Pending'}
+                        </motion.button>
+                      </>
+                    )}
                   </div>
                   
                   <div className="flex gap-2">
-                    {org.website && (() => {
+                    {editingOrg !== org.id && (
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => startEdit(org)}
+                        className="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-500 transition-colors shadow-lg"
+                      >
+                        ✏️ Edit
+                      </motion.button>
+                    )}
+                    
+                    {org.website && editingOrg !== org.id && (() => {
                       try {
-                        // Validate URL before creating the link
                         new URL(org.website.startsWith('http') ? org.website : `https://${org.website}`);
                         return (
                           <motion.a
@@ -674,19 +966,20 @@ export default function AdminOrgs() {
                           </motion.a>
                         );
                       } catch (error) {
-                        // If URL is invalid, don't render the visit site button
                         return null;
                       }
                     })()}
                     
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleExpandOrg(org.id)}
-                      className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-500 transition-colors shadow-lg"
-                    >
-                      {expandedOrg === org.id ? '📊 Hide Scoring' : '📊 Edit Scoring'}
-                    </motion.button>
+                    {editingOrg !== org.id && (
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleExpandOrg(org.id)}
+                        className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-500 transition-colors shadow-lg"
+                      >
+                        {expandedOrg === org.id ? '📊 Hide Scoring' : '📊 Edit Scoring'}
+                      </motion.button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -712,6 +1005,149 @@ export default function AdminOrgs() {
           </div>
         )}
       </div>
+
+      {/* Add New Org Modal */}
+      {showAddForm && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowAddForm(false);
+          }}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-gray-800 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-white">Add New Organization</h2>
+              <button
+                onClick={() => setShowAddForm(false)}
+                className="text-gray-400 hover:text-white text-2xl"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Organization Name *
+                  </label>
+                  <input
+                    type="text"
+                    value={newOrgForm.org_name || ''}
+                    onChange={(e) => handleNewOrgFieldChange('org_name', e.target.value)}
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                    placeholder="Enter organization name"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Country Code *
+                  </label>
+                  <input
+                    type="text"
+                    value={newOrgForm.country_code || ''}
+                    onChange={(e) => handleNewOrgFieldChange('country_code', e.target.value.toUpperCase())}
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                    placeholder="e.g., US, CA, UK"
+                    maxLength={2}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Website</label>
+                  <input
+                    type="url"
+                    value={newOrgForm.website || ''}
+                    onChange={(e) => handleNewOrgFieldChange('website', e.target.value)}
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                    placeholder="https://example.org"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                  <input
+                    type="email"
+                    value={newOrgForm.email || ''}
+                    onChange={(e) => handleNewOrgFieldChange('email', e.target.value)}
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                    placeholder="contact@example.org"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Type of Work</label>
+                  <input
+                    type="text"
+                    value={newOrgForm.type_of_work || ''}
+                    onChange={(e) => handleNewOrgFieldChange('type_of_work', e.target.value)}
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                    placeholder="e.g., Advocacy, Education, Direct Action"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Years Active</label>
+                  <input
+                    type="text"
+                    value={newOrgForm.years_active || ''}
+                    onChange={(e) => handleNewOrgFieldChange('years_active', e.target.value)}
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                    placeholder="e.g., 2013–present, 2018–2023"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Mission Statement</label>
+                <textarea
+                  value={newOrgForm.mission_statement || ''}
+                  onChange={(e) => handleNewOrgFieldChange('mission_statement', e.target.value)}
+                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none h-24 resize-none"
+                  placeholder="Enter the organization's mission statement"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">Notable Success</label>
+                <textarea
+                  value={newOrgForm.notable_success || ''}
+                  onChange={(e) => handleNewOrgFieldChange('notable_success', e.target.value)}
+                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none h-20 resize-none"
+                  placeholder="Describe a key achievement or success story"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={addNewOrg}
+                  disabled={updatingId === 'new' || !newOrgForm.org_name || !newOrgForm.country_code}
+                  className="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-500 transition-colors"
+                >
+                  {updatingId === 'new' ? 'Adding...' : 'Add Organization'}
+                </button>
+                <button
+                  onClick={() => setShowAddForm(false)}
+                  className="px-6 py-3 bg-gray-600 text-white rounded-lg font-medium hover:bg-gray-500 transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 }
