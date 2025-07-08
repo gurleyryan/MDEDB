@@ -47,11 +47,11 @@ export function AdminHeader({
   return (
     <div className="sticky top-0 z-40 bg-gray-900/95 backdrop-blur-md border-b border-gray-700/50">
       <div className="p-4 max-w-7xl mx-auto">
-        {/* Header Row */}
+        {/* Enhanced Header Row */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-          {/* Title */}
+          {/* Enhanced Title */}
           <div className="flex items-center gap-3">
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">
+            <h1 className="text-title text-gradient-ocean">
               Admin: Manage Organizations
             </h1>
             {isLoading && (
@@ -65,11 +65,11 @@ export function AdminHeader({
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={onAddNew}
-              className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-500 transition-colors shadow-lg flex items-center gap-2"
+              className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2 rounded-lg text-caption font-medium hover:shadow-glow-green transition-all-smooth shadow-lg flex items-center gap-2"
             >
               <span className="text-lg">➕</span>
-              <span className="hidden sm:inline">Add New Org</span>
-              <span className="sm:hidden">Add</span>
+              <span className="hidden sm:inline font-heading">Add New Org</span>
+              <span className="sm:hidden font-heading">Add</span>
             </motion.button>
             
             <motion.button
@@ -103,7 +103,7 @@ export function AdminHeader({
           </div>
         </div>
 
-        {/* Filter Buttons Row */}
+        {/* Enhanced Filter Buttons */}
         <div className="flex flex-wrap gap-2 mt-4">
           {filterButtons.map((button) => (
             <motion.button
@@ -111,10 +111,10 @@ export function AdminHeader({
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => onFilterChange(button.key)}
-              className={`px-3 py-2 rounded-lg capitalize text-sm sm:text-base font-medium transition-all duration-200 ${
+              className={`px-3 py-2 rounded-lg capitalize text-caption font-heading font-medium transition-all-smooth ${
                 filter === button.key
-                  ? 'bg-blue-600 text-white shadow-lg ring-2 ring-blue-400/30'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600 shadow-md'
+                  ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-glow-blue ring-2 ring-blue-400/30'
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600 shadow-md hover:shadow-lg'
               }`}
             >
               <span className="flex items-center gap-2">

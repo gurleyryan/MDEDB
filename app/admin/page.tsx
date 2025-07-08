@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabaseClient';
 
 // Hooks
@@ -168,6 +168,7 @@ export default function AdminOrgs() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
+      
       {/* Admin Header with Metadata Progress */}
       <AdminHeader
         filter={filter}
@@ -242,26 +243,40 @@ export default function AdminOrgs() {
 
       {/* Main Content */}
       <div className="p-4 max-w-7xl mx-auto">
-        {/* Organization Cards */}
+        {/* Organization Cards with Stable Animations */}
         <div className="space-y-6">
           {filteredOrgs.map((org, index) => (
-            <OrganizationCard
-              key={org.id}
-              org={org}
-              metadata={websiteMetadata[org.id]}
-              scores={orgScores[org.id]}
-              isExpanded={expandedOrg === org.id}
-              isEditing={editingOrg === org.id}
-              updatingId={updatingId}
-              savingScores={savingScores}
-              onExpand={handleExpandOrg}
-              onEdit={(org) => setEditingOrg(org.id)}
-              onSave={handleOrganizationSave}
-              onCancel={() => setEditingOrg(null)}
-              onStatusUpdate={updateStatus}
-              onScoreUpdate={updateScoringField}
-              onScoringSave={handleScoringSave}
-            />
+            <motion.div
+              key={org.id} // Use stable org.id instead of filter-based key
+              initial={false} // Don't animate on first render
+              animate={{ 
+                opacity: 1, 
+                y: 0,
+                transition: { 
+                  duration: 0.2,
+                  delay: index * 0.01 // Minimal stagger
+                }
+              }}
+              layout // Enable layout animations for smooth repositioning
+              className="will-change-transform" // Optimize for animations
+            >
+              <OrganizationCard
+                org={org}
+                metadata={websiteMetadata[org.id]}
+                scores={orgScores[org.id]}
+                isExpanded={expandedOrg === org.id}
+                isEditing={editingOrg === org.id}
+                updatingId={updatingId}
+                savingScores={savingScores}
+                onExpand={handleExpandOrg}
+                onEdit={(org) => setEditingOrg(org.id)}
+                onSave={handleOrganizationSave}
+                onCancel={() => setEditingOrg(null)}
+                onStatusUpdate={updateStatus}
+                onScoreUpdate={updateScoringField}
+                onScoringSave={handleScoringSave}
+              />
+            </motion.div>
           ))}
         </div>
 

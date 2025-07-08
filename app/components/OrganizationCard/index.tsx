@@ -154,10 +154,7 @@ export function OrganizationCard({
   const isMetadataLoading = !metadata && org.website; // Loading if no metadata but has website
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+    <div
       className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${getRegionalTheme(org.country_code)} backdrop-blur-sm border ${getAccentColor(org.country_code)} shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-[1.02]`}
     >
       {/* Banner Image with Loading State */}
@@ -199,10 +196,10 @@ export function OrganizationCard({
                 </div>
                 
                 {/* Mission text with subtle scale and enhanced typography on hover */}
-                <blockquote className="text-white/90 group-hover:text-white text-sm group-hover:text-base font-medium leading-relaxed group-hover:leading-relaxed transition-all duration-300 transform group-hover:scale-[1.02] origin-bottom-left">
-                  <span className="text-blue-300 group-hover:text-blue-200 text-lg leading-none transition-colors duration-300">"</span>
+                <blockquote className="text-body text-white/90 group-hover:text-white leading-relaxed transition-all duration-300 text-pretty">
+                  <span className="text-blue-300 text-lg leading-none">"</span>
                   {org.mission_statement}
-                  <span className="text-blue-300 group-hover:text-blue-200 text-lg leading-none transition-colors duration-300">"</span>
+                  <span className="text-blue-300 text-lg leading-none">"</span>
                 </blockquote>
               </div>
             </div>
@@ -422,9 +419,11 @@ export function OrganizationCard({
                 
                 {/* Organization name and info */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="text-xl font-bold text-white mb-1 break-words">
+                  {/* Organization name with distinctive heading font */}
+                  <h3 className="text-heading text-white mb-1 break-words text-balance">
                     {org.org_name}
                   </h3>
+                  
                   <p className="text-gray-300 text-sm">
                     {org.country_code} • {org.type_of_work}
                   </p>
@@ -557,7 +556,7 @@ export function OrganizationCard({
                   whileTap={{ scale: 0.95 }}
                   disabled={updatingId === org.id || org.approval_status === 'approved'}
                   onClick={() => onStatusUpdate(org.id, 'approved')}
-                  className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-500 transition-colors shadow-lg"
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2 rounded-lg text-caption font-heading font-medium hover:shadow-glow-green transition-all-smooth shadow-lg"
                 >
                   {updatingId === org.id ? '...' : '✓ Approve'}
                 </motion.button>
@@ -632,7 +631,7 @@ export function OrganizationCard({
           exit={{ opacity: 0, height: 0 }}
           className="border-t border-gray-700 bg-gray-900/90 p-6"
         >
-          <h4 className="text-lg font-bold text-white mb-4">🎯 Scoring Criteria</h4>
+          <h4 className="text-heading font-heading text-gradient-forest mb-4">🎯 Scoring Criteria</h4>
           
           {/* Scoring Guide */}
           <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
@@ -724,7 +723,7 @@ export function OrganizationCard({
           </div>
         </motion.div>
       )}
-    </motion.div>
+    </div>
   );
 }
 
