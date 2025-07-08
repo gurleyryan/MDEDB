@@ -119,8 +119,6 @@ N/A at this stage.
 
 No license selected yet.
 
-If you're planning on open-sourcing, MIT is a good default. Otherwise you can wait until the project’s shape becomes clearer.
-
 ---
 
 ## Questions
