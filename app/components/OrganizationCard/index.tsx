@@ -164,11 +164,15 @@ export function OrganizationCard({
 
   return (
     <div
-      className={`organization-card panel-glass relative rounded-2xl backdrop-blur-sm shadow-2xl hover:shadow-3xl transition-all duration-300 stained-glass ${getRegionalTheme(org.country_code)}`}
+      className={`organization-card panel-glass relative rounded-2xl backdrop-blur-sm shadow-2xl transition-all duration-300 stained-glass ${getRegionalTheme(org.country_code)} ${
+        isExpanded || isEditing ? 'expanded-card' : 'hover:shadow-3xl'
+      }`}
       style={{ 
         overflow: 'visible',
         position: 'relative',
-        zIndex: 'auto'
+        zIndex: 'auto',
+        // Remove hover transform when expanded/editing
+        transform: isExpanded || isEditing ? 'none' : undefined
       }}
     >
       {/* Banner Image with proper rounding */}
@@ -195,25 +199,15 @@ export function OrganizationCard({
             />
           ) : null}
           
-          {/* Mission Statement Overlay */}
-          {org.mission_statement && !isMetadataLoading && (
-            <div className="absolute bottom-0 left-0 right-0 group cursor-default">
-              {/* Progressive gradient darkening */}
-              <div className="bg-gradient-to-t from-black/80 via-black/50 to-transparent group-hover:from-black/95 group-hover:via-black/80 transition-all duration-500 ease-out p-6 pb-4">
-                
-                {/* Header */}
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-blue-400 group-hover:text-blue-300 text-lg transition-colors duration-300">💭</span>
-                  <span className="text-blue-300 group-hover:text-blue-200 text-xs font-medium uppercase tracking-wide transition-colors duration-300">
-                    Mission Statement
-                  </span>
-                </div>
-                
-                {/* Mission text with subtle scale and enhanced typography on hover */}
-                <blockquote className="text-body text-white/90 group-hover:text-white leading-relaxed transition-all duration-300 text-pretty">
-                  <span className="text-blue-300 text-lg leading-none">"</span>
-                  {org.mission_statement}
-                  <span className="text-blue-300 text-lg leading-none">"</span>
+          {/* Mission Statement Overlay - simplified with auto-width glass box */}
+          {org.mission_statement && (
+            <div className="absolute bottom-4 left-4 right-4 flex justify-center">
+              {/* Glass box that sizes to content */}
+              <div className="mission-statement-glass px-4 py-3 max-w-full">
+                <blockquote className="mission-statement-text text-sm leading-relaxed text-pretty text-center">
+                  <span className="mission-quote-mark text-lg leading-none">"</span>
+                  <span className="mx-1">{org.mission_statement}</span>
+                  <span className="mission-quote-mark text-lg leading-none">"</span>
                 </blockquote>
               </div>
             </div>
@@ -392,15 +386,6 @@ export function OrganizationCard({
         ) : (
           // Display Mode
           <>
-            {/* Mission Statement as header if no banner */}
-            {org.mission_statement && (!metadata?.image || isPlaceholderUrl(metadata.image)) && (
-              <div className="mb-4 p-4 bg-gray-700/50 rounded-lg border-l-4 border-blue-500">
-                <blockquote className="text-blue-100 text-sm font-medium italic leading-relaxed">
-                  "{org.mission_statement}"
-                </blockquote>
-              </div>
-            )}
-
             {/* Header with organized two-column layout */}
             <div className="flex justify-between items-start mb-3 gap-4">
               {/* Left Column: Favicon + Org Info */}
@@ -609,60 +594,72 @@ export function OrganizationCard({
           </>
         )}
 
-        {/* Status and Action Buttons - Compact */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+        {/* Status and Action Buttons - Fix z-index hierarchy */}
+        <div className="flex items-center justify-between gap-4 mt-4">
+          {/* Left: Status Dropdown with explicit z-index */}
           <div 
-            className="flex items-center gap-3 relative"
-            style={{ zIndex: 9999 }}
+            className="flex items-center gap-2 status-dropdown-container"
+            style={{ 
+              position: 'relative',
+              zIndex: 25000, // Much higher than scoring section
+              isolation: 'isolate' // Create own stacking context
+            }}
           >
-            <span className="text-sm text-gray-400">Status:</span>
-            <CustomDropdown
-              value={org.approval_status}
-              onChange={(value) => onStatusUpdate(org.id, value as 'pending' | 'approved' | 'rejected')}
-              options={getStatusOptions()}
-              colorCoded={true}
-              className="min-w-[120px]"
-            />
+            <span className="text-yellow-400">⚡</span>
+            <div 
+              className="relative"
+              style={{ 
+                position: 'relative',
+                zIndex: 25001,
+                overflow: 'visible'
+              }}
+            >
+              <CustomDropdown
+                value={org.approval_status}
+                onChange={(value) => onStatusUpdate(org.id, value as 'pending' | 'approved' | 'rejected')}
+                options={getStatusOptions()}
+                colorCoded={true}
+                className="min-w-[100px] text-xs status-dropdown-main"
+              />
+            </div>
           </div>
 
-          {/* Action Buttons - Compact */}
-          <div className="flex flex-wrap gap-2">
+          {/* Right: Action Buttons */}
+          <div className="flex items-center gap-4">
             {isEditing ? (
-              // Edit mode buttons - simple appearance
               <>
                 <button
                   onClick={handleSave}
                   disabled={updatingId === org.id || Object.keys(errors).length > 0}
-                  className="btn-glass btn-glass-green px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-100 shadow-lg flex items-center gap-2 hover:translate-y-[-1px]"
+                  className="btn-glass btn-glass-green px-8 py-3 rounded-xl text-base font-semibold disabled:opacity-50 flex items-center gap-3 hover:translate-y-[-2px] transition-all duration-150 shadow-xl"
                 >
-                  <span>💾</span>
-                  <span>{updatingId === org.id ? 'Saving...' : 'Save'}</span>
+                  <span className="text-lg">💾</span>
+                  <span>{updatingId === org.id ? 'Saving...' : 'Save Changes'}</span>
                 </button>
                 
                 <button
                   onClick={handleCancel}
-                  className="btn-glass text-gray-300 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-100 shadow-lg flex items-center gap-2 hover:translate-y-[-1px]"
+                  className="btn-glass text-gray-300 px-8 py-3 rounded-xl text-base font-semibold flex items-center gap-3 hover:translate-y-[-2px] transition-all duration-150 shadow-xl"
                 >
-                  <span>❌</span>
+                  <span className="text-lg">❌</span>
                   <span>Cancel</span>
                 </button>
               </>
             ) : (
-              // Normal mode buttons - simple appearance
               <>
                 <button
                   onClick={startEdit}
-                  className="btn-glass btn-glass-blue px-4 py-2 rounded-lg text-sm font-medium transition-all duration-100 shadow-lg flex items-center gap-2 hover:translate-y-[-1px]"
+                  className="btn-glass btn-glass-blue px-7 py-3 rounded-xl text-base font-semibold hover:shadow-glow-blue flex items-center gap-3 hover:translate-y-[-2px] transition-all duration-150 shadow-xl"
                 >
-                  <span>✏️</span>
+                  <span className="text-lg">✏️</span>
                   <span>Edit Info</span>
                 </button>
 
                 <button
                   onClick={() => onExpand(org.id)}
-                  className="btn-glass btn-glass-purple px-4 py-2 rounded-lg text-sm font-medium transition-all duration-100 shadow-lg flex items-center gap-2 hover:translate-y-[-1px]"
+                  className="btn-glass btn-glass-purple px-7 py-3 rounded-xl text-base font-semibold hover:shadow-glow-purple flex items-center gap-3 hover:translate-y-[-2px] transition-all duration-150 shadow-xl"
                 >
-                  <span>📊</span>
+                  <span className="text-lg">📊</span>
                   <span>{isExpanded ? 'Hide Scoring' : 'Edit Scoring'}</span>
                 </button>
               </>

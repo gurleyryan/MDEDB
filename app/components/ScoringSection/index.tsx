@@ -46,7 +46,7 @@ export function ScoringSection({
   };
 
   return (
-    <div className="">
+    <div className="scoring-section" style={{ position: 'relative', zIndex: 1000 }}>
       {/* Simple CSS transition - no stretching */}
       {isExpanded && (
         <div
@@ -58,7 +58,9 @@ export function ScoringSection({
               rgba(8, 8, 8, 0.97)
             )`,
             borderColor: 'rgba(255, 255, 255, 0.08)',
-            animation: 'fadeIn 0.2s ease-out'
+            animation: 'fadeIn 0.2s ease-out',
+            position: 'relative',
+            zIndex: 1000
           }}
         >
           {/* Header */}
@@ -135,7 +137,7 @@ export function ScoringSection({
             </div>
           </div>
           
-          {/* Scoring Criteria Grid - no individual animations */}
+          {/* Scoring Criteria Grid - fix dropdown z-index */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
             {SCORING_CRITERIA.map((criterion, index) => {
               const currentScore = scores?.[criterion.key as keyof OrgScoring] as number | undefined;
@@ -152,6 +154,11 @@ export function ScoringSection({
                         : 'border-red-500/30 bg-red-500/5 shadow-red-500/10 shadow-lg'
                     : 'border-gray-600 hover:border-gray-500'
                   }`}
+                  style={{ 
+                    position: 'relative',
+                    zIndex: SCORING_CRITERIA.length - index + 1000, // Higher z-index for earlier criteria
+                    overflow: 'visible'
+                  }}
                 >
                   <div className="flex justify-between items-start mb-3">
                     <h5 className="font-medium text-white text-sm flex items-center gap-2">
@@ -161,8 +168,15 @@ export function ScoringSection({
                       {criterion.label}
                     </h5>
                     
-                    {/* Scoring Dropdown */}
-                    <div className="flex flex-col items-end gap-1">
+                    {/* Scoring Dropdown with higher z-index */}
+                    <div 
+                      className="flex flex-col items-end gap-1"
+                      style={{ 
+                        position: 'relative',
+                        zIndex: SCORING_CRITERIA.length - index + 2000, // Even higher z-index
+                        overflow: 'visible'
+                      }}
+                    >
                       <CustomDropdown
                         value={currentScore?.toString() || ''}
                         onChange={(value) => {

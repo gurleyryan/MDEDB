@@ -1,14 +1,17 @@
 @import "tailwindcss";
 
+/* ============================================
+   CSS VARIABLES
+   ============================================ */
 :root {
   --background: #000000;
   --foreground: #f5f5f5;
-  
+
   /* Glass Effect Variables */
   --glass-bg: rgba(15, 15, 15, 0.8);
   --glass-border: rgba(255, 255, 255, 0.1);
   --glass-shadow: rgba(0, 0, 0, 0.5);
-  
+
   /* Stained Glass Colors */
   --glass-blue: rgba(59, 130, 246, 0.15);
   --glass-blue-border: rgba(59, 130, 246, 0.3);
@@ -20,7 +23,7 @@
   --glass-red-border: rgba(239, 68, 68, 0.3);
   --glass-orange: rgba(249, 115, 22, 0.15);
   --glass-orange-border: rgba(249, 115, 22, 0.3);
-  
+
   /* Enhanced Spacing */
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
@@ -29,334 +32,23 @@
   --space-xl: 2rem;
 }
 
-/* Base Dark Theme */
+/* ============================================
+   BASE STYLES
+   ============================================ */
 body {
-  background: linear-gradient(135deg, #000000, #0a0a0a);
-  color: var(--foreground);
-  font-family: var(--font-ibm-plex);
-  font-feature-settings: "rlig" 1, "calt" 1;
-}
-
-/* Enhanced Page Background */
-body {
-  background: 
+  background:
     radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
     radial-gradient(circle at 75% 75%, rgba(16, 185, 129, 0.04) 0%, transparent 50%),
     linear-gradient(135deg, #000000, #0a0a0a, #000000);
+  color: var(--foreground);
+  font-family: var(--font-ibm-plex);
+  font-feature-settings: "rlig" 1, "calt" 1;
   min-height: 100vh;
 }
 
-/* Glass Button Base */
-.btn-glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-  border-radius: 0.75rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.btn-glass::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-}
-
-.btn-glass:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 32px var(--glass-shadow);
-}
-
-/* Glass Button Variants */
-.btn-glass-blue {
-  background: linear-gradient(135deg, var(--glass-blue), rgba(59, 130, 246, 0.05));
-  border-color: var(--glass-blue-border);
-  color: #93c5fd;
-}
-
-.btn-glass-blue:hover {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(59, 130, 246, 0.1));
-  border-color: rgba(59, 130, 246, 0.5);
-  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
-}
-
-.btn-glass-green {
-  background: linear-gradient(135deg, var(--glass-green), rgba(16, 185, 129, 0.05));
-  border-color: var(--glass-green-border);
-  color: #6ee7b7;
-}
-
-.btn-glass-green:hover {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.1));
-  border-color: rgba(16, 185, 129, 0.5);
-  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
-}
-
-.btn-glass-purple {
-  background: linear-gradient(135deg, var(--glass-purple), rgba(147, 51, 234, 0.05));
-  border-color: var(--glass-purple-border);
-  color: #c4b5fd;
-}
-
-.btn-glass-purple:hover {
-  background: linear-gradient(135deg, rgba(147, 51, 234, 0.25), rgba(147, 51, 234, 0.1));
-  border-color: rgba(147, 51, 234, 0.5);
-  box-shadow: 0 8px 32px rgba(147, 51, 234, 0.3);
-}
-
-.btn-glass-red {
-  background: linear-gradient(135deg, var(--glass-red), rgba(239, 68, 68, 0.05));
-  border-color: var(--glass-red-border);
-  color: #fca5a5;
-}
-
-.btn-glass-red:hover {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(239, 68, 68, 0.1));
-  border-color: rgba(239, 68, 68, 0.5);
-  box-shadow: 0 8px 32px rgba(239, 68, 68, 0.3);
-}
-
-.btn-glass-orange {
-  background: linear-gradient(135deg, var(--glass-orange), rgba(249, 115, 22, 0.05));
-  border-color: var(--glass-orange-border);
-  color: #fdba74;
-}
-
-.btn-glass-orange:hover {
-  background: linear-gradient(135deg, rgba(249, 115, 22, 0.25), rgba(249, 115, 22, 0.1));
-  border-color: rgba(249, 115, 22, 0.5);
-  box-shadow: 0 8px 32px rgba(249, 115, 22, 0.3);
-}
-
-/* Enhanced Glass Panel Effects */
-.panel-glass {
-  background: rgba(5, 5, 5, 0.95);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 1rem;
-  position: relative;
-  overflow: visible; /* Changed from hidden */
-}
-
-.panel-glass::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, 
-    transparent, 
-    rgba(255, 255, 255, 0.15), 
-    transparent
-  );
-  border-radius: 1rem 1rem 0 0;
-}
-
-/* Remove the conflicting ::after pseudo-element */
-.panel-glass::after {
-  display: none !important;
-}
-
-/* Enhanced Dropdown Glass Effects */
-.dropdown-glass {
-  background: rgba(8, 8, 8, 0.98);
-  backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 
-    0 32px 64px rgba(0, 0, 0, 0.8),
-    0 0 0 1px rgba(255, 255, 255, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-/* Organization Card Glass Effects */
-.organization-card {
-  background: linear-gradient(135deg, 
-    rgba(8, 8, 8, 0.98), 
-    rgba(15, 15, 15, 0.95), 
-    rgba(5, 5, 5, 0.98)
-  );
-  backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 1rem;
-  position: relative;
-  overflow: visible;
-  isolation: isolate;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Remove the conflicting pseudo-elements */
-.organization-card::before,
-.organization-card::after {
-  display: none !important;
-}
-
-/* Continent-Themed Card Edges - Using box-shadow instead of border-image */
-.organization-card.north-america {
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  box-shadow: 
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(59, 130, 246, 0.2),
-    inset 0 1px 0 rgba(59, 130, 246, 0.1),
-    0 0 20px rgba(59, 130, 246, 0.1);
-}
-
-.organization-card.north-america:hover {
-  border-color: rgba(59, 130, 246, 0.5);
-  box-shadow: 
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(59, 130, 246, 0.4),
-    0 0 32px rgba(59, 130, 246, 0.3),
-    inset 0 1px 0 rgba(59, 130, 246, 0.2);
-  transform: translateY(-2px) scale(1.01);
-}
-
-.organization-card.south-america {
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  box-shadow: 
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(16, 185, 129, 0.2),
-    inset 0 1px 0 rgba(16, 185, 129, 0.1),
-    0 0 20px rgba(16, 185, 129, 0.1);
-}
-
-.organization-card.south-america:hover {
-  border-color: rgba(16, 185, 129, 0.5);
-  box-shadow: 
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(16, 185, 129, 0.4),
-    0 0 32px rgba(16, 185, 129, 0.3),
-    inset 0 1px 0 rgba(16, 185, 129, 0.2);
-  transform: translateY(-2px) scale(1.01);
-}
-
-.organization-card.europe {
-  border: 1px solid rgba(147, 51, 234, 0.3);
-  box-shadow: 
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(147, 51, 234, 0.2),
-    inset 0 1px 0 rgba(147, 51, 234, 0.1),
-    0 0 20px rgba(147, 51, 234, 0.1);
-}
-
-.organization-card.europe:hover {
-  border-color: rgba(147, 51, 234, 0.5);
-  box-shadow: 
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(147, 51, 234, 0.4),
-    0 0 32px rgba(147, 51, 234, 0.3),
-    inset 0 1px 0 rgba(147, 51, 234, 0.2);
-  transform: translateY(-2px) scale(1.01);
-}
-
-.organization-card.africa {
-  border: 1px solid rgba(249, 115, 22, 0.3);
-  box-shadow: 
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(249, 115, 22, 0.2),
-    inset 0 1px 0 rgba(249, 115, 22, 0.1),
-    0 0 20px rgba(249, 115, 22, 0.1);
-}
-
-.organization-card.africa:hover {
-  border-color: rgba(249, 115, 22, 0.5);
-  box-shadow: 
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(249, 115, 22, 0.4),
-    0 0 32px rgba(249, 115, 22, 0.3),
-    inset 0 1px 0 rgba(249, 115, 22, 0.2);
-  transform: translateY(-2px) scale(1.01);
-}
-
-.organization-card.asia {
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  box-shadow: 
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(239, 68, 68, 0.2),
-    inset 0 1px 0 rgba(239, 68, 68, 0.1),
-    0 0 20px rgba(239, 68, 68, 0.1);
-}
-
-.organization-card.asia:hover {
-  border-color: rgba(239, 68, 68, 0.5);
-  box-shadow: 
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(239, 68, 68, 0.4),
-    0 0 32px rgba(239, 68, 68, 0.3),
-    inset 0 1px 0 rgba(239, 68, 68, 0.2);
-  transform: translateY(-2px) scale(1.01);
-}
-
-.organization-card.oceania {
-  border: 1px solid rgba(6, 182, 212, 0.3);
-  box-shadow: 
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(6, 182, 212, 0.2),
-    inset 0 1px 0 rgba(6, 182, 212, 0.1),
-    0 0 20px rgba(6, 182, 212, 0.1);
-}
-
-.organization-card.oceania:hover {
-  border-color: rgba(6, 182, 212, 0.5);
-  box-shadow: 
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(6, 182, 212, 0.4),
-    0 0 32px rgba(6, 182, 212, 0.3),
-    inset 0 1px 0 rgba(6, 182, 212, 0.2);
-  transform: translateY(-2px) scale(1.01);
-}
-
-.organization-card.middle-east {
-  border: 1px solid rgba(217, 119, 6, 0.3);
-  box-shadow: 
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(217, 119, 6, 0.2),
-    inset 0 1px 0 rgba(217, 119, 6, 0.1),
-    0 0 20px rgba(217, 119, 6, 0.1);
-}
-
-.organization-card.middle-east:hover {
-  border-color: rgba(217, 119, 6, 0.5);
-  box-shadow: 
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(217, 119, 6, 0.4),
-    0 0 32px rgba(217, 119, 6, 0.3),
-    inset 0 1px 0 rgba(217, 119, 6, 0.2);
-  transform: translateY(-2px) scale(1.01);
-}
-
-/* Enhanced Stained Glass Effects */
-.stained-glass::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    135deg,
-    rgba(59, 130, 246, 0.015) 0%,
-    rgba(16, 185, 129, 0.01) 25%,
-    rgba(147, 51, 234, 0.015) 50%,
-    rgba(249, 115, 22, 0.01) 75%,
-    rgba(239, 68, 68, 0.015) 100%
-  );
-  pointer-events: none;
-  opacity: 0.4;
-  border-radius: inherit;
-  transition: opacity 0.3s ease;
-}
-
-.stained-glass:hover::before {
-  opacity: 0.6;
-}
-
-/* Typography System - Option C (Creative & Distinctive) */
+/* ============================================
+   TYPOGRAPHY SYSTEM
+   ============================================ */
 .font-heading {
   font-family: var(--font-outfit);
   font-weight: 600;
@@ -373,7 +65,6 @@ body {
   font-family: var(--font-space-mono);
 }
 
-/* Enhanced Text Hierarchy */
 .text-hero {
   font-size: clamp(2rem, 5vw, 4rem);
   font-weight: 800;
@@ -454,59 +145,807 @@ body {
   background-clip: text;
 }
 
-/* Enhanced Focus States */
-.focus-ring {
-  outline: none;
+/* ============================================
+   GLASS COMPONENTS
+   ============================================ */
+.btn-glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 0.75rem;
+  transition: all 0.1s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+.btn-glass:hover {
+  transform: translateY(-1px);
   box-shadow:
-    0 0 0 2px rgba(59, 130, 246, 0.5),
-    0 0 0 4px #1a1a1a;
+    0 10px 25px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
-/* Smooth Animations */
-.transition-all-smooth {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.btn-glass:active {
+  transform: translateY(0);
+  transition: all 0.05s ease-out;
 }
 
-/* Enhanced Shadows */
-.shadow-glow-blue {
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+/* Button Variants */
+.btn-glass-blue {
+  background: linear-gradient(135deg, var(--glass-blue), rgba(59, 130, 246, 0.05));
+  border-color: var(--glass-blue-border);
+  color: #93c5fd;
 }
 
-.shadow-glow-green {
-  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+.btn-glass-blue:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(59, 130, 246, 0.1));
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-ibm-plex);
-  font-feature-settings: "rlig" 1, "calt" 1;
+.btn-glass-green {
+  background: linear-gradient(135deg, var(--glass-green), rgba(16, 185, 129, 0.05));
+  border-color: var(--glass-green-border);
+  color: #6ee7b7;
 }
 
-/* Improved readability for light text on dark backgrounds */
-.text-balance {
-  text-wrap: balance;
+.btn-glass-green:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.1));
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
 }
 
-.text-pretty {
-  text-wrap: pretty;
+.btn-glass-purple {
+  background: linear-gradient(135deg, var(--glass-purple), rgba(147, 51, 234, 0.05));
+  border-color: var(--glass-purple-border);
+  color: #c4b5fd;
 }
 
-/* Add this section to your globals.css file */
+.btn-glass-purple:hover {
+  background: linear-gradient(135deg, rgba(147, 51, 234, 0.25), rgba(147, 51, 234, 0.1));
+  border-color: rgba(147, 51, 234, 0.5);
+  box-shadow: 0 8px 32px rgba(147, 51, 234, 0.3);
+}
 
-/* Form Elements Typography - Match Option C fonts */
-select, 
-input[type="text"], 
-input[type="email"], 
-input[type="url"], 
-textarea, 
+.btn-glass-red {
+  background: linear-gradient(135deg, var(--glass-red), rgba(239, 68, 68, 0.05));
+  border-color: var(--glass-red-border);
+  color: #fca5a5;
+}
+
+.btn-glass-red:hover {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(239, 68, 68, 0.1));
+  border-color: rgba(239, 68, 68, 0.5);
+  box-shadow: 0 8px 32px rgba(239, 68, 68, 0.3);
+}
+
+.btn-glass-orange {
+  background: linear-gradient(135deg, var(--glass-orange), rgba(249, 115, 22, 0.05));
+  border-color: var(--glass-orange-border);
+  color: #fdba74;
+}
+
+.btn-glass-orange:hover {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.25), rgba(249, 115, 22, 0.1));
+  border-color: rgba(249, 115, 22, 0.5);
+  box-shadow: 0 8px 32px rgba(249, 115, 22, 0.3);
+}
+
+/* Panel Glass */
+.panel-glass {
+  background: rgba(5, 5, 5, 0.95);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  position: relative;
+  overflow: visible;
+}
+
+.panel-glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  border-radius: 1rem 1rem 0 0;
+}
+
+.panel-glass::after {
+  display: none !important;
+}
+
+/* Dropdown Glass */
+.dropdown-glass {
+  background: rgba(8, 8, 8, 0.98);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 32px 64px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  animation: fadeIn 0.1s ease-out;
+}
+
+.dropdown-option:hover {
+  transform: translateX(4px);
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================
+   ADMIN HEADER
+   ============================================ */
+.admin-header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 9999 !important;
+  background: linear-gradient(135deg,
+      rgba(0, 0, 0, 0.98),
+      rgba(5, 5, 5, 0.95),
+      rgba(0, 0, 0, 0.97)) !important;
+  backdrop-filter: blur(24px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  overflow: visible !important;
+}
+
+.admin-header>div {
+  position: relative;
+  z-index: 10000;
+  overflow: visible !important;
+}
+
+.admin-header .dropdown-glass {
+  position: absolute !important;
+  z-index: 99999 !important;
+  top: 100% !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin-top: 4px !important;
+}
+
+.admin-header [class*="relative"] {
+  overflow: visible !important;
+}
+
+/* ============================================
+   ORGANIZATION CARDS
+   ============================================ */
+.organization-card {
+  background: linear-gradient(135deg,
+      rgba(8, 8, 8, 0.98),
+      rgba(15, 15, 15, 0.95),
+      rgba(5, 5, 5, 0.98));
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1rem;
+  position: relative !important;
+  z-index: auto !important;
+  overflow: visible !important;
+  transition: all 0.15s ease-out;
+  /* Add margin to prevent edge cutoff */
+  margin: 2px;
+}
+
+.organization-card:hover {
+  transform: translateY(-1px) scale(1.005);
+  transition: all 0.1s ease-out;
+}
+
+.organization-card::before,
+.organization-card::after {
+  display: none !important;
+}
+
+/* Expanded card state - maintain elevated appearance without hover effect */
+.organization-card.expanded-card {
+  transform: translateY(-2px) scale(1.01) !important;
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 2px rgba(59, 130, 246, 0.3),
+    0 0 32px rgba(59, 130, 246, 0.2) !important;
+  transition: all 0.15s ease-out !important;
+  /* Ensure colored edges are preserved */
+  border-radius: 1rem !important;
+  overflow: visible !important;
+}
+
+/* Remove hover effects when expanded */
+.organization-card.expanded-card:hover {
+  transform: translateY(-2px) scale(1.01) !important;
+}
+
+/* Regional theming for expanded cards */
+.organization-card.expanded-card.north-america {
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 2px rgba(59, 130, 246, 0.4),
+    0 0 32px rgba(59, 130, 246, 0.3) !important;
+}
+
+.organization-card.expanded-card.south-america {
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 2px rgba(16, 185, 129, 0.4),
+    0 0 32px rgba(16, 185, 129, 0.3) !important;
+}
+
+.organization-card.expanded-card.europe {
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 2px rgba(147, 51, 234, 0.4),
+    0 0 32px rgba(147, 51, 234, 0.3) !important;
+}
+
+.organization-card.expanded-card.africa {
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 2px rgba(249, 115, 22, 0.4),
+    0 0 32px rgba(249, 115, 22, 0.3) !important;
+}
+
+.organization-card.expanded-card.asia {
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 2px rgba(239, 68, 68, 0.4),
+    0 0 32px rgba(239, 68, 68, 0.3) !important;
+}
+
+.organization-card.expanded-card.oceania {
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 2px rgba(6, 182, 212, 0.4),
+    0 0 32px rgba(6, 182, 212, 0.3) !important;
+}
+
+.organization-card.expanded-card.middle-east {
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 2px rgba(217, 119, 6, 0.4),
+    0 0 32px rgba(217, 119, 6, 0.3) !important;
+}
+
+/* Regional Theming */
+.organization-card.north-america {
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  box-shadow:
+    0 32px 64px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(59, 130, 246, 0.2),
+    inset 0 1px 0 rgba(59, 130, 246, 0.1),
+    0 0 20px rgba(59, 130, 246, 0.1);
+}
+
+.organization-card.north-america:hover {
+  border-color: rgba(59, 130, 246, 0.5);
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 2px rgba(59, 130, 246, 0.4),
+    0 0 32px rgba(59, 130, 246, 0.3),
+    inset 0 1px 0 rgba(59, 130, 246, 0.2);
+  transform: translateY(-2px) scale(1.01);
+}
+
+.organization-card.south-america {
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  box-shadow:
+    0 32px 64px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(16, 185, 129, 0.2),
+    inset 0 1px 0 rgba(16, 185, 129, 0.1),
+    0 0 20px rgba(16, 185, 129, 0.1);
+}
+
+.organization-card.south-america:hover {
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 2px rgba(16, 185, 129, 0.4),
+    0 0 32px rgba(16, 185, 129, 0.3),
+    inset 0 1px 0 rgba(16, 185, 129, 0.2);
+  transform: translateY(-2px) scale(1.01);
+}
+
+.organization-card.europe {
+  border: 1px solid rgba(147, 51, 234, 0.3);
+  box-shadow:
+    0 32px 64px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(147, 51, 234, 0.2),
+    inset 0 1px 0 rgba(147, 51, 234, 0.1),
+    0 0 20px rgba(147, 51, 234, 0.1);
+}
+
+.organization-card.europe:hover {
+  border-color: rgba(147, 51, 234, 0.5);
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 2px rgba(147, 51, 234, 0.4),
+    0 0 32px rgba(147, 51, 234, 0.3),
+    inset 0 1px 0 rgba(147, 51, 234, 0.2);
+  transform: translateY(-2px) scale(1.01);
+}
+
+.organization-card.africa {
+  border: 1px solid rgba(249, 115, 22, 0.3);
+  box-shadow:
+    0 32px 64px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(249, 115, 22, 0.2),
+    inset 0 1px 0 rgba(249, 115, 22, 0.1),
+    0 0 20px rgba(249, 115, 22, 0.1);
+}
+
+.organization-card.africa:hover {
+  border-color: rgba(249, 115, 22, 0.5);
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 2px rgba(249, 115, 22, 0.4),
+    0 0 32px rgba(249, 115, 22, 0.3),
+    inset 0 1px 0 rgba(249, 115, 22, 0.2);
+  transform: translateY(-2px) scale(1.01);
+}
+
+.organization-card.asia {
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  box-shadow:
+    0 32px 64px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(239, 68, 68, 0.2),
+    inset 0 1px 0 rgba(239, 68, 68, 0.1),
+    0 0 20px rgba(239, 68, 68, 0.1);
+}
+
+.organization-card.asia:hover {
+  border-color: rgba(239, 68, 68, 0.5);
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 2px rgba(239, 68, 68, 0.4),
+    0 0 32px rgba(239, 68, 68, 0.3),
+    inset 0 1px 0 rgba(239, 68, 68, 0.2);
+  transform: translateY(-2px) scale(1.01);
+}
+
+.organization-card.oceania {
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  box-shadow:
+    0 32px 64px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(6, 182, 212, 0.2),
+    inset 0 1px 0 rgba(6, 182, 212, 0.1),
+    0 0 20px rgba(6, 182, 212, 0.1);
+}
+
+.organization-card.oceania:hover {
+  border-color: rgba(6, 182, 212, 0.5);
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 2px rgba(6, 182, 212, 0.4),
+    0 0 32px rgba(6, 182, 212, 0.3),
+    inset 0 1px 0 rgba(6, 182, 212, 0.2);
+  transform: translateY(-2px) scale(1.01);
+}
+
+.organization-card.middle-east {
+  border: 1px solid rgba(217, 119, 6, 0.3);
+  box-shadow:
+    0 32px 64px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(217, 119, 6, 0.2),
+    inset 0 1px 0 rgba(217, 119, 6, 0.1),
+    0 0 20px rgba(217, 119, 6, 0.1);
+}
+
+.organization-card.middle-east:hover {
+  border-color: rgba(217, 119, 6, 0.5);
+  box-shadow:
+    0 40px 80px rgba(0, 0, 0, 0.7),
+    0 0 0 2px rgba(217, 119, 6, 0.4),
+    0 0 32px rgba(217, 119, 6, 0.3),
+    inset 0 1px 0 rgba(217, 119, 6, 0.2);
+  transform: translateY(-2px) scale(1.01);
+}
+
+/* ============================================
+   MISSION STATEMENT OVERLAY
+   ============================================ */
+.organization-card .mission-statement-overlay {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.5s ease-out;
+}
+
+.organization-card .mission-statement-overlay:hover {
+  background: linear-gradient(to top,
+      rgba(0, 0, 0, 0.98) 0%,
+      rgba(5, 5, 5, 0.92) 40%,
+      rgba(8, 8, 8, 0.85) 60%,
+      transparent 100%);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Mission statement glass panel */
+.mission-statement-glass {
+  background: linear-gradient(135deg,
+      rgba(15, 15, 15, 0.4) 0%,
+      rgba(8, 8, 8, 0.3) 50%,
+      rgba(15, 15, 15, 0.4) 100%);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 0.5rem;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 4px 16px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.mission-statement-glass:hover {
+  background: linear-gradient(135deg,
+      rgba(15, 15, 15, 0.5) 0%,
+      rgba(8, 8, 8, 0.4) 50%,
+      rgba(15, 15, 15, 0.5) 100%);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 6px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Mission statement text styling */
+.mission-statement-text {
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+.mission-statement-text:hover {
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+/* Quote marks styling */
+.mission-quote-mark {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 300;
+  text-shadow: 0 0 8px rgba(96, 165, 250, 0.4);
+  transition: all 0.3s ease;
+}
+
+.mission-quote-mark:hover {
+  color: rgba(96, 165, 250, 1);
+  text-shadow: 0 0 12px rgba(96, 165, 250, 0.6);
+}
+
+/* Header label styling */
+.mission-header-label {
+  color: rgba(147, 197, 253, 0.8);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+.mission-header-label:hover {
+  color: rgba(147, 197, 253, 0.9);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+/* Mission icon styling */
+.mission-icon {
+  color: rgba(96, 165, 250, 0.8);
+  filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.3));
+  transition: all 0.3s ease;
+}
+
+.mission-icon:hover {
+  color: rgba(96, 165, 250, 0.9);
+  filter: drop-shadow(0 0 10px rgba(96, 165, 250, 0.4));
+  transform: scale(1.05);
+}
+
+/* ============================================
+   ORGANIZATION CARD ACTIONS
+   ============================================ */
+
+/* Enhanced button hover effects */
+.btn-glass:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+/* Purple glow effect */
+.shadow-glow-purple {
+  box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+}
+
+.btn-glass-purple:hover {
+  box-shadow:
+    0 12px 30px rgba(147, 51, 234, 0.4),
+    0 0 0 1px rgba(147, 51, 234, 0.3);
+}
+
+/* Blue glow effect */
+.btn-glass-blue:hover {
+  box-shadow:
+    0 12px 30px rgba(59, 130, 246, 0.4),
+    0 0 0 1px rgba(59, 130, 246, 0.3);
+}
+
+/* Status dropdown enhancement */
+.status-dropdown-container {
+  background: linear-gradient(135deg,
+      rgba(10, 10, 10, 0.6),
+      rgba(5, 5, 5, 0.5));
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.status-dropdown-container:hover {
+  background: linear-gradient(135deg,
+      rgba(15, 15, 15, 0.8),
+      rgba(8, 8, 8, 0.7));
+}
+
+/* Button spacing and sizing improvements */
+.organization-card button {
+  min-height: 2.5rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.organization-card button span:first-child {
+  font-size: 1rem;
+}
+
+/* Responsive button text */
+@media (max-width: 640px) {
+  .organization-card button span:last-child {
+    display: none;
+  }
+
+  .organization-card button {
+    min-width: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .organization-card .action-bar {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .organization-card .action-bar>div {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .organization-card .flex.justify-between {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  .organization-card .flex.justify-between>div {
+    justify-content: center;
+  }
+}
+
+/* ============================================
+   STAINED GLASS EFFECTS
+   ============================================ */
+.stained-glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg,
+      rgba(59, 130, 246, 0.015) 0%,
+      rgba(16, 185, 129, 0.01) 25%,
+      rgba(147, 51, 234, 0.015) 50%,
+      rgba(249, 115, 22, 0.01) 75%,
+      rgba(239, 68, 68, 0.015) 100%);
+  pointer-events: none;
+  opacity: 0.4;
+  border-radius: inherit;
+  transition: opacity 0.3s ease;
+}
+
+.stained-glass:hover::before {
+  opacity: 0.6;
+}
+
+/* ============================================
+   STATUS DROPDOWN
+   ============================================ */
+.organization-card .status-dropdown-container {
+  position: relative !important;
+  z-index: 20000 !important;
+  overflow: visible !important;
+}
+
+.organization-card .status-dropdown-container .dropdown-glass {
+  position: absolute !important;
+  top: 100% !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin-top: 4px !important;
+  z-index: 20001 !important;
+  background: rgba(31, 41, 55, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+}
+
+.organization-card .status-dropdown-container .dropdown-glass .dropdown-option {
+  position: relative !important;
+  z-index: 20002 !important;
+}
+
+.organization-card .status-dropdown-container,
+.organization-card .status-dropdown-container>div,
+.organization-card .status-dropdown-container .relative {
+  overflow: visible !important;
+  z-index: inherit !important;
+}
+
+.status-dropdown-container .dropdown-glass,
+.status-dropdown-container [class*="dropdown"] {
+  z-index: 20001 !important;
+}
+
+/* ============================================
+   SCORING SECTION
+   ============================================ */
+.scoring-section {
+  position: relative !important;
+  z-index: 1000 !important;
+  transition: all 0.2s ease-out;
+  /* Ensure scoring section doesn't interfere with card borders */
+  margin-top: -1px;
+  /* Slight overlap to prevent gaps */
+}
+
+.scoring-section::before,
+.scoring-section::after {
+  display: none !important;
+}
+
+/* Scoring section dropdowns - ensure proper stacking */
+.scoring-section .dropdown-glass {
+  position: absolute !important;
+  top: 100% !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin-top: 4px !important;
+  z-index: 3000 !important;
+  /* Higher than scoring criteria containers */
+  background: rgba(31, 41, 55, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Scoring section dropdown options */
+.scoring-section .dropdown-option {
+  position: relative !important;
+  z-index: 3001 !important;
+}
+
+/* Ensure scoring criteria containers don't interfere with dropdowns */
+.scoring-section .scoring-criteria-container {
+  position: relative;
+  overflow: visible !important;
+}
+
+/* Container spacing to prevent edge cutoff */
+.scoring-section .grid {
+  gap: 1.5rem !important;
+  /* Increase gap to prevent cutoff */
+}
+
+/* ============================================
+   Z-INDEX HIERARCHY (CLEAN)
+   ============================================ */
+
+/* Level 1: Base Card Elements */
+.organization-card {
+  position: relative !important;
+  z-index: 1 !important;
+  overflow: visible !important;
+}
+
+/* Level 2: Scoring Section (contained) */
+.scoring-section {
+  position: relative !important;
+  z-index: 100 !important;
+  isolation: isolate !important; /* Contains scoring dropdowns */
+}
+
+/* Level 3: Scoring Section Dropdowns (within scoring context) */
+.scoring-section .dropdown-glass {
+  position: absolute !important;
+  z-index: 500 !important; /* High within scoring context */
+}
+
+/* Level 4: Status Dropdown Container (escapes card context) */
+.status-dropdown-container {
+  position: relative !important;
+  z-index: 25000 !important; /* Much higher than scoring */
+  isolation: isolate !important;
+}
+
+/* Level 5: Status Dropdown (highest) */
+.status-dropdown-main .dropdown-glass,
+.organization-card .status-dropdown-container .dropdown-glass {
+  position: absolute !important;
+  top: 100% !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin-top: 4px !important;
+  z-index: 50000 !important; /* Absolute highest */
+  background: rgba(31, 41, 55, 0.98) !important;
+  backdrop-filter: blur(24px) !important;
+  border: 2px solid rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 
+    0 32px 64px rgba(0, 0, 0, 0.9),
+    0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Status dropdown options */
+.status-dropdown-main .dropdown-option,
+.organization-card .status-dropdown-container .dropdown-option {
+  position: relative !important;
+  z-index: 50001 !important;
+}
+
+/* Admin Header (above everything) */
+.admin-header {
+  z-index: 99999 !important;
+}
+
+/* Force status dropdown visibility */
+.status-dropdown-container *,
+.status-dropdown-main * {
+  overflow: visible !important;
+}
+
+/* Ensure scoring section doesn't interfere */
+.scoring-section .scoring-criteria-container {
+  position: relative;
+  z-index: 200 !important; /* Lower than status dropdown */
+  overflow: visible !important;
+}
+
+/* ============================================
+   FORM ELEMENTS
+   ============================================ */
+select,
+input[type="text"],
+input[type="email"],
+input[type="url"],
+textarea,
 button {
   font-family: var(--font-ibm-plex) !important;
   font-weight: 400;
   letter-spacing: normal;
 }
 
-/* Override browser defaults for select elements */
 select {
   font-family: var(--font-ibm-plex) !important;
   font-size: 0.875rem;
@@ -519,20 +958,17 @@ select {
   padding-right: 2.5rem;
 }
 
-/* Buttons should use heading font for labels */
 button {
   font-family: var(--font-outfit) !important;
   font-weight: 500;
 }
 
-/* Input placeholders */
 ::placeholder {
   font-family: var(--font-ibm-plex) !important;
   font-weight: 400;
   opacity: 0.6;
 }
 
-/* Focus states for form elements */
 select:focus,
 input:focus,
 textarea:focus {
@@ -541,20 +977,18 @@ textarea:focus {
   border-color: #3b82f6;
 }
 
-/* Enhanced dropdown styling */
-
-/* Style dropdown options when opened */
+/* ============================================
+   DROPDOWN OPTIONS STYLING
+   ============================================ */
 select option {
   font-family: var(--font-ibm-plex) !important;
   font-size: 0.875rem !important;
   line-height: 1.6 !important;
   padding: 10px 12px !important;
   font-weight: 500 !important;
-  border: none !important;
-  margin: 0 !important;
 }
 
-/* Target specific option values for color coding */
+/* Country Options */
 select option[value="North America"] {
   background: linear-gradient(135deg, #1e3a8a, #2563eb) !important;
   color: #dbeafe !important;
@@ -590,7 +1024,7 @@ select option[value="Middle East"] {
   color: #fed7aa !important;
 }
 
-/* Score range options */
+/* Score Range Options */
 select option[value="strong"] {
   background: linear-gradient(135deg, #065f46, #047857) !important;
   color: #d1fae5 !important;
@@ -615,26 +1049,7 @@ select option[value="unscored"] {
   font-weight: 600 !important;
 }
 
-/* Scoring options */
-select option[value="0"] {
-  background: linear-gradient(135deg, #991b1b, #dc2626) !important;
-  color: #fecaca !important;
-  font-weight: 600 !important;
-}
-
-select option[value="1"] {
-  background: linear-gradient(135deg, #92400e, #b45309) !important;
-  color: #fef3c7 !important;
-  font-weight: 600 !important;
-}
-
-select option[value="2"] {
-  background: linear-gradient(135deg, #065f46, #047857) !important;
-  color: #d1fae5 !important;
-  font-weight: 600 !important;
-}
-
-/* Website status options */
+/* Website Status Options */
 select option[value="yes"] {
   background: linear-gradient(135deg, #065f46, #047857) !important;
   color: #d1fae5 !important;
@@ -645,7 +1060,6 @@ select option[value="no"] {
   color: #fecaca !important;
 }
 
-/* Hover effects for better contrast */
 select option:hover {
   background: rgba(59, 130, 246, 0.3) !important;
   color: white !important;
@@ -653,51 +1067,138 @@ select option:hover {
   transition: all 0.2s ease;
 }
 
-/* Focus/active states */
-select option:focus,
-select option:active {
-  background: rgba(59, 130, 246, 0.5) !important;
-  color: white !important;
-  outline: 2px solid #3b82f6 !important;
-}
-
-/* Selected option enhancement */
 select option:checked {
   background: rgba(59, 130, 246, 0.6) !important;
   color: white !important;
   font-weight: 700 !important;
 }
 
-/* Webkit-specific dropdown styling */
+/* ============================================
+   SCROLLBARS
+   ============================================ */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #6b7280 #1f2937;
+  scroll-behavior: smooth;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #1f2937;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #6b7280;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
 select::-webkit-scrollbar {
   width: 8px;
 }
 
 select::-webkit-scrollbar-track {
-  background: #1f2937; /* gray-800 */
+  background: #1f2937;
 }
 
 select::-webkit-scrollbar-thumb {
-  background: #4b5563; /* gray-600 */
+  background: #4b5563;
   border-radius: 4px;
 }
 
 select::-webkit-scrollbar-thumb:hover {
-  background: #6b7280; /* gray-500 */
+  background: #6b7280;
 }
 
-/* Firefox-specific */
-@-moz-document url-prefix() {
-  select option {
-    font-family: var(--font-ibm-plex) !important;
-    background-color: #374151 !important;
-    color: white !important;
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-/* Add to app/globals.css - Cursor styling */
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
-/* Ensure all interactive elements have pointer cursor */
+  to {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+}
+
+/* ============================================
+   PROGRESS BAR
+   ============================================ */
+.search-progress-bar {
+  background: linear-gradient(90deg,
+      rgba(34, 197, 94, 0.8),
+      rgba(16, 185, 129, 0.9),
+      rgba(34, 197, 94, 0.8));
+  box-shadow:
+    0 0 4px rgba(34, 197, 94, 0.4),
+    0 0 8px rgba(34, 197, 94, 0.2);
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+.focus-ring {
+  outline: none;
+  box-shadow:
+    0 0 0 2px rgba(59, 130, 246, 0.5),
+    0 0 0 4px #1a1a1a;
+}
+
+.transition-all-smooth {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.shadow-glow-blue {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+.shadow-glow-green {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+.shadow-glow-purple {
+  box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-pretty {
+  text-wrap: pretty;
+}
+
+.dropdown-content {
+  overscroll-behavior: contain;
+}
+
+/* ============================================
+   CURSOR STATES
+   ============================================ */
 button,
 select,
 input[type="button"],
@@ -708,7 +1209,6 @@ input[type="reset"],
   cursor: pointer !important;
 }
 
-/* Keep text cursor for text inputs */
 input[type="text"],
 input[type="email"],
 input[type="url"],
@@ -717,7 +1217,6 @@ textarea {
   cursor: text !important;
 }
 
-/* Disabled states should show not-allowed cursor */
 button:disabled,
 select:disabled,
 input:disabled,
@@ -725,776 +1224,20 @@ textarea:disabled {
   cursor: not-allowed !important;
 }
 
-/* Loading states */
 .loading,
 [aria-busy="true"] {
   cursor: wait !important;
 }
 
-/* Add to app/globals.css - Custom scrollbar for dropdown */
-
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: #6b7280 #1f2937;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: #1f2937;
-  border-radius: 4px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #6b7280;
-  border-radius: 4px;
-  transition: background 0.2s ease;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
-
-/* Ensure smooth scrolling behavior */
-.custom-scrollbar {
-  scroll-behavior: smooth;
-}
-
-/* Fix any potential scrolling issues */
-.dropdown-content {
-  overscroll-behavior: contain;
-}
-
-/* Update app/globals.css - Better scrollbar styling */
-
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: #6b7280 #1f2937;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: #1f2937;
-  border-radius: 4px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #6b7280;
-  border-radius: 4px;
-  transition: background 0.2s ease;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
-}
-
-/* Ensure smooth scrolling behavior */
-.custom-scrollbar {
-  scroll-behavior: smooth;
-}
-
-/* Fix any potential scrolling issues */
-.dropdown-content {
-  overscroll-behavior: contain;
-}
-
-/* Enhanced dropdown stacking and positioning */
-.dropdown-container {
-  position: relative;
-  z-index: 1000;
-}
-
-.dropdown-menu {
-  position: absolute;
-  z-index: 9999;
-  top: 100%;
-  left: 0;
-  right: 0;
-  margin-top: 4px;
-}
-
-/* Prevent card overflow from clipping dropdowns */
-.card-container {
-  position: relative;
-  overflow: visible !important;
-}
-
-/* Enhanced card border radius consistency */
-.rounded-card {
-  border-radius: 1rem;
-  overflow: hidden;
-}
-
-.rounded-card-top {
-  border-top-left-radius: 1rem;
-  border-top-right-radius: 1rem;
-}
-
-.rounded-card-bottom {
-  border-bottom-left-radius: 1rem;
-  border-bottom-right-radius: 1rem;
-}
-
-/* Add to app/globals.css - Fix card border artifacts */
-
-/* Ensure cards don't have border artifacts */
-.organization-card {
-  border-radius: 1rem;
-  overflow: visible;
-  position: relative;
-  isolation: isolate; /* Creates new stacking context */
-}
-
-/* Remove any unwanted borders or lines */
-.organization-card::after,
-.organization-card::before {
-  display: none !important;
-}
-
-/* Ensure proper border radius on all card elements */
-.organization-card > div:first-child {
-  border-radius: 1rem 1rem 0 0;
-}
-
-.organization-card > div:last-child {
-  border-radius: 0 0 1rem 1rem;
-}
-
-.organization-card > div:only-child {
-  border-radius: 1rem;
-}
-
-/* Enhanced dropdown z-index management */
-.dropdown-open {
-  z-index: 999999 !important;
-  position: relative;
-}
-
-/* Prevent any box-shadow artifacts */
-.organization-card {
-  box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.25),
-    0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.organization-card:hover {
-  box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.4),
-    0 10px 15px -3px rgba(0, 0, 0, 0.2);
-}
-
-/* Add to app/globals.css - Enhanced stacking and hover effects */
-
-/* Ensure header always appears above everything */
-.admin-header {
-  z-index: 9999 !important;
-  position: sticky;
-  top: 0;
-}
-
-/* Enhanced dropdown hover effects */
-.dropdown-option-hover {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.dropdown-option-hover:hover {
-  transform: translateX(4px);
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
-}
-
-/* Remove any unwanted separator lines */
-.scoring-section {
-  border: none !important;
-}
-
-.scoring-section::before,
-.scoring-section::after {
-  display: none !important;
-}
-
-/* Ensure card hover doesn't affect background lines */
-.organization-card {
-  position: relative;
-  z-index: auto;
-  isolation: isolate;
-}
-
-.organization-card::before,
-.organization-card::after {
-  display: none !important;
-}
-
-/* Enhanced dropdown shadows and backdrop */
-.dropdown-panel {
-  backdrop-filter: blur(12px);
-  box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.9),
-    0 0 0 1px rgba(255, 255, 255, 0.1),
-    0 4px 6px -1px rgba(0, 0, 0, 0.3);
-}
-
-/* Smooth option hover animations */
-@keyframes optionHover {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(4px); }
-}
-
-.dropdown-option:hover {
-  animation: optionHover 0.2s ease-out forwards;
-}
-
-/* Update app/globals.css - Fix continent-themed borders to follow card shape */
-
-/* Organization Card Glass Effects - Base */
-.organization-card {
-  background: linear-gradient(135deg, 
-    rgba(8, 8, 8, 0.98), 
-    rgba(15, 15, 15, 0.95), 
-    rgba(5, 5, 5, 0.98)
-  );
-  backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 1rem;
-  position: relative;
-  overflow: visible;
-  isolation: isolate;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Remove the conflicting pseudo-elements */
-.organization-card::before,
-.organization-card::after {
-  display: none !important;
-}
-
-/* Continent-Themed Card Edges - Using box-shadow instead of border-image */
-.organization-card.north-america {
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  box-shadow: 
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(59, 130, 246, 0.2),
-    inset 0 1px 0 rgba(59, 130, 246, 0.1),
-    0 0 20px rgba(59, 130, 246, 0.1);
-}
-
-.organization-card.north-america:hover {
-  border-color: rgba(59, 130, 246, 0.5);
-  box-shadow: 
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(59, 130, 246, 0.4),
-    0 0 32px rgba(59, 130, 246, 0.3),
-    inset 0 1px 0 rgba(59, 130, 246, 0.2);
-  transform: translateY(-2px) scale(1.01);
-}
-
-.organization-card.south-america {
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  box-shadow: 
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(16, 185, 129, 0.2),
-    inset 0 1px 0 rgba(16, 185, 129, 0.1),
-    0 0 20px rgba(16, 185, 129, 0.1);
-}
-
-.organization-card.south-america:hover {
-  border-color: rgba(16, 185, 129, 0.5);
-  box-shadow: 
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(16, 185, 129, 0.4),
-    0 0 32px rgba(16, 185, 129, 0.3),
-    inset 0 1px 0 rgba(16, 185, 129, 0.2);
-  transform: translateY(-2px) scale(1.01);
-}
-
-.organization-card.europe {
-  border: 1px solid rgba(147, 51, 234, 0.3);
-  box-shadow: 
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(147, 51, 234, 0.2),
-    inset 0 1px 0 rgba(147, 51, 234, 0.1),
-    0 0 20px rgba(147, 51, 234, 0.1);
-}
-
-.organization-card.europe:hover {
-  border-color: rgba(147, 51, 234, 0.5);
-  box-shadow: 
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(147, 51, 234, 0.4),
-    0 0 32px rgba(147, 51, 234, 0.3),
-    inset 0 1px 0 rgba(147, 51, 234, 0.2);
-  transform: translateY(-2px) scale(1.01);
-}
-
-.organization-card.africa {
-  border: 1px solid rgba(249, 115, 22, 0.3);
-  box-shadow: 
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(249, 115, 22, 0.2),
-    inset 0 1px 0 rgba(249, 115, 22, 0.1),
-    0 0 20px rgba(249, 115, 22, 0.1);
-}
-
-.organization-card.africa:hover {
-  border-color: rgba(249, 115, 22, 0.5);
-  box-shadow: 
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(249, 115, 22, 0.4),
-    0 0 32px rgba(249, 115, 22, 0.3),
-    inset 0 1px 0 rgba(249, 115, 22, 0.2);
-  transform: translateY(-2px) scale(1.01);
-}
-
-.organization-card.asia {
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  box-shadow: 
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(239, 68, 68, 0.2),
-    inset 0 1px 0 rgba(239, 68, 68, 0.1),
-    0 0 20px rgba(239, 68, 68, 0.1);
-}
-
-.organization-card.asia:hover {
-  border-color: rgba(239, 68, 68, 0.5);
-  box-shadow: 
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(239, 68, 68, 0.4),
-    0 0 32px rgba(239, 68, 68, 0.3),
-    inset 0 1px 0 rgba(239, 68, 68, 0.2);
-  transform: translateY(-2px) scale(1.01);
-}
-
-.organization-card.oceania {
-  border: 1px solid rgba(6, 182, 212, 0.3);
-  box-shadow: 
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(6, 182, 212, 0.2),
-    inset 0 1px 0 rgba(6, 182, 212, 0.1),
-    0 0 20px rgba(6, 182, 212, 0.1);
-}
-
-.organization-card.oceania:hover {
-  border-color: rgba(6, 182, 212, 0.5);
-  box-shadow: 
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(6, 182, 212, 0.4),
-    0 0 32px rgba(6, 182, 212, 0.3),
-    inset 0 1px 0 rgba(6, 182, 212, 0.2);
-  transform: translateY(-2px) scale(1.01);
-}
-
-.organization-card.middle-east {
-  border: 1px solid rgba(217, 119, 6, 0.3);
-  box-shadow: 
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(217, 119, 6, 0.2),
-    inset 0 1px 0 rgba(217, 119, 6, 0.1),
-    0 0 20px rgba(217, 119, 6, 0.1);
-}
-
-.organization-card.middle-east:hover {
-  border-color: rgba(217, 119, 6, 0.5);
-  box-shadow: 
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(217, 119, 6, 0.4),
-    0 0 32px rgba(217, 119, 6, 0.3),
-    inset 0 1px 0 rgba(217, 119, 6, 0.2);
-  transform: translateY(-2px) scale(1.01);
-}
-
-/* Enhanced Header Glass Styling */
-
-/* Admin Header Glass - Enhanced */
-.admin-header {
-  background: linear-gradient(135deg, 
-    rgba(5, 5, 5, 0.98), 
-    rgba(15, 15, 15, 0.95), 
-    rgba(8, 8, 8, 0.97)
-  );
-  backdrop-filter: blur(24px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  position: sticky;
-  top: 0;
-  z-index: 9999;
-}
-
-/* Professional Animation Overrides */
-* {
-  /* Ultra-fast animations */
-  animation-timing-function: cubic-bezier(0.25, 0, 0.25, 1) !important;
-  transition-timing-function: cubic-bezier(0.25, 0, 0.25, 1) !important;
-  transition-duration: 0.08s !important;
-}
-
-/* Framer Motion overrides for snappy feel */
-.layout-animation {
-  transition: all 0.08s cubic-bezier(0.25, 0, 0.25, 1) !important;
-}
-
-/* Remove ALL spring animations globally */
-.motion-reduce-bouncing *,
-[data-framer-motion],
-[data-framer-motion] * {
-  animation-timing-function: cubic-bezier(0.25, 0, 0.25, 1) !important;
-  transition-timing-function: cubic-bezier(0.25, 0, 0.25, 1) !important;
-}
-
-/* Ultra-fast button hover effects */
-.btn-glass {
-  transition: all 0.075s cubic-bezier(0.25, 0, 0.25, 1);
-}
-
-.btn-glass:hover {
-  transform: translateY(-1px) scale(1.02);
-  transition: all 0.05s cubic-bezier(0.25, 0, 0.25, 1);
-}
-
-.btn-glass:active {
-  transform: translateY(0) scale(0.98);
-  transition: all 0.03s cubic-bezier(0.25, 0, 0.25, 1);
-}
-
-/* Ultra-fast dropdown animations */
-.dropdown-glass {
-  animation: dropdownAppear 0.08s cubic-bezier(0.25, 0, 0.25, 1);
-}
-
-@keyframes dropdownAppear {
-  from {
-    opacity: 0;
-    transform: translateY(-1px) scale(0.99);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-/* Card animations - Instant */
-.organization-card {
-  transition: all 0.08s cubic-bezier(0.25, 0, 0.25, 1);
-}
-
-.organization-card:hover {
-  transition: all 0.05s cubic-bezier(0.25, 0, 0.25, 1);
-}
-
-/* Ultra-fast expand/collapse animations */
-.expand-animation {
-  transition: height 0.1s cubic-bezier(0.25, 0, 0.25, 1), opacity 0.08s cubic-bezier(0.25, 0, 0.25, 1);
-}
-
-/* Professional scaling animations - Instant */
-@keyframes professionalScale {
-  from {
-    opacity: 0;
-    transform: scale(0.99);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.professional-scale {
-  animation: professionalScale 0.06s cubic-bezier(0.25, 0, 0.25, 1);
-}
-
-/* Filter panel styling - Remove blue, use glass theme */
-.filters-panel {
-  background: linear-gradient(135deg, 
-    rgba(15, 15, 15, 0.95), 
-    rgba(25, 25, 25, 0.9)
-  ) !important;
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-/* Ensure no motion springs anywhere */
-[data-framer-motion] {
-  --framer-motion-spring-damping: 1 !important;
-  --framer-motion-spring-stiffness: 500 !important;
-  --framer-motion-spring-mass: 0.1 !important;
-}
-
-/* Update app/globals.css - Force linear animations everywhere */
-
-/* Override ALL animations to be linear */
-*,
-*::before,
-*::after {
-  animation-timing-function: linear !important;
-  transition-timing-function: linear !important;
-  transition-duration: 0.05s !important;
-}
-
-/* Remove ALL spring animations globally */
-[data-framer-motion],
-[data-framer-motion] * {
-  animation-timing-function: linear !important;
-  transition-timing-function: linear !important;
-}
-
-/* Ultra-fast button effects */
-.btn-glass {
-  transition: all 0.05s linear;
-}
-
-.btn-glass:hover {
-  transform: translateY(-1px);
-  transition: all 0.03s linear;
-}
-
-.btn-glass:active {
-  transform: translateY(0);
-  transition: all 0.02s linear;
-}
-
-/* Ultra-fast dropdown animations */
-.dropdown-glass {
-  animation: dropdownAppear 0.03s linear;
-}
-
-@keyframes dropdownAppear {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* Organization card animations */
-.organization-card {
-  transition: all 0.05s linear;
-}
-
-.organization-card:hover {
-  transition: all 0.03s linear;
-}
-
-/* Force linear timing everywhere */
-.expand-animation,
-.layout-animation,
-.professional-scale {
-  transition: all 0.06s linear !important;
-  animation: none !important;
-}
-
-/* Remove motion springs completely */
-[data-framer-motion] {
-  --framer-motion-spring-damping: 999 !important;
-  --framer-motion-spring-stiffness: 999 !important;
-  --framer-motion-spring-mass: 0.001 !important;
-}
-
-/* Update app/globals.css - Force linear everywhere */
-
-/* Force ALL Framer Motion to use linear timing */
-[data-framer-motion],
-[data-framer-motion] *,
-.framer-motion {
-  animation-timing-function: linear !important;
-  transition-timing-function: linear !important;
-  transition-duration: 0.03s !important;
-}
-
-/* Override Framer Motion spring settings globally */
-[data-framer-motion] {
-  --framer-motion-spring-damping: 999999 !important;
-  --framer-motion-spring-stiffness: 999999 !important;
-  --framer-motion-spring-mass: 0.0001 !important;
-  --framer-motion-spring-bounce: 0 !important;
-}
-
-/* Remove ALL animations that could cause bounce */
-* {
-  animation-timing-function: linear !important;
-  transition-timing-function: linear !important;
-  transition-duration: 0.03s !important;
-}
-
-/* Ensure buttons have no bounce */
-.btn-glass {
-  transition: all 0.03s linear !important;
-}
-
-.btn-glass:hover {
-  transform: translateY(-1px);
-  transition: all 0.02s linear !important;
-}
-
-.btn-glass:active {
-  transform: translateY(0);
-  transition: all 0.01s linear !important;
-}
-
-/* Organization cards - instant */
-.organization-card {
-  transition: all 0.03s linear !important;
-}
-
-/* Progress bar styling */
-.search-progress-bar {
-  background: linear-gradient(90deg, 
-    rgba(34, 197, 94, 0.8), 
-    rgba(16, 185, 129, 0.9),
-    rgba(34, 197, 94, 0.8)
-  );
-  box-shadow: 
-    0 0 4px rgba(34, 197, 94, 0.4),
-    0 0 8px rgba(34, 197, 94, 0.2);
-}
-
-/* Remove any expand/collapse animations */
-.panel-glass {
-  transition: none !important;
-  animation: none !important;
-}
-
-/* Force immediate visibility changes */
-.scoring-section,
-.edit-section {
-  transition: none !important;
-  animation: none !important;
-}
-
-/* Update app/globals.css - Simple CSS animations */
-
-/* Simple fade-in animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-2px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Simple fade-out animation */
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-2px);
-  }
-}
-
-/* Clean button hover effects */
-.btn-glass {
-  transition: all 0.1s ease-out;
-}
-
-.btn-glass:hover {
-  transform: translateY(-1px);
-  box-shadow: 
-    0 10px 25px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-
-.btn-glass:active {
-  transform: translateY(0);
-  transition: all 0.05s ease-out;
-}
-
-/* Organization card hover - simple and clean */
-.organization-card {
-  transition: all 0.15s ease-out;
-}
-
-.organization-card:hover {
-  transform: translateY(-1px) scale(1.005);
-  transition: all 0.1s ease-out;
-}
-
-/* Remove ALL Framer Motion overrides */
-[data-framer-motion],
-[data-framer-motion] * {
-  /* Disable all Framer Motion springs */
-  transition: none !important;
-  animation: none !important;
-}
-
-/* Ensure clean transitions everywhere */
+/* ============================================
+   GLOBAL OVERRIDES
+   ============================================ */
 * {
   transition-timing-function: ease-out !important;
 }
 
-/* Clean dropdown animations */
-.dropdown-glass {
-  animation: fadeIn 0.1s ease-out;
-}
-
-/* Simple scoring section styles */
-.scoring-section {
-  transition: all 0.2s ease-out;
-}
-
-.edit-section {
-  transition: all 0.2s ease-out;
-}
-
-/* Update app/globals.css - Fix sticky header */
-
-/* Admin Header - Ensure proper stickiness */
-.admin-header {
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 9999 !important;
-  /* Darker background - back to original */
-  background: linear-gradient(135deg, 
-    rgba(0, 0, 0, 0.98), 
-    rgba(0, 0, 0, 0.95), 
-    rgba(0, 0, 0, 0.97)
-  ), radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(16, 185, 129, 0.04) 0%, transparent 50%),
-    linear-gradient(135deg, #000000, #0a0a0a, #000000) !important;
-  backdrop-filter: blur(24px) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
-  /* Prevent height changes from dropdowns */
-  height: auto !important;
-  min-height: auto !important;
-  max-height: none !important;
-  overflow: visible !important;
-}
-
-/* Ensure header content doesn't expand */
-.admin-header > div {
-  position: relative;
-  z-index: 10000;
-  overflow: visible !important;
-}
-
-/* Prevent CustomDropdown from affecting header height */
-.admin-header .dropdown-glass {
-  position: absolute !important;
-  z-index: 99999 !important;
-  top: 100% !important;
-  left: 0 !important;
-  right: 0 !important;
-  margin-top: 4px !important;
-}
-
-/* Ensure dropdowns render outside header bounds */
-.admin-header [class*="relative"] {
-  overflow: visible !important;
-}
-
-/* High z-index for all header dropdowns */
-.admin-header .relative {
-  overflow: visible !important;
-}
-
-/* Make sure CustomDropdown containers don't expand */
-.admin-header .relative > div {
-  overflow: visible !important;
+[data-framer-motion],
+[data-framer-motion] * {
+  transition: none !important;
+  animation: none !important;
 }

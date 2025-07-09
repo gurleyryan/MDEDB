@@ -407,7 +407,7 @@ export default function AdminOrgs() {
                 key={org.id}
                 className="will-change-auto relative"
                 style={{ 
-                  zIndex: Math.max(1, 100 - index),
+                  zIndex: expandedOrg === org.id ? 1001 : Math.max(1, 50 - index), // Higher z-index for expanded cards
                   animation: `fadeIn 0.2s ease-out ${index * 0.02}s both`
                 }}
               >
@@ -431,16 +431,18 @@ export default function AdminOrgs() {
                   />
                   
                   {/* Separate Scoring Section */}
-                  <ScoringSection
-                    orgId={org.id}
-                    orgName={org.org_name}
-                    scores={orgScores[org.id]}
-                    isExpanded={expandedOrg === org.id}
-                    savingScores={savingScores}
-                    onScoreUpdate={updateScoringField}
-                    onScoringSave={handleScoringSave}
-                    onToggleExpanded={handleExpandOrg}
-                  />
+                  <div style={{ zIndex: 1000 }}> {/* Lower z-index for scoring section */}
+                    <ScoringSection
+                      orgId={org.id}
+                      orgName={org.org_name}
+                      scores={orgScores[org.id]}
+                      isExpanded={expandedOrg === org.id}
+                      savingScores={savingScores}
+                      onScoreUpdate={updateScoringField}
+                      onScoringSave={handleScoringSave}
+                      onToggleExpanded={handleExpandOrg}
+                    />
+                  </div>
                 </div>
               </div>
             ))}
