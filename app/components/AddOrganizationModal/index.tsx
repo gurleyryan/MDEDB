@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { CustomDropdown } from '../CustomDropdown';
 import { Org } from '@/models/org';
 import { validateField, formatUrl, formatCountryCode, isFormReady } from '../../utils/validation';
 
@@ -18,6 +19,25 @@ interface FormErrors {
 interface FormWarnings {
   [key: string]: string | null;
 }
+
+const getCountryOptions = () => [
+  { value: '', label: 'Select Country', color: '#9ca3af', bgColor: '#374151' },
+  { value: 'US', label: 'United States', emoji: '🇺🇸', color: '#60a5fa', bgColor: '#1e40af' },
+  { value: 'CA', label: 'Canada', emoji: '🇨🇦', color: '#60a5fa', bgColor: '#1e40af' },
+  { value: 'GB', label: 'United Kingdom', emoji: '🇬🇧', color: '#10b981', bgColor: '#065f46' },
+  { value: 'DE', label: 'Germany', emoji: '🇩🇪', color: '#10b981', bgColor: '#065f46' },
+  { value: 'FR', label: 'France', emoji: '🇫🇷', color: '#10b981', bgColor: '#065f46' },
+  { value: 'BR', label: 'Brazil', emoji: '🇧🇷', color: '#34d399', bgColor: '#065f46' },
+  { value: 'IN', label: 'India', emoji: '🇮🇳', color: '#f59e0b', bgColor: '#92400e' },
+  { value: 'AU', label: 'Australia', emoji: '🇦🇺', color: '#06b6d4', bgColor: '#0e7490' },
+  { value: 'JP', label: 'Japan', emoji: '🇯🇵', color: '#a78bfa', bgColor: '#5b21b6' },
+];
+
+const getStatusOptions = () => [
+  { value: 'pending', label: 'Pending Review', emoji: '⏳', color: '#f59e0b', bgColor: '#92400e' },
+  { value: 'approved', label: 'Approved', emoji: '✅', color: '#10b981', bgColor: '#065f46' },
+  { value: 'rejected', label: 'Rejected', emoji: '❌', color: '#ef4444', bgColor: '#991b1b' },
+];
 
 export function AddOrganizationModal({ 
   isOpen, 
@@ -169,336 +189,275 @@ export function AddOrganizationModal({
   if (!isOpen) return null;
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-      onClick={handleBackdropClick}
-    >
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-gray-800 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
-      >
-        {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-white">Add New Organization</h2>
-          <button
-            onClick={handleClose}
-            disabled={isSubmitting}
-            className="text-gray-400 hover:text-white text-2xl transition-colors disabled:opacity-50"
-            title="Close modal"
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={handleBackdropClick}
           >
-            ×
-          </button>
-        </div>
-
-        <div className="space-y-4">
-          {/* Required Fields */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Organization Name *
-              </label>
-              <input
-                type="text"
-                value={formData.org_name || ''}
-                onChange={(e) => handleFieldChange('org_name', e.target.value)}
-                onBlur={() => handleFieldBlur('org_name')}
-                className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors ${
-                  errors.org_name 
-                    ? 'border-red-500 focus:border-red-400' 
-                    : warnings.org_name
-                    ? 'border-yellow-500 focus:border-yellow-400'
-                    : 'border-gray-600 focus:border-blue-500'
-                }`}
-                placeholder="Enter organization name"
-                disabled={isSubmitting}
-              />
-              {touched.org_name && errors.org_name && (
-                <p className="text-red-400 text-xs mt-1">{errors.org_name}</p>
-              )}
-              {touched.org_name && warnings.org_name && !errors.org_name && (
-                <p className="text-yellow-400 text-xs mt-1">{warnings.org_name}</p>
-              )}
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Country Code *
-              </label>
-              <input
-                type="text"
-                value={formData.country_code || ''}
-                onChange={(e) => handleFieldChange('country_code', e.target.value.toUpperCase())}
-                onBlur={() => handleFieldBlur('country_code')}
-                className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors ${
-                  errors.country_code 
-                    ? 'border-red-500 focus:border-red-400' 
-                    : warnings.country_code
-                    ? 'border-yellow-500 focus:border-yellow-400'
-                    : 'border-gray-600 focus:border-blue-500'
-                }`}
-                placeholder="e.g., US, CA, UK"
-                maxLength={2}
-                disabled={isSubmitting}
-              />
-              {touched.country_code && errors.country_code && (
-                <p className="text-red-400 text-xs mt-1">{errors.country_code}</p>
-              )}
-              {touched.country_code && warnings.country_code && !errors.country_code && (
-                <p className="text-yellow-400 text-xs mt-1">{warnings.country_code}</p>
-              )}
-            </div>
-          </div>
-
-          {/* Contact Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Website</label>
-              <input
-                type="url"
-                value={formData.website || ''}
-                onChange={(e) => handleFieldChange('website', e.target.value)}
-                onBlur={() => handleFieldBlur('website')}
-                className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors ${
-                  errors.website 
-                    ? 'border-red-500 focus:border-red-400' 
-                    : warnings.website
-                    ? 'border-yellow-500 focus:border-yellow-400'
-                    : 'border-gray-600 focus:border-blue-500'
-                }`}
-                placeholder="https://example.org"
-                disabled={isSubmitting}
-              />
-              {touched.website && errors.website && (
-                <p className="text-red-400 text-xs mt-1">{errors.website}</p>
-              )}
-              {touched.website && warnings.website && !errors.website && (
-                <p className="text-yellow-400 text-xs mt-1">{warnings.website}</p>
-              )}
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
-              <textarea
-                value={formData.email || ''}
-                onChange={(e) => handleFieldChange('email', e.target.value)}
-                onBlur={() => handleFieldBlur('email')}
-                className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors h-24 resize-none ${
-                  errors.email 
-                    ? 'border-red-500 focus:border-red-400' 
-                    : warnings.email
-                    ? 'border-yellow-500 focus:border-yellow-400'
-                    : 'border-gray-600 focus:border-blue-500'
-                }`}
-                placeholder="contact@example.org (multiple emails separated by commas or line breaks)"
-                disabled={isSubmitting}
-              />
-              {touched.email && errors.email && (
-                <p className="text-red-400 text-xs mt-1">{errors.email}</p>
-              )}
-              {touched.email && warnings.email && !errors.email && (
-                <p className="text-yellow-400 text-xs mt-1">{warnings.email}</p>
-              )}
-            </div>
-          </div>
-
-          {/* Organization Details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Type of Work</label>
-              <input
-                type="text"
-                value={formData.type_of_work || ''}
-                onChange={(e) => handleFieldChange('type_of_work', e.target.value)}
-                onBlur={() => handleFieldBlur('type_of_work')}
-                className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors ${
-                  errors.type_of_work 
-                    ? 'border-red-500 focus:border-red-400' 
-                    : warnings.type_of_work
-                    ? 'border-yellow-500 focus:border-yellow-400'
-                    : 'border-gray-600 focus:border-blue-500'
-                }`}
-                placeholder="e.g., Advocacy, Education, Direct Action"
-                disabled={isSubmitting}
-              />
-              {touched.type_of_work && errors.type_of_work && (
-                <p className="text-red-400 text-xs mt-1">{errors.type_of_work}</p>
-              )}
-              {touched.type_of_work && warnings.type_of_work && !errors.type_of_work && (
-                <p className="text-yellow-400 text-xs mt-1">{warnings.type_of_work}</p>
-              )}
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Years Active</label>
-              <input
-                type="text"
-                value={formData.years_active || ''}
-                onChange={(e) => handleFieldChange('years_active', e.target.value)}
-                onBlur={() => handleFieldBlur('years_active')}
-                className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors ${
-                  errors.years_active 
-                    ? 'border-red-500 focus:border-red-400' 
-                    : warnings.years_active
-                    ? 'border-yellow-500 focus:border-yellow-400'
-                    : 'border-gray-600 focus:border-blue-500'
-                }`}
-                placeholder="e.g., 2013–present, 2018–2023"
-                disabled={isSubmitting}
-              />
-              {touched.years_active && errors.years_active && (
-                <p className="text-red-400 text-xs mt-1">{errors.years_active}</p>
-              )}
-              {touched.years_active && warnings.years_active && !errors.years_active && (
-                <p className="text-yellow-400 text-xs mt-1">{warnings.years_active}</p>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Capacity</label>
-            <input
-              type="text"
-              value={formData.capacity || ''}
-              onChange={(e) => handleFieldChange('capacity', e.target.value)}
-              onBlur={() => handleFieldBlur('capacity')}
-              className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors ${
-                errors.capacity 
-                  ? 'border-red-500 focus:border-red-400' 
-                  : warnings.capacity
-                  ? 'border-yellow-500 focus:border-yellow-400'
-                  : 'border-gray-600 focus:border-blue-500'
-              }`}
-              placeholder="e.g., 20-50 volunteers, Small team"
-              disabled={isSubmitting}
-            />
-            {touched.capacity && errors.capacity && (
-              <p className="text-red-400 text-xs mt-1">{errors.capacity}</p>
-            )}
-            {touched.capacity && warnings.capacity && !errors.capacity && (
-              <p className="text-yellow-400 text-xs mt-1">{warnings.capacity}</p>
-            )}
-          </div>
-
-          {/* Long Text Fields */}
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Mission Statement</label>
-            <textarea
-              value={formData.mission_statement || ''}
-              onChange={(e) => handleFieldChange('mission_statement', e.target.value)}
-              onBlur={() => handleFieldBlur('mission_statement')}
-              className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors h-24 resize-none ${
-                errors.mission_statement 
-                  ? 'border-red-500 focus:border-red-400' 
-                  : warnings.mission_statement
-                  ? 'border-yellow-500 focus:border-yellow-400'
-                  : 'border-gray-600 focus:border-blue-500'
-              }`}
-              placeholder="Enter the organization's mission statement"
-              disabled={isSubmitting}
-            />
-            {touched.mission_statement && errors.mission_statement && (
-              <p className="text-red-400 text-xs mt-1">{errors.mission_statement}</p>
-            )}
-            {touched.mission_statement && warnings.mission_statement && !errors.mission_statement && (
-              <p className="text-yellow-400 text-xs mt-1">{warnings.mission_statement}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Notable Success</label>
-            <textarea
-              value={formData.notable_success || ''}
-              onChange={(e) => handleFieldChange('notable_success', e.target.value)}
-              onBlur={() => handleFieldBlur('notable_success')}
-              className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${
-                errors.notable_success 
-                  ? 'border-red-500 focus:border-red-400' 
-                  : warnings.notable_success
-                  ? 'border-yellow-500 focus:border-yellow-400'
-                  : 'border-gray-600 focus:border-blue-500'
-              }`}
-              placeholder="Describe a key achievement or success story"
-              disabled={isSubmitting}
-            />
-            {touched.notable_success && errors.notable_success && (
-              <p className="text-red-400 text-xs mt-1">{errors.notable_success}</p>
-            )}
-            {touched.notable_success && warnings.notable_success && !errors.notable_success && (
-              <p className="text-yellow-400 text-xs mt-1">{warnings.notable_success}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">CTA Notes</label>
-            <textarea
-              value={formData.cta_notes || ''}
-              onChange={(e) => handleFieldChange('cta_notes', e.target.value)}
-              onBlur={() => handleFieldBlur('cta_notes')}
-              className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${
-                errors.cta_notes 
-                  ? 'border-red-500 focus:border-red-400' 
-                  : warnings.cta_notes
-                  ? 'border-yellow-500 focus:border-yellow-400'
-                  : 'border-gray-600 focus:border-blue-500'
-              }`}
-              placeholder="Notes about call-to-action or how people can get involved"
-              disabled={isSubmitting}
-            />
-            {touched.cta_notes && errors.cta_notes && (
-              <p className="text-red-400 text-xs mt-1">{errors.cta_notes}</p>
-            )}
-            {touched.cta_notes && warnings.cta_notes && !errors.cta_notes && (
-              <p className="text-yellow-400 text-xs mt-1">{warnings.cta_notes}</p>
-            )}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-3 pt-4">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleSubmit}
-              disabled={isSubmitting || !isFormReady(formData) || Object.values(errors).some(error => error !== null)}
-              className="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-500 transition-colors shadow-lg"
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-gray-800 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
             >
-              {isSubmitting ? (
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 0 1 4 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                  </svg>
-                  Adding...
-                </span>
-              ) : (
-                'Add Organization'
-              )}
-            </motion.button>
-            
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleClose}
-              disabled={isSubmitting}
-              className="px-6 py-3 bg-gray-600 text-white rounded-lg font-medium hover:bg-gray-500 transition-colors disabled:opacity-50 shadow-lg"
-            >
-              Cancel
-            </motion.button>
-          </div>
+              {/* Header */}
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-white">Add New Organization</h2>
+                <button
+                  onClick={handleClose}
+                  disabled={isSubmitting}
+                  className="text-gray-400 hover:text-white text-2xl transition-colors disabled:opacity-50"
+                  title="Close modal"
+                >
+                  ×
+                </button>
+              </div>
 
-          {/* Form Status Indicator */}
-          {hasUnsavedChanges && !isSubmitting && (
-            <div className="text-xs text-gray-400 text-center pt-2">
-              * Fields marked with asterisk are required
-            </div>
-          )}
-        </div>
-      </motion.div>
-    </motion.div>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Required Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Organization Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.org_name}
+                      onChange={(e) => setFormData({ ...formData, org_name: e.target.value })}
+                      className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none transition-colors font-body"
+                      placeholder="Enter organization name"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Country *
+                    </label>
+                    <CustomDropdown
+                      value={formData.country_code || ''}
+                      onChange={(value) => setFormData({ ...formData, country_code: value })}
+                      options={getCountryOptions()}
+                      colorCoded={true}
+                      className="w-full"
+                      placeholder="Select Country"
+                    />
+                  </div>
+                </div>
+
+                {/* Contact Information */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Website</label>
+                    <input
+                      type="url"
+                      value={formData.website}
+                      onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                      className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none transition-colors font-body"
+                      placeholder="https://example.org"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                    <textarea
+                      value={formData.email || ''}
+                      onChange={(e) => handleFieldChange('email', e.target.value)}
+                      onBlur={() => handleFieldBlur('email')}
+                      className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors h-24 resize-none ${
+                        errors.email 
+                          ? 'border-red-500 focus:border-red-400' 
+                          : warnings.email
+                          ? 'border-yellow-500 focus:border-yellow-400'
+                          : 'border-gray-600 focus:border-blue-500'
+                      }`}
+                      placeholder="contact@example.org (multiple emails separated by commas or line breaks)"
+                    />
+                  </div>
+                </div>
+
+                {/* Organization Details */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Type of Work</label>
+                    <input
+                      type="text"
+                      value={formData.type_of_work || ''}
+                      onChange={(e) => handleFieldChange('type_of_work', e.target.value)}
+                      onBlur={() => handleFieldBlur('type_of_work')}
+                      className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors ${
+                        errors.type_of_work 
+                          ? 'border-red-500 focus:border-red-400' 
+                          : warnings.type_of_work
+                          ? 'border-yellow-500 focus:border-yellow-400'
+                          : 'border-gray-600 focus:border-blue-500'
+                      }`}
+                      placeholder="e.g., Advocacy, Education, Direct Action"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Years Active</label>
+                    <input
+                      type="text"
+                      value={formData.years_active || ''}
+                      onChange={(e) => handleFieldChange('years_active', e.target.value)}
+                      onBlur={() => handleFieldBlur('years_active')}
+                      className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors ${
+                        errors.years_active 
+                          ? 'border-red-500 focus:border-red-400' 
+                          : warnings.years_active
+                          ? 'border-yellow-500 focus:border-yellow-400'
+                          : 'border-gray-600 focus:border-blue-500'
+                      }`}
+                      placeholder="e.g., 2013–present, 2018–2023"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Capacity</label>
+                  <input
+                    type="text"
+                    value={formData.capacity || ''}
+                    onChange={(e) => handleFieldChange('capacity', e.target.value)}
+                    onBlur={() => handleFieldBlur('capacity')}
+                    className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors ${
+                      errors.capacity 
+                        ? 'border-red-500 focus:border-red-400' 
+                        : warnings.capacity
+                        ? 'border-yellow-500 focus:border-yellow-400'
+                        : 'border-gray-600 focus:border-blue-500'
+                    }`}
+                    placeholder="e.g., 20-50 volunteers, Small team"
+                  />
+                  {touched.capacity && errors.capacity && (
+                    <p className="text-red-400 text-xs mt-1">{errors.capacity}</p>
+                  )}
+                  {touched.capacity && warnings.capacity && !errors.capacity && (
+                    <p className="text-yellow-400 text-xs mt-1">{warnings.capacity}</p>
+                  )}
+                </div>
+
+                {/* Long Text Fields */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Mission Statement</label>
+                  <textarea
+                    value={formData.mission_statement}
+                    onChange={(e) => setFormData({ ...formData, mission_statement: e.target.value })}
+                    className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none transition-colors font-body resize-none"
+                    rows={4}
+                    placeholder="Enter the organization's mission statement"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Notable Success</label>
+                  <textarea
+                    value={formData.notable_success || ''}
+                    onChange={(e) => handleFieldChange('notable_success', e.target.value)}
+                    onBlur={() => handleFieldBlur('notable_success')}
+                    className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${
+                      errors.notable_success 
+                        ? 'border-red-500 focus:border-red-400' 
+                        : warnings.notable_success
+                        ? 'border-yellow-500 focus:border-yellow-400'
+                        : 'border-gray-600 focus:border-blue-500'
+                    }`}
+                    placeholder="Describe a key achievement or success story"
+                  />
+                  {touched.notable_success && errors.notable_success && (
+                    <p className="text-red-400 text-xs mt-1">{errors.notable_success}</p>
+                  )}
+                  {touched.notable_success && warnings.notable_success && !errors.notable_success && (
+                    <p className="text-yellow-400 text-xs mt-1">{warnings.notable_success}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">CTA Notes</label>
+                  <textarea
+                    value={formData.cta_notes || ''}
+                    onChange={(e) => handleFieldChange('cta_notes', e.target.value)}
+                    onBlur={() => handleFieldBlur('cta_notes')}
+                    className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${
+                      errors.cta_notes 
+                        ? 'border-red-500 focus:border-red-400' 
+                        : warnings.cta_notes
+                        ? 'border-yellow-500 focus:border-yellow-400'
+                        : 'border-gray-600 focus:border-blue-500'
+                    }`}
+                    placeholder="Notes about call-to-action or how people can get involved"
+                  />
+                  {touched.cta_notes && errors.cta_notes && (
+                    <p className="text-red-400 text-xs mt-1">{errors.cta_notes}</p>
+                  )}
+                  {touched.cta_notes && warnings.cta_notes && !errors.cta_notes && (
+                    <p className="text-yellow-400 text-xs mt-1">{warnings.cta_notes}</p>
+                  )}
+                </div>
+
+                {/* Initial Status - Updated with CustomDropdown */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Initial Status
+                  </label>
+                  <CustomDropdown
+                    value={formData.approval_status || 'pending'}
+                    onChange={(value) => setFormData({ ...formData, approval_status: value as 'pending' | 'approved' | 'rejected' })}
+                    options={getStatusOptions()}
+                    colorCoded={true}
+                    className="w-full"
+                  />
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    disabled={isSubmitting}
+                    className="px-6 py-2 bg-gray-600 text-white rounded-lg font-medium hover:bg-gray-500 transition-colors disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  
+                  <button
+                    type="submit"
+                    disabled={isSubmitting || !formData.org_name || !formData.country_code}
+                    className="px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-medium hover:shadow-glow-green transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                        Adding...
+                      </>
+                    ) : (
+                      <>
+                        <span>➕</span>
+                        Add Organization
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Form Status Indicator */}
+                {hasUnsavedChanges && !isSubmitting && (
+                  <div className="text-xs text-gray-400 text-center pt-2">
+                    * Fields marked with asterisk are required
+                  </div>
+                )}
+              </form>
+            </motion.div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
   );
 }
 

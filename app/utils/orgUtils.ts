@@ -1,157 +1,33 @@
-// Function to get regional theme based on country code
-export const getRegionalTheme = (countryCode: string) => {
-  const regions = {
-    // Africa - warm earth tones
-    'NG': 'from-orange-500/20 via-yellow-500/10 to-red-500/20',
-    'KE': 'from-orange-500/20 via-yellow-500/10 to-red-500/20',
-    'ZA': 'from-orange-500/20 via-yellow-500/10 to-red-500/20',
-    'GH': 'from-orange-500/20 via-yellow-500/10 to-red-500/20',
-    'EG': 'from-orange-500/20 via-yellow-500/10 to-red-500/20',
-    'MA': 'from-orange-500/20 via-yellow-500/10 to-red-500/20',
-    'TN': 'from-orange-500/20 via-yellow-500/10 to-red-500/20',
-    
-    // Europe - cool greens
-    'DE': 'from-green-500/20 via-emerald-500/10 to-teal-500/20',
-    'FR': 'from-green-500/20 via-emerald-500/10 to-teal-500/20',
-    'UK': 'from-green-500/20 via-emerald-500/10 to-teal-500/20',
-    'GB': 'from-green-500/20 via-emerald-500/10 to-teal-500/20',
-    'NL': 'from-green-500/20 via-emerald-500/10 to-teal-500/20',
-    'SE': 'from-green-500/20 via-emerald-500/10 to-teal-500/20',
-    'NO': 'from-green-500/20 via-emerald-500/10 to-teal-500/20',
-    'DK': 'from-green-500/20 via-emerald-500/10 to-teal-500/20',
-    'FI': 'from-green-500/20 via-emerald-500/10 to-teal-500/20',
-    'IT': 'from-green-500/20 via-emerald-500/10 to-teal-500/20',
-    'ES': 'from-green-500/20 via-emerald-500/10 to-teal-500/20',
-    'PT': 'from-green-500/20 via-emerald-500/10 to-teal-500/20',
-    'CH': 'from-green-500/20 via-emerald-500/10 to-teal-500/20',
-    'AT': 'from-green-500/20 via-emerald-500/10 to-teal-500/20',
-    'BE': 'from-green-500/20 via-emerald-500/10 to-teal-500/20',
-    'IE': 'from-green-500/20 via-emerald-500/10 to-teal-500/20',
-    
-    // Americas - blues and greens
-    'US': 'from-blue-500/20 via-cyan-500/10 to-green-500/20',
-    'CA': 'from-blue-500/20 via-cyan-500/10 to-green-500/20',
-    'BR': 'from-green-600/20 via-yellow-500/10 to-blue-500/20',
-    'MX': 'from-green-500/20 via-red-500/10 to-yellow-500/20',
-    'AR': 'from-blue-500/20 via-cyan-500/10 to-green-500/20',
-    'CL': 'from-blue-500/20 via-cyan-500/10 to-green-500/20',
-    'CO': 'from-yellow-500/20 via-blue-500/10 to-red-500/20',
-    'PE': 'from-red-500/20 via-white/10 to-red-500/20',
-    'EC': 'from-yellow-500/20 via-blue-500/10 to-red-500/20',
-    'UY': 'from-blue-500/20 via-cyan-500/10 to-green-500/20',
-    'CR': 'from-green-500/20 via-blue-500/10 to-red-500/20',
-    'GT': 'from-blue-500/20 via-cyan-500/10 to-green-500/20',
-    
-    // Asia Pacific - ocean blues and cultural colors
-    'AU': 'from-blue-600/20 via-teal-500/10 to-cyan-500/20',
-    'NZ': 'from-blue-600/20 via-teal-500/10 to-cyan-500/20',
-    'JP': 'from-blue-500/20 via-purple-500/10 to-pink-500/20',
-    'IN': 'from-orange-500/20 via-green-500/10 to-blue-500/20',
-    'CN': 'from-red-500/20 via-yellow-500/10 to-green-500/20',
-    'KR': 'from-blue-500/20 via-red-500/10 to-white/20',
-    'TH': 'from-red-500/20 via-blue-500/10 to-red-500/20',
-    'VN': 'from-red-500/20 via-yellow-500/10 to-red-500/20',
-    'MY': 'from-red-500/20 via-blue-500/10 to-yellow-500/20',
-    'SG': 'from-red-500/20 via-white/10 to-blue-500/20',
-    'ID': 'from-red-500/20 via-white/10 to-red-500/20',
-    'PH': 'from-blue-500/20 via-red-500/10 to-yellow-500/20',
-    'BD': 'from-green-500/20 via-red-500/10 to-green-500/20',
-    'PK': 'from-green-500/20 via-white/10 to-green-500/20',
-    'LK': 'from-orange-500/20 via-red-500/10 to-green-500/20',
-    
-    // Middle East - warm desert tones
-    'AE': 'from-red-500/20 via-green-500/10 to-black/20',
-    'SA': 'from-green-500/20 via-white/10 to-green-500/20',
-    'IL': 'from-blue-500/20 via-white/10 to-blue-500/20',
-    'TR': 'from-red-500/20 via-white/10 to-red-500/20',
-    'JO': 'from-red-500/20 via-white/10 to-green-500/20',
-    'LB': 'from-red-500/20 via-white/10 to-red-500/20',
-    'IQ': 'from-red-500/20 via-white/10 to-black/20',
-    'IR': 'from-green-500/20 via-white/10 to-red-500/20',
-    
-    // Default for unknown countries
-    'default': 'from-emerald-500/20 via-green-500/10 to-teal-500/20'
+// Helper function to get continent from country code
+const getContinent = (countryCode: string): string => {
+  const continentMap: Record<string, string> = {
+    'US': 'North America', 'CA': 'North America', 'MX': 'North America',
+    'BR': 'South America', 'AR': 'South America', 'CL': 'South America', 'CO': 'South America',
+    'DE': 'Europe', 'FR': 'Europe', 'UK': 'Europe', 'GB': 'Europe', 'IT': 'Europe', 'ES': 'Europe',
+    'NL': 'Europe', 'SE': 'Europe', 'NO': 'Europe', 'DK': 'Europe', 'FI': 'Europe', 'PT': 'Europe',
+    'CH': 'Europe', 'AT': 'Europe', 'BE': 'Europe', 'IE': 'Europe',
+    'AU': 'Oceania', 'NZ': 'Oceania',
+    'JP': 'Asia', 'CN': 'Asia', 'IN': 'Asia', 'KR': 'Asia', 'TH': 'Asia', 'VN': 'Asia', 'MY': 'Asia', 'SG': 'Asia', 'ID': 'Asia', 'PH': 'Asia', 'BD': 'Asia', 'PK': 'Asia', 'LK': 'Asia',
+    'NG': 'Africa', 'ZA': 'Africa', 'KE': 'Africa', 'GH': 'Africa', 'EG': 'Africa', 'MA': 'Africa', 'TN': 'Africa',
+    'AE': 'Middle East', 'SA': 'Middle East', 'IL': 'Middle East', 'TR': 'Middle East', 'JO': 'Middle East', 'LB': 'Middle East', 'IQ': 'Middle East', 'IR': 'Middle East',
   };
-  
-  return regions[countryCode as keyof typeof regions] || regions.default;
+  return continentMap[countryCode] || 'North America';
 };
 
-// Function to get accent color based on region
-export const getAccentColor = (countryCode: string) => {
-  const colors = {
-    // Africa - warm oranges
-    'NG': 'border-orange-500/30 hover:border-orange-400',
-    'KE': 'border-orange-500/30 hover:border-orange-400',
-    'ZA': 'border-orange-500/30 hover:border-orange-400',
-    'GH': 'border-orange-500/30 hover:border-orange-400',
-    'EG': 'border-orange-500/30 hover:border-orange-400',
-    'MA': 'border-orange-500/30 hover:border-orange-400',
-    'TN': 'border-orange-500/30 hover:border-orange-400',
-    
-    // Europe - cool greens
-    'DE': 'border-green-500/30 hover:border-green-400',
-    'FR': 'border-green-500/30 hover:border-green-400',
-    'UK': 'border-green-500/30 hover:border-green-400',
-    'GB': 'border-green-500/30 hover:border-green-400',
-    'NL': 'border-green-500/30 hover:border-green-400',
-    'SE': 'border-green-500/30 hover:border-green-400',
-    'NO': 'border-green-500/30 hover:border-green-400',
-    'DK': 'border-green-500/30 hover:border-green-400',
-    'FI': 'border-green-500/30 hover:border-green-400',
-    'IT': 'border-green-500/30 hover:border-green-400',
-    'ES': 'border-green-500/30 hover:border-green-400',
-    'PT': 'border-green-500/30 hover:border-green-400',
-    'CH': 'border-green-500/30 hover:border-green-400',
-    'AT': 'border-green-500/30 hover:border-green-400',
-    'BE': 'border-green-500/30 hover:border-green-400',
-    'IE': 'border-green-500/30 hover:border-green-400',
-    
-    // Americas - blues
-    'US': 'border-blue-500/30 hover:border-blue-400',
-    'CA': 'border-blue-500/30 hover:border-blue-400',
-    'BR': 'border-green-600/30 hover:border-green-500',
-    'MX': 'border-green-500/30 hover:border-green-400',
-    'AR': 'border-blue-500/30 hover:border-blue-400',
-    'CL': 'border-blue-500/30 hover:border-blue-400',
-    'CO': 'border-yellow-500/30 hover:border-yellow-400',
-    'PE': 'border-red-500/30 hover:border-red-400',
-    'EC': 'border-yellow-500/30 hover:border-yellow-400',
-    'UY': 'border-blue-500/30 hover:border-blue-400',
-    'CR': 'border-green-500/30 hover:border-green-400',
-    'GT': 'border-blue-500/30 hover:border-blue-400',
-    
-    // Asia Pacific - ocean blues
-    'AU': 'border-blue-600/30 hover:border-blue-500',
-    'NZ': 'border-blue-600/30 hover:border-blue-500',
-    'JP': 'border-purple-500/30 hover:border-purple-400',
-    'IN': 'border-orange-500/30 hover:border-orange-400',
-    'CN': 'border-red-500/30 hover:border-red-400',
-    'KR': 'border-blue-500/30 hover:border-blue-400',
-    'TH': 'border-red-500/30 hover:border-red-400',
-    'VN': 'border-red-500/30 hover:border-red-400',
-    'MY': 'border-red-500/30 hover:border-red-400',
-    'SG': 'border-red-500/30 hover:border-red-400',
-    'ID': 'border-red-500/30 hover:border-red-400',
-    'PH': 'border-blue-500/30 hover:border-blue-400',
-    'BD': 'border-green-500/30 hover:border-green-400',
-    'PK': 'border-green-500/30 hover:border-green-400',
-    'LK': 'border-orange-500/30 hover:border-orange-400',
-    
-    // Middle East - warm tones
-    'AE': 'border-red-500/30 hover:border-red-400',
-    'SA': 'border-green-500/30 hover:border-green-400',
-    'IL': 'border-blue-500/30 hover:border-blue-400',
-    'TR': 'border-red-500/30 hover:border-red-400',
-    'JO': 'border-red-500/30 hover:border-red-400',
-    'LB': 'border-red-500/30 hover:border-red-400',
-    'IQ': 'border-red-500/30 hover:border-red-400',
-    'IR': 'border-green-500/30 hover:border-green-400',
-    
-    // Default
-    'default': 'border-emerald-500/30 hover:border-emerald-400'
-  };
+// Function to get regional theme based on country code
+export const getRegionalTheme = (countryCode: string): string => {
+  const continent = getContinent(countryCode);
   
-  return colors[countryCode as keyof typeof colors] || colors.default;
+  switch (continent) {
+    case 'North America': return 'north-america';
+    case 'South America': return 'south-america';
+    case 'Europe': return 'europe';
+    case 'Africa': return 'africa';
+    case 'Asia': return 'asia';
+    case 'Oceania': return 'oceania';
+    case 'Middle East': return 'middle-east';
+    default: return 'north-america'; // Default fallback
+  }
 };
 
 // Function to get alignment score color for display

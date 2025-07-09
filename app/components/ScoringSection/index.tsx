@@ -1,7 +1,9 @@
 'use client';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { CustomDropdown } from '../CustomDropdown';
 import { OrgScoring, SCORING_CRITERIA, getScoreRecommendation, calculateAlignmentScore } from '../../utils/scoring';
 import { getAlignmentScoreColor } from '../../utils/orgUtils';
+import { getScoringOptions } from '../../utils/selectOptions';
 
 interface ScoringSectionProps {
   orgId: string;
@@ -34,8 +36,6 @@ export function ScoringSection({
     const score = scores?.[criterion.key as keyof OrgScoring];
     return score !== undefined && score !== null;
   }).length;
-  
-  const progressPercentage = Math.round((scoredCriteria / SCORING_CRITERIA.length) * 100);
 
   // Handle score save
   const handleSave = async () => {
@@ -46,51 +46,20 @@ export function ScoringSection({
   };
 
   return (
-    <div className="border-t border-gray-700">
-      {/* Scoring Toggle Button */}
-      <div className="bg-gray-800/50 p-4">
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          onClick={() => onToggleExpanded(orgId)}
-          className="w-full flex items-center justify-between text-left bg-purple-600 hover:bg-purple-500 text-white px-4 py-3 rounded-lg transition-colors shadow-lg"
-        >
-          <div className="flex items-center gap-3">
-            <span className="text-lg">📊</span>
-            <div>
-              <span className="font-medium">
-                {isExpanded ? 'Hide Scoring' : 'Edit Scoring'}
-              </span>
-              {!isExpanded && scores && (
-                <div className="text-sm text-purple-200 mt-1">
-                  Progress: {progressPercentage}% • Score: {totalScore ?? 'N/A'}
-                  {recommendation.category !== 'none' && (
-                    <span className="ml-2">{recommendation.emoji}</span>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-          
-          <motion.div
-            animate={{ rotate: isExpanded ? 180 : 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </motion.div>
-        </motion.button>
-      </div>
-
-      {/* Expanded Scoring Interface */}
+    <div className="">
+      {/* Simple CSS transition - no stretching */}
       {isExpanded && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.3 }}
-          className="bg-gray-900/90 p-6"
+        <div
+          className="panel-glass border-t p-6 rounded-b-2xl backdrop-blur-md stained-glass overflow-hidden transition-all duration-200 ease-out"
+          style={{
+            background: `linear-gradient(135deg, 
+              rgba(5, 5, 5, 0.98), 
+              rgba(15, 15, 15, 0.95), 
+              rgba(8, 8, 8, 0.97)
+            )`,
+            borderColor: 'rgba(255, 255, 255, 0.08)',
+            animation: 'fadeIn 0.2s ease-out'
+          }}
         >
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
@@ -103,25 +72,29 @@ export function ScoringSection({
               <div className="text-sm text-gray-300">
                 {scoredCriteria}/{SCORING_CRITERIA.length} criteria
               </div>
-              <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progressPercentage}%` }}
-                  transition={{ duration: 0.5 }}
-                  className={`h-full rounded-full ${
-                    progressPercentage === 100 
-                      ? 'bg-green-500' 
-                      : progressPercentage >= 50 
-                      ? 'bg-yellow-500' 
-                      : 'bg-red-500'
-                  }`}
+              
+              {/* Progress bar */}
+              <div className="w-24 h-2 bg-gray-800/60 backdrop-blur-sm rounded-full overflow-hidden border border-gray-600/50">
+                <div
+                  className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-300 ease-out"
+                  style={{ width: `${(scoredCriteria / SCORING_CRITERIA.length) * 100}%` }}
                 />
               </div>
-              <span className="text-xs text-gray-400">{progressPercentage}%</span>
+              
+              {/* Score display */}
+              {totalScore !== null && (
+                <div className={`px-3 py-1 rounded-full text-sm font-bold backdrop-blur-sm border ${
+                  totalScore >= 21 ? 'bg-green-500/20 text-green-200 border-green-500/30' :
+                  totalScore >= 13 ? 'bg-orange-500/20 text-orange-200 border-orange-500/30' : 
+                  'bg-red-500/20 text-red-200 border-red-500/30'
+                }`}>
+                  Total: {totalScore}/26
+                </div>
+              )}
             </div>
           </div>
-          
-          {/* Scoring Guide */}
+
+          {/* Scoring Guide - no animation */}
           <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
             <h5 className="text-blue-200 font-medium mb-3 flex items-center gap-2">
               📋 Scoring Guide
@@ -162,70 +135,62 @@ export function ScoringSection({
             </div>
           </div>
           
-          {/* Scoring Criteria Grid */}
+          {/* Scoring Criteria Grid - no individual animations */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
             {SCORING_CRITERIA.map((criterion, index) => {
               const currentScore = scores?.[criterion.key as keyof OrgScoring] as number | undefined;
               
               return (
-                <motion.div
+                <div
                   key={criterion.key}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
                   className={`bg-gray-800/50 rounded-lg p-4 border transition-all duration-200 ${
                     currentScore !== undefined 
-                      ? 'border-green-500/30 bg-green-500/5' 
-                      : 'border-gray-600 hover:border-gray-500'
+                      ? currentScore === 2 
+                        ? 'border-green-500/30 bg-green-500/5 shadow-green-500/10 shadow-lg' 
+                        : currentScore === 1
+                        ? 'border-yellow-500/30 bg-yellow-500/5 shadow-yellow-500/10 shadow-lg'
+                        : 'border-red-500/30 bg-red-500/5 shadow-red-500/10 shadow-lg'
+                    : 'border-gray-600 hover:border-gray-500'
                   }`}
                 >
                   <div className="flex justify-between items-start mb-3">
                     <h5 className="font-medium text-white text-sm flex items-center gap-2">
-                      <span className="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded">
+                      <span className="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded font-mono">
                         {index + 1}
                       </span>
                       {criterion.label}
                     </h5>
                     
-                    <select
-                      value={currentScore ?? ''}
-                      onChange={(e) => {
-                        const value = e.target.value === '' ? undefined : parseInt(e.target.value);
-                        onScoreUpdate(orgId, criterion.key as keyof OrgScoring, value ?? '');
-                      }}
-                      className={`border rounded px-3 py-2 text-white text-sm min-w-[90px] transition-colors ${
-                        currentScore === undefined
-                          ? 'bg-gray-700 border-gray-600 hover:border-gray-500'
-                          : currentScore === 0
-                          ? 'bg-red-700 border-red-500'
-                          : currentScore === 1
-                          ? 'bg-yellow-700 border-yellow-500'
-                          : 'bg-green-700 border-green-500'
-                      }`}
-                    >
-                      <option value="">N/A</option>
-                      <option value={0}>0 - No</option>
-                      <option value={1}>1 - Unclear</option>
-                      <option value={2}>2 - Yes</option>
-                    </select>
+                    {/* Scoring Dropdown */}
+                    <div className="flex flex-col items-end gap-1">
+                      <CustomDropdown
+                        value={currentScore?.toString() || ''}
+                        onChange={(value) => {
+                          const numValue = value === '' ? undefined : parseInt(value);
+                          onScoreUpdate(orgId, criterion.key as keyof OrgScoring, numValue ?? '');
+                        }}
+                        options={getScoringOptions()}
+                        colorCoded={true}
+                        className="min-w-[100px] text-center font-mono"
+                      />
+                      
+                      {/* Score indicator */}
+                      {currentScore !== undefined && (
+                        <div className={`text-xs font-bold px-2 py-1 rounded-full ${
+                          currentScore === 0 ? 'text-red-200 bg-red-800/50' :
+                          currentScore === 1 ? 'text-yellow-200 bg-yellow-800/50' : 
+                          'text-green-200 bg-green-800/50'
+                        }`}>
+                          {currentScore}/2
+                        </div>
+                      )}
+                    </div>
                   </div>
                   
                   <p className="text-gray-400 text-xs leading-relaxed">
                     {criterion.description}
                   </p>
-                  
-                  {/* Score indicator */}
-                  {currentScore !== undefined && (
-                    <div className="mt-2 pt-2 border-t border-gray-700">
-                      <div className={`text-xs font-medium ${
-                        currentScore === 0 ? 'text-red-300' :
-                        currentScore === 1 ? 'text-yellow-300' : 'text-green-300'
-                      }`}>
-                        Score: {currentScore}/2
-                      </div>
-                    </div>
-                  )}
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -265,14 +230,12 @@ export function ScoringSection({
                 {totalScore !== null && (
                   <div className="mt-2">
                     <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${(totalScore / 26) * 100}%` }}
-                        transition={{ duration: 0.8 }}
-                        className={`h-full rounded-full ${
+                      <div
+                        className={`h-full rounded-full transition-all duration-300 ease-linear ${
                           totalScore >= 21 ? 'bg-green-500' :
                           totalScore >= 13 ? 'bg-yellow-500' : 'bg-red-500'
                         }`}
+                        style={{ width: `${(totalScore / 26) * 100}%` }}
                       />
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
@@ -301,11 +264,8 @@ export function ScoringSection({
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             {/* Quick Actions */}
             <div className="flex flex-wrap gap-2">
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <button
                 onClick={() => {
-                  // Set all scores to 2 (maximum)
                   SCORING_CRITERIA.forEach(criterion => {
                     onScoreUpdate(orgId, criterion.key as keyof OrgScoring, 2);
                   });
@@ -313,13 +273,10 @@ export function ScoringSection({
                 className="bg-green-600/20 text-green-300 border border-green-500/30 px-3 py-2 rounded-lg text-xs font-medium hover:bg-green-600/30 transition-colors"
               >
                 ✨ Set All to Max
-              </motion.button>
+              </button>
               
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <button
                 onClick={() => {
-                  // Clear all scores
                   SCORING_CRITERIA.forEach(criterion => {
                     onScoreUpdate(orgId, criterion.key as keyof OrgScoring, '');
                   });
@@ -328,31 +285,30 @@ export function ScoringSection({
                 className="bg-red-600/20 text-red-300 border border-red-500/30 px-3 py-2 rounded-lg text-xs font-medium hover:bg-red-600/30 transition-colors"
               >
                 🗑️ Clear All
-              </motion.button>
+              </button>
             </div>
             
-            {/* Save Button */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            {/* Save Button - simple CSS hover */}
+            <button
               onClick={handleSave}
               disabled={savingScores === orgId}
-              className="bg-purple-600 text-white px-6 py-3 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-purple-500 transition-colors shadow-lg flex items-center gap-2"
+              className="btn-glass btn-glass-purple px-6 py-3 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg flex items-center gap-2 hover:translate-y-[-1px]"
             >
               {savingScores === orgId ? (
                 <>
                   <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 0 1 4 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  Saving...
+                  <span>Saving...</span>
                 </>
               ) : (
                 <>
-                  💾 Save Scoring
+                  <span>💾</span>
+                  <span>Save Scoring</span>
                 </>
               )}
-            </motion.button>
+            </button>
           </div>
 
           {/* Keyboard Shortcuts Info */}
@@ -362,7 +318,7 @@ export function ScoringSection({
               Score meanings: 0 = No, 1 = Unclear/Maybe, 2 = Yes/Strong
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
     </div>
   );

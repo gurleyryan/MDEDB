@@ -1,13 +1,15 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { snapTransition } from '../../utils/motion';
+import { CustomDropdown } from '../CustomDropdown';
+import { getScoringOptions } from '../../utils/selectOptions';
 import { Org } from '@/models/org';
 import { OrgWithScore } from '@/models/orgWithScore';
 import { WebsiteMetadata } from '../../hooks/useWebsiteMetadata';
 import { OrgScoring, SCORING_CRITERIA } from '../../utils/scoring';
 import { 
   getRegionalTheme, 
-  getAccentColor, 
   getAlignmentScoreColor,
   getStatusColor,
   createValidUrl,
@@ -34,6 +36,13 @@ interface OrganizationCardProps {
   onScoreUpdate: (orgId: string, field: keyof OrgScoring, value: number | string) => void;
   onScoringSave: (orgId: string) => Promise<boolean>;
 }
+
+// Add status options
+const getStatusOptions = () => [
+  { value: 'pending', label: 'Pending', emoji: '⏳', color: '#f59e0b', bgColor: '#92400e' },
+  { value: 'approved', label: 'Approved', emoji: '✅', color: '#10b981', bgColor: '#065f46' },
+  { value: 'rejected', label: 'Rejected', emoji: '❌', color: '#ef4444', bgColor: '#991b1b' },
+];
 
 export function OrganizationCard({
   org,
@@ -155,11 +164,16 @@ export function OrganizationCard({
 
   return (
     <div
-      className={`relative overflow-hidden rounded-2xl bg-gradient-to-br ${getRegionalTheme(org.country_code)} backdrop-blur-sm border ${getAccentColor(org.country_code)} shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-[1.02]`}
+      className={`organization-card panel-glass relative rounded-2xl backdrop-blur-sm shadow-2xl hover:shadow-3xl transition-all duration-300 stained-glass ${getRegionalTheme(org.country_code)}`}
+      style={{ 
+        overflow: 'visible',
+        position: 'relative',
+        zIndex: 'auto'
+      }}
     >
-      {/* Banner Image with Loading State */}
+      {/* Banner Image with proper rounding */}
       {org.website && (
-        <div className="relative h-48 overflow-hidden">
+        <div className="relative h-48 overflow-hidden rounded-t-2xl">
           {isMetadataLoading ? (
             // Skeleton loader for banner
             <div className="w-full h-full bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 animate-pulse">
@@ -207,8 +221,8 @@ export function OrganizationCard({
         </div>
       )}
 
-      {/* Card Content */}
-      <div className="p-6 bg-gray-800/80 backdrop-blur">
+      {/* Card Content with enhanced glass effect */}
+      <div className={`p-6 backdrop-blur relative panel-glass ${org.website ? 'rounded-b-2xl' : 'rounded-2xl'}`}>
         {isEditing ? (
           // Edit Mode
           <div className="space-y-4 mb-6">
@@ -439,10 +453,14 @@ export function OrganizationCard({
               </div>
               
               <div className="flex items-center gap-2 flex-shrink-0">
-                {/* Alignment Score Badge */}
-                <span className={`px-3 py-1 rounded-full text-xs font-bold ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
-                  {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
-                </span>
+                {/* Alignment Score Badge with Label */}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-400">Alignment Score:</span>
+                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
+                    {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
+                  </span>
+                </div>
+                
                 {/* Status Badge */}
                 <span className={`px-3 py-1 rounded-full text-xs font-bold capitalize ${getStatusColor(org.approval_status)}`}>
                   {org.approval_status}
@@ -450,60 +468,85 @@ export function OrganizationCard({
               </div>
             </div>
 
-            {/* Quick Info Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-              {org.website && (
-                <div className="flex items-center gap-2">
-                  <span className="text-blue-400">🌐</span>
-                  {websiteInfo?.isValid ? (
-                    <a
-                      href={websiteInfo.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate"
-                    >
-                      {websiteInfo.hostname}
-                    </a>
-                  ) : (
-                    <span className="text-sm text-gray-400 truncate">
-                      {org.website} (invalid URL)
-                    </span>
-                  )}
-                </div>
-              )}
-              
-              {emails.length > 0 && (
-                <div className="flex items-start gap-2">
-                  <span className="text-green-400 mt-0.5">📧</span>
-                  <div className="flex flex-col gap-1 min-w-0 flex-1">
-                    {emails.map((email, index) => (
+            {/* Quick Info Grid - Single Row Layout */}
+            <div className="grid grid-cols-3 gap-4 mb-6">
+              {/* Left Column - Website */}
+              <div className="flex items-center gap-2">
+                {org.website ? (
+                  <>
+                    <span className="text-blue-400">🌐</span>
+                    {websiteInfo?.isValid ? (
                       <a
-                        key={index}
-                        href={`mailto:${email}`}
-                        className="text-sm text-green-400 hover:text-green-300 hover:underline break-all"
-                        title={email}
+                        href={websiteInfo.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate"
                       >
-                        {email}
+                        {websiteInfo.hostname}
                       </a>
-                    ))}
+                    ) : (
+                      <span className="text-sm text-gray-400 truncate">
+                        {org.website} (invalid URL)
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <span className="text-sm text-gray-500 italic">No website</span>
+                )}
+              </div>
+              
+              {/* Center Column - Email */}
+              <div className="flex flex-col items-center gap-1">
+                {emails.length > 0 ? (
+                  <>
+                    <div className="space-y-1 text-center">
+                      {emails.slice(0, 1).map((email, index) => (
+                        <div key={index} className="flex items-center gap-2 justify-center">
+                          <span className="text-green-400">📧</span>
+                          <a
+                            href={`mailto:${email}`}
+                            className="text-sm text-green-400 hover:text-green-300 hover:underline truncate max-w-full"
+                            title={email}
+                          >
+                            {email}
+                          </a>
+                        </div>
+                      ))}
+                      {emails.length > 1 && (
+                        <span className="text-xs text-gray-500">
+                          +{emails.length - 1} more
+                        </span>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex items-center gap-2 text-center">
+                    <span className="text-gray-500">📧</span>
+                    <span className="text-sm text-gray-500 italic">No contact email</span>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
               
-              {org.years_active && (
-                <div className="flex items-center gap-2">
-                  <span className="text-yellow-400">📅</span>
-                  <span className="text-sm text-gray-300">Active: {org.years_active}</span>
-                </div>
-              )}
-              
-              {org.capacity && (
-                <div className="flex items-center gap-2">
-                  <span className="text-purple-400">👥</span>
-                  <span className="text-sm text-gray-300">{org.capacity}</span>
-                </div>
-              )}
+              {/* Right Column - Years Active */}
+              <div className="flex items-center justify-end gap-2">
+                {org.years_active ? (
+                  <>
+                    <span className="text-yellow-400">📅</span>
+                    <span className="text-sm text-gray-300">Active: {org.years_active}</span>
+                  </>
+                ) : (
+                  <span className="text-sm text-gray-500 italic">Years not specified</span>
+                )}
+              </div>
             </div>
+
+            {/* Capacity - Separate row if needed */}
+            {org.capacity && (
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-purple-400">👥</span>
+                <span className="text-sm text-gray-300">{org.capacity}</span>
+              </div>
+            )}
 
             {/* Notable Success Highlight */}
             {org.notable_success && (
@@ -523,206 +566,69 @@ export function OrganizationCard({
           </>
         )}
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        {/* Status and Action Buttons - Enhanced positioning */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+          <div 
+            className="flex items-center gap-3 relative"
+            style={{ 
+              zIndex: 9999 // Very high z-index for dropdown container
+            }}
+          >
+            <span className="text-sm text-gray-400">Status:</span>
+            <CustomDropdown
+              value={org.approval_status}
+              onChange={(value) => onStatusUpdate(org.id, value as 'pending' | 'approved' | 'rejected')}
+              options={getStatusOptions()}
+              colorCoded={true}
+              className="min-w-[120px]"
+            />
+          </div>
+
+          {/* Action Buttons - Simple CSS transitions, no Framer Motion */}
           <div className="flex flex-wrap gap-2">
             {isEditing ? (
-              // Edit mode buttons
+              // Edit mode buttons - simple appearance
               <>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                <button
                   onClick={handleSave}
                   disabled={updatingId === org.id || Object.keys(errors).length > 0}
-                  className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-500 transition-colors shadow-lg"
+                  className="btn-glass btn-glass-green px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-100 shadow-lg flex items-center gap-2 hover:translate-y-[-1px]"
                 >
-                  {updatingId === org.id ? 'Saving...' : '💾 Save'}
-                </motion.button>
+                  <span>💾</span>
+                  <span>{updatingId === org.id ? 'Saving...' : 'Save'}</span>
+                </button>
                 
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                <button
                   onClick={handleCancel}
-                  className="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-500 transition-colors shadow-lg"
+                  className="btn-glass text-gray-300 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-100 shadow-lg flex items-center gap-2 hover:translate-y-[-1px]"
                 >
-                  ❌ Cancel
-                </motion.button>
+                  <span>❌</span>
+                  <span>Cancel</span>
+                </button>
               </>
             ) : (
-              // Normal mode buttons
+              // Normal mode buttons - simple appearance
               <>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  disabled={updatingId === org.id || org.approval_status === 'approved'}
-                  onClick={() => onStatusUpdate(org.id, 'approved')}
-                  className="bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2 rounded-lg text-caption font-heading font-medium hover:shadow-glow-green transition-all-smooth shadow-lg"
+                <button
+                  onClick={startEdit}
+                  className="btn-glass btn-glass-blue px-4 py-2 rounded-lg text-sm font-medium transition-all duration-100 shadow-lg flex items-center gap-2 hover:translate-y-[-1px]"
                 >
-                  {updatingId === org.id ? '...' : '✓ Approve'}
-                </motion.button>
-                
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  disabled={updatingId === org.id || org.approval_status === 'rejected'}
-                  onClick={() => onStatusUpdate(org.id, 'rejected')}
-                  className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-red-500 transition-colors shadow-lg"
+                  <span>✏️</span>
+                  <span>Edit Info</span>
+                </button>
+
+                <button
+                  onClick={() => onExpand(org.id)}
+                  className="btn-glass btn-glass-purple px-4 py-2 rounded-lg text-sm font-medium transition-all duration-100 shadow-lg flex items-center gap-2 hover:translate-y-[-1px]"
                 >
-                  {updatingId === org.id ? '...' : '✗ Reject'}
-                </motion.button>
-                
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  disabled={updatingId === org.id || org.approval_status === 'pending'}
-                  onClick={() => onStatusUpdate(org.id, 'pending')}
-                  className="bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-500 transition-colors shadow-lg"
-                >
-                  {updatingId === org.id ? '...' : '⏳ Pending'}
-                </motion.button>
+                  <span>📊</span>
+                  <span>{isExpanded ? 'Hide Scoring' : 'Edit Scoring'}</span>
+                </button>
               </>
-            )}
-          </div>
-          
-          <div className="flex gap-2">
-            {!isEditing && (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={startEdit}
-                className="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-500 transition-colors shadow-lg"
-              >
-                ✏️ Edit
-              </motion.button>
-            )}
-            
-            {org.website && !isEditing && websiteInfo?.isValid && (
-              <motion.a
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                href={websiteInfo.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-500 transition-colors shadow-lg"
-              >
-                🔗 Visit Site
-              </motion.a>
-            )}
-            
-            {!isEditing && (
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => onExpand(org.id)}
-                className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-500 transition-colors shadow-lg"
-              >
-                {isExpanded ? '📊 Hide Scoring' : '📊 Edit Scoring'}
-              </motion.button>
             )}
           </div>
         </div>
       </div>
-
-      {/* Expanded Scoring Section */}
-      {isExpanded && (
-        <motion.div
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          exit={{ opacity: 0, height: 0 }}
-          className="border-t border-gray-700 bg-gray-900/90 p-6"
-        >
-          <h4 className="text-heading font-heading text-gradient-forest mb-4">🎯 Scoring Criteria</h4>
-          
-          {/* Scoring Guide */}
-          <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-            <h5 className="text-blue-200 font-medium mb-2">📋 Scoring Guide</h5>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              <div>
-                <div className="space-y-1 mb-3">
-                  <div className="text-gray-300"><span className="font-bold text-red-400">0</span> = Does not meet the criteria</div>
-                  <div className="text-gray-300"><span className="font-bold text-yellow-400">1</span> = Unclear/questionable</div>
-                  <div className="text-gray-300"><span className="font-bold text-green-400">2</span> = Clearly meets the criteria</div>
-                </div>
-              </div>
-              <div>
-                <div className="space-y-1">
-                  <div className="text-green-200 font-medium">🟢 21–26: Strong Candidate</div>
-                  <div className="text-orange-200 font-medium">🟡 13–20: Promising, Needs Follow-Up</div>
-                  <div className="text-red-200 font-medium">🔴 0–12: Low Priority / Not Suitable</div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Scoring Criteria Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-            {SCORING_CRITERIA.map((criterion) => (
-              <div key={criterion.key} className="bg-gray-800/50 rounded-lg p-4 border border-gray-600">
-                <div className="flex justify-between items-start mb-2">
-                  <h5 className="font-medium text-white text-sm">{criterion.label}</h5>
-                  <select
-                    value={scores?.[criterion.key as keyof OrgScoring] || ''}
-                    onChange={(e) => onScoreUpdate(org.id, criterion.key as keyof OrgScoring, parseInt(e.target.value) || 0)}
-                    className="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white text-sm ml-2 min-w-[70px]"
-                  >
-                    <option value="">N/A</option>
-                    <option value={0}>0 - No</option>
-                    <option value={1}>1 - Unclear</option>
-                    <option value={2}>2 - Yes</option>
-                  </select>
-                </div>
-                <p className="text-gray-400 text-xs leading-relaxed">{criterion.description}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Comments Section */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-300 mb-2">Comments</label>
-            <textarea
-              value={scores?.comments || ''}
-              onChange={(e) => onScoreUpdate(org.id, 'comments', e.target.value)}
-              className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none h-24 resize-none"
-              placeholder="Add any additional notes or comments about this organization..."
-            />
-          </div>
-
-          {/* Calculated Score Display */}
-          <div className="mb-4 p-4 bg-gray-800 rounded-lg border border-gray-600">
-            <div className="flex justify-between items-center">
-              <span className="text-gray-300 font-medium">Calculated Alignment Score:</span>
-              <span className={`px-3 py-1 rounded-full text-sm font-bold ${getAlignmentScoreColor(totalScore)}`}>
-                {totalScore ?? 'N/A'}
-              </span>
-            </div>
-            <div className="text-xs text-gray-400 mt-1">
-              Maximum possible score: 26 (13 criteria × 2 points each)
-            </div>
-            
-            {/* Recommendation */}
-            {totalScore !== null && totalScore > 0 && (
-              <div className="text-xs mt-2">
-                <span className={`font-medium ${recommendation.color}`}>
-                  {recommendation.emoji} Recommendation: {recommendation.text}
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* Save Scoring Button */}
-          <div className="flex justify-end">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => onScoringSave(org.id)}
-              disabled={savingScores === org.id}
-              className="bg-purple-600 text-white px-6 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-purple-500 transition-colors shadow-lg"
-            >
-              {savingScores === org.id ? 'Saving...' : '💾 Save Scoring'}
-            </motion.button>
-          </div>
-        </motion.div>
-      )}
     </div>
   );
 }
