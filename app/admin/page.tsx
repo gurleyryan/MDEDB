@@ -312,7 +312,6 @@ export default function AdminOrgs() {
 
   function handleEditOrg(org: OrgWithScore): void {
     setEditingOrg(org.id);
-    setExpandedOrg(org.id);
   }
 
   async function handleSaveOrg(orgId: string, data: Partial<OrgWithScore>): Promise<boolean> {

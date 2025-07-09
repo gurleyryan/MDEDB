@@ -78,7 +78,7 @@ export function OrganizationCard({
       capacity: org.capacity || ''
     });
     setErrors({});
-    onEdit(org);
+    onEdit(org); // Restore this call to set editing state
   };
 
   // Handle field changes with validation
