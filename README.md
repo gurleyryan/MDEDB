@@ -30,23 +30,24 @@ A sophisticated platform to catalog, score, and assess grassroots climate organi
 ## Features
 
 ### 🎯 **Core Functionality**
-- **Organization Management** - Add, edit, approve/reject climate organizations
-- **Intelligent Scoring** - 13-criteria assessment with real-time recommendations
-- **Metadata Enrichment** - Automatic website favicon and metadata extraction
-- **Advanced Filtering** - Status-based filters with real-time counts
-- **Responsive Design** - Optimized for desktop, tablet, and mobile
+- **Organization Management** - Add, edit, approve/reject climate organizations with inline editing
+- **Intelligent Scoring** - 13-criteria assessment with real-time recommendations and visual progress
+- **Metadata Enrichment** - Automatic website favicon and metadata extraction with loading states
+- **Advanced Filtering & Search** - Multi-criteria filtering, real-time search, and sorting capabilities
+- **Responsive Glass Design** - Modern glass morphism UI optimized for all devices
 
 ### 🛡️ **Security & Validation**
-- **Real-time Validation** - Field-level validation with visual feedback
-- **Role-based Access Control** - JWT-based admin authentication
-- **Row Level Security** - Supabase RLS for data protection
-- **Input Sanitization** - Comprehensive data validation and formatting
+- **Real-time Validation** - Field-level validation with visual feedback and error handling
+- **Role-based Access Control** - JWT-based admin authentication with secure routing
+- **Row Level Security** - Supabase RLS for comprehensive data protection
+- **Input Sanitization** - Comprehensive data validation, formatting, and URL validation
 
 ### 🎨 **User Experience**
-- **Motion Animations** - Smooth transitions and micro-interactions
-- **Regional Theming** - Visual themes based on organization location
-- **Loading States** - Comprehensive loading and error handling
-- **Accessibility** - ARIA labels and keyboard navigation support
+- **Glass Morphism Design** - Modern frosted glass aesthetic with backdrop blur effects
+- **Smooth Animations** - CSS-based transitions and micro-interactions (Framer Motion deprecated)
+- **Regional Theming** - Visual themes and colors based on organization location
+- **Comprehensive Loading States** - Loading indicators, progress bars, and error handling
+- **Accessibility** - ARIA labels, keyboard navigation, and screen reader support
 
 ---
 
@@ -55,8 +56,9 @@ A sophisticated platform to catalog, score, and assess grassroots climate organi
 ### **Frontend**
 - **Next.js 14** with App Router and Server Components
 - **React 18** with TypeScript for type safety
-- **Tailwind CSS** for utility-first styling
-- **Framer Motion** for animations and transitions
+- **Tailwind CSS** with custom glass morphism utilities
+- **CSS Animations** - Custom CSS transitions and animations (Framer Motion removed)
+- **Custom Hooks** - Specialized hooks for organizations, scoring, and metadata
 
 ### **Backend**
 - **Supabase** - PostgreSQL database with real-time subscriptions
@@ -133,10 +135,12 @@ project-root/
 - **`/api/metadata/*`** - Website metadata extraction
 
 #### **Component Architecture**
-- **AdminHeader** - Header with filters, controls, and real-time stats
-- **OrganizationCard** - Display, editing, and scoring interface
-- **AddOrganizationModal** - Form modal with validation
-- **ScoringSection** - Comprehensive 13-criteria scoring interface
+- **AdminHeader** - Header with compact layout, filters, search, and real-time stats
+- **OrganizationCard** - Rich cards with glass effects, inline editing, and regional theming
+- **AddOrganizationModal** - Form modal with comprehensive validation and dropdown components
+- **ScoringSection** - Streamlined 13-criteria scoring interface with progress tracking
+- **CustomDropdown** - Beautiful glass dropdown components with search and animations
+- **ScoringGuide** - Interactive scoring guide with visual recommendations
 
 #### **Custom Hooks**
 - **useOrganizations** - Organization CRUD and state management
@@ -159,7 +163,7 @@ project-root/
 
 ## Installation
 
-> ⚠️ *In active development — deploy-ready for private use.*
+> ⚠️ *Production-ready for private deployment*
 
 1. **Clone the repository:**
    ```bash
@@ -177,12 +181,14 @@ project-root/
    ```env
    NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   SUPABASE_SERVICE_KEY=your-service-key
    ```
 
 4. **Set up the database:**
    - Import the SQL schema from `/database/schema.sql`
    - Configure Row Level Security policies
-   - Set up authentication with custom claims
+   - Set up authentication with custom admin claims
+   - Enable real-time subscriptions
 
 5. **Run the development server:**
    ```bash
@@ -192,6 +198,13 @@ project-root/
 6. **Access the application:**
    - Public view: `http://localhost:3000`
    - Admin dashboard: `http://localhost:3000/admin`
+   - Login page: `http://localhost:3000/login`
+
+### **Production Deployment**
+- **Vercel** - Optimized for Next.js deployment
+- **Supabase** - Database and authentication hosting
+- **Environment Variables** - Secure credential management
+- **Domain Configuration** - Custom domain setup
 
 ---
 
@@ -219,33 +232,44 @@ The admin dashboard provides a comprehensive interface for managing climate orga
 ### **Key Features**
 
 #### 📊 **Dashboard Overview**
-- Real-time organization counts by status
-- Quick stats and approval rates
-- Progress tracking for scoring completion
+- Real-time organization counts by status with color-coded badges
+- Metadata loading progress with visual indicators
+- Quick stats showing strong candidates (21+ score) and continent coverage
+- Compact header design with optimized spacing
 
 #### 🏢 **Organization Management**
-- **Card-based Layout** - Rich organization cards with metadata
-- **Inline Editing** - Edit organization details with real-time validation
-- **Status Management** - Approve, reject, or set to pending
-- **Bulk Operations** - Efficient management of multiple organizations
+- **Glass Card Layout** - Modern frosted glass cards with regional theming
+- **Inline Editing** - Edit organization details with real-time validation and error feedback
+- **Status Management** - Approve, reject, or set to pending with visual status indicators
+- **Metadata Integration** - Automatic favicon extraction and website validation
+- **Email Processing** - Smart email parsing and validation with multiple email support
 
 #### 🎯 **Scoring Interface**
-- **13-Criteria Assessment** - Comprehensive scoring rubric
-- **Visual Progress** - Progress bars and completion indicators
-- **Smart Recommendations** - AI-driven scoring suggestions
-- **Comments System** - Detailed notes for each organization
+- **Streamlined 13-Criteria Assessment** - Clean, focused scoring interface
+- **Visual Progress Tracking** - Progress bars and completion indicators
+- **Smart Recommendations** - Color-coded recommendations based on total scores
+- **Comments System** - Detailed notes with character limits and formatting
+- **Score Summary** - Real-time score calculation with percentage breakdowns
 
-#### 🔍 **Advanced Filtering**
-- Filter by approval status (All, Pending, Approved, Rejected)
-- Real-time count updates
-- Toggle rejected organization visibility
-- Search and sort capabilities
+#### 🔍 **Advanced Filtering & Search**
+- **Multi-Status Filtering** - Filter by All, Pending, Approved, Rejected with live counts
+- **Real-time Search** - Instant search across organization names and details
+- **Advanced Filters** - Continent, score range, and website status filtering
+- **Sorting Options** - Sort by name, score, status, country, or recent activity
+- **Filter Persistence** - Maintains filter state across sessions
 
 #### 🌐 **Metadata Enhancement**
-- Automatic website favicon extraction
-- Metadata enrichment for organization details
-- URL validation and formatting
-- Email validation and parsing
+- **Automatic Website Processing** - Favicon extraction and URL validation
+- **Loading Progress Indicators** - Visual feedback for metadata processing
+- **Website Status Validation** - Checks for valid URLs and website accessibility
+- **Image Placeholder Generation** - Fallback images for organizations without websites
+
+#### 🎨 **Design & UX**
+- **Glass Morphism Aesthetic** - Modern frosted glass design with backdrop blur
+- **Regional Color Theming** - Visual themes based on organization's geographic location
+- **Responsive Design** - Optimized for desktop, tablet, and mobile devices
+- **Smooth Animations** - CSS-based transitions and hover effects
+- **Accessibility Features** - ARIA labels, keyboard navigation, and screen reader support
 
 ---
 
@@ -278,6 +302,40 @@ Organizations are evaluated across 13 key criteria, each scored 0-2:
 - **🟢 21-26 Points** - Strong Candidate (Recommended for approval)
 - **🟡 13-20 Points** - Promising, Needs Follow-Up
 - **🔴 0-12 Points** - Low Priority / Not Suitable
+
+---
+
+## Design System
+
+#### **Glass Morphism Components**
+- **btn-glass** - Glass button variants with hover effects
+- **panel-glass** - Frosted glass panels with backdrop blur
+- **dropdown-glass** - Beautiful glass dropdown menus
+- **stained-glass** - Subtle color overlays for regional theming
+
+#### **Regional Theming**
+Organizations are visually themed based on their geographic location:
+- **North America** - Blue gradient themes
+- **Europe** - Purple and blue themes  
+- **Asia** - Green and teal themes
+- **Africa** - Orange and amber themes
+- **South America** - Red and pink themes
+- **Oceania** - Cyan and blue themes
+- **Middle East** - Yellow and orange themes
+
+#### **Validation System**
+- **Real-time Validation** - Instant feedback as users type
+- **Visual Error States** - Red borders and error messages
+- **Warning States** - Yellow borders for formatting suggestions
+- **Success States** - Green indicators for valid inputs
+- **Character Limits** - Live character counting for text fields
+
+### **Performance Optimizations**
+- **Efficient Re-renders** - Optimized state management to prevent unnecessary updates
+- **Lazy Loading** - Dynamic imports for better initial load times
+- **Metadata Caching** - Intelligent caching of website metadata
+- **Debounced Search** - Optimized search performance with debouncing
+- **CSS-only Animations** - Hardware-accelerated animations without JavaScript frameworks
 
 ---
 
@@ -337,24 +395,35 @@ For questions, feedback, or collaboration opportunities:
 
 ### **Phase 1: Core Admin Features** ✅
 - [x] Organization CRUD operations
-- [x] Scoring system implementation
-- [x] Admin authentication
-- [x] Real-time validation
+- [x] 13-criteria scoring system
+- [x] Admin authentication & security
+- [x] Real-time validation system
 
 ### **Phase 2: Enhanced UX** ✅
-- [x] Responsive design
-- [x] Motion animations
+- [x] Glass morphism design system
+- [x] Regional theming
 - [x] Metadata enrichment
-- [x] Advanced filtering
+- [x] Advanced filtering & search
+- [x] Responsive design
+- [x] CSS-based animations
 
-### **Phase 3: Public Interface** 🚧
+### **Phase 3: Admin Experience** ✅
+- [x] Inline editing capabilities
+- [x] Streamlined scoring interface
+- [x] Progress tracking
+- [x] Comprehensive validation
+- [x] Custom dropdown components
+
+### **Phase 4: Public Interface** 🚧
 - [ ] Public organization directory
 - [ ] Search and discovery
 - [ ] Organization profiles
-- [ ] Public API
+- [ ] Public API endpoints
 
-### **Phase 4: Advanced Features** 📋
+### **Phase 5: Advanced Features** 📋
 - [ ] Multi-admin collaboration
-- [ ] Audit trails
-- [ ] Export capabilities
+- [ ] Audit trails and history
+- [ ] Export capabilities (CSV, JSON)
 - [ ] Integration APIs
+- [ ] Bulk operations
+- [ ] Analytics dashboard
