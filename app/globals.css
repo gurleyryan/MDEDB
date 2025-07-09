@@ -1442,3 +1442,59 @@ textarea:disabled {
 .edit-section {
   transition: all 0.2s ease-out;
 }
+
+/* Update app/globals.css - Fix sticky header */
+
+/* Admin Header - Ensure proper stickiness */
+.admin-header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 9999 !important;
+  /* Darker background - back to original */
+  background: linear-gradient(135deg, 
+    rgba(0, 0, 0, 0.98), 
+    rgba(0, 0, 0, 0.95), 
+    rgba(0, 0, 0, 0.97)
+  ), radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(16, 185, 129, 0.04) 0%, transparent 50%),
+    linear-gradient(135deg, #000000, #0a0a0a, #000000) !important;
+  backdrop-filter: blur(24px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+  /* Prevent height changes from dropdowns */
+  height: auto !important;
+  min-height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* Ensure header content doesn't expand */
+.admin-header > div {
+  position: relative;
+  z-index: 10000;
+  overflow: visible !important;
+}
+
+/* Prevent CustomDropdown from affecting header height */
+.admin-header .dropdown-glass {
+  position: absolute !important;
+  z-index: 99999 !important;
+  top: 100% !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin-top: 4px !important;
+}
+
+/* Ensure dropdowns render outside header bounds */
+.admin-header [class*="relative"] {
+  overflow: visible !important;
+}
+
+/* High z-index for all header dropdowns */
+.admin-header .relative {
+  overflow: visible !important;
+}
+
+/* Make sure CustomDropdown containers don't expand */
+.admin-header .relative > div {
+  overflow: visible !important;
+}

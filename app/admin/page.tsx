@@ -550,33 +550,41 @@ export default function AdminOrgs() {
           isSubmitting={updatingId === 'new'}
         />
 
-        {/* Scroll to Top Button */}
+        {/* Scroll to Top Button - Smooth CSS-only Glass Orb */}
         {showScrollTop && (
-          <motion.button
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
+          <button
             onClick={scrollToTop}
-            className="fixed bottom-6 right-6 z-50 bg-blue-600 hover:bg-blue-500 text-white p-3 rounded-full shadow-lg transition-colors"
+            className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full backdrop-blur-2xl shadow-2xl flex items-center justify-center transition-all duration-200 group scroll-to-top-btn"
             title="Scroll to top"
             aria-label="Scroll to top"
+            style={{
+              background: `
+                radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.3), transparent 70%),
+                radial-gradient(circle at 70% 70%, rgba(16, 185, 129, 0.2), transparent 70%),
+                linear-gradient(135deg, rgba(15, 15, 15, 0.9), rgba(25, 25, 25, 0.8))
+              `,
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              boxShadow: `
+                0 20px 40px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1)
+              `
+            }}
           >
             <svg 
-              className="w-6 h-6" 
+              className="w-7 h-7 text-blue-300 group-hover:text-blue-200 transition-all duration-200 group-hover:translate-y-[-1px]" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
+              strokeWidth={2.5}
             >
               <path 
                 strokeLinecap="round" 
                 strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M5 10l7-7m0 0l7 7m-7-7v18" 
+                d="M5 15l7-7 7 7"
               />
             </svg>
-          </motion.button>
+          </button>
         )}
       </div>
     </div>

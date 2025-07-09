@@ -260,35 +260,9 @@ export function ScoringSection({
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            {/* Quick Actions */}
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => {
-                  SCORING_CRITERIA.forEach(criterion => {
-                    onScoreUpdate(orgId, criterion.key as keyof OrgScoring, 2);
-                  });
-                }}
-                className="bg-green-600/20 text-green-300 border border-green-500/30 px-3 py-2 rounded-lg text-xs font-medium hover:bg-green-600/30 transition-colors"
-              >
-                ✨ Set All to Max
-              </button>
-              
-              <button
-                onClick={() => {
-                  SCORING_CRITERIA.forEach(criterion => {
-                    onScoreUpdate(orgId, criterion.key as keyof OrgScoring, '');
-                  });
-                  onScoreUpdate(orgId, 'comments', '');
-                }}
-                className="bg-red-600/20 text-red-300 border border-red-500/30 px-3 py-2 rounded-lg text-xs font-medium hover:bg-red-600/30 transition-colors"
-              >
-                🗑️ Clear All
-              </button>
-            </div>
-            
-            {/* Save Button - simple CSS hover */}
+          {/* Action Buttons - Keep only Save button */}
+          <div className="flex justify-end items-center">
+            {/* Save Button - clean and minimal */}
             <button
               onClick={handleSave}
               disabled={savingScores === orgId}
