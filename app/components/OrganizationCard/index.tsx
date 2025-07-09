@@ -401,10 +401,11 @@ export function OrganizationCard({
               </div>
             )}
 
-            {/* Header with favicon and badges */}
-            <div className="flex justify-between items-start mb-4">
-              <div className="flex items-start gap-3 flex-1">
-                {/* Favicon with Loading State */}
+            {/* Header with organized two-column layout */}
+            <div className="flex justify-between items-start mb-3 gap-4">
+              {/* Left Column: Favicon + Org Info */}
+              <div className="flex items-start gap-3 flex-1 min-w-0">
+                {/* Favicon */}
                 {org.website && (
                   <div className="w-8 h-8 rounded-lg flex-shrink-0 bg-white/10 p-1">
                     {isMetadataLoading ? (
@@ -431,148 +432,188 @@ export function OrganizationCard({
                   </div>
                 )}
                 
-                {/* Organization name and info */}
+                {/* Left side organization info */}
                 <div className="flex-1 min-w-0">
-                  {/* Organization name with distinctive heading font */}
-                  <h3 className="text-heading text-white mb-1 break-words text-balance">
+                  {/* Org name */}
+                  <h3 className="text-heading text-white break-words text-balance mb-1">
                     {org.org_name}
                   </h3>
                   
-                  <p className="text-gray-300 text-sm">
-                    {org.country_code} • {org.type_of_work}
-                  </p>
+                  {/* Country code and type of work */}
+                  <div className="flex items-center gap-1 text-sm">
+                    <span className="text-gray-300">{org.country_code} • {org.type_of_work}</span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Right Column: Website, Badges, Emails, Years */}
+              <div className="flex flex-col items-end gap-1 flex-shrink-0">
+                {/* Top row: Website and Badges */}
+                <div className="flex items-center gap-3">
+                  {/* Website - show full URL */}
+                  {org.website && (
+                    <div className="flex items-center gap-1">
+                      <span className="text-blue-400 flex-shrink-0">🌐</span>
+                      {websiteInfo?.isValid ? (
+                        <a
+                          href={websiteInfo.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-blue-400 hover:text-blue-300 hover:underline"
+                          title={org.website}
+                        >
+                          {websiteInfo.hostname}
+                        </a>
+                      ) : (
+                        <span className="text-sm text-gray-400" title={org.website}>
+                          Invalid URL
+                        </span>
+                      )}
+                    </div>
+                  )}
                   
-                  {/* Loading indicator for metadata */}
-                  {isMetadataLoading && (
-                    <div className="flex items-center gap-1 mt-1">
-                      <div className="w-3 h-3 border border-blue-400 border-t-transparent rounded-full animate-spin"></div>
-                      <span className="text-xs text-blue-400">Loading details...</span>
+                  {/* Score and Status badges */}
+                  <div className="flex items-center gap-2">
+                    <span className={`px-2 py-1 rounded text-xs font-bold ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
+                      {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
+                    </span>
+                    
+                    <span className={`px-2 py-1 rounded text-xs font-bold capitalize ${getStatusColor(org.approval_status)}`}>
+                      {org.approval_status}
+                    </span>
+                  </div>
+                </div>
+                
+                {/* Bottom row: Emails and Years Active */}
+                <div className="flex items-start gap-3 text-sm">
+                  {/* Emails - generous space allocation */}
+                  {emails.length > 0 && (
+                    <div className="flex items-center gap-1">
+                      <span className="text-green-400 flex-shrink-0">📧</span>
+                      <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 min-w-0">
+                        {emails.length <= 3 ? (
+                          // 1-3 emails: Show all unless extremely long
+                          emails.map((email, index) => (
+                            <span key={index} className="flex items-center">
+                              <a
+                                href={`mailto:${email}`}
+                                className="text-green-400 hover:text-green-300 hover:underline transition-colors"
+                                title={email}
+                              >
+                                {email.length > 30 ? `${email.substring(0, 27)}...` : email}
+                              </a>
+                              {index < emails.length - 1 && (
+                                <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
+                              )}
+                            </span>
+                          ))
+                        ) : emails.length === 4 ? (
+                          // 4 emails: Smart display based on total length
+                          <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5">
+                            {emails.every(email => email.length <= 18) ? (
+                              // All short emails, show all
+                              emails.map((email, index) => (
+                                <span key={index} className="flex items-center">
+                                  <a
+                                    href={`mailto:${email}`}
+                                    className="text-green-400 hover:text-green-300 hover:underline transition-colors"
+                                    title={email}
+                                  >
+                                    {email}
+                                  </a>
+                                  {index < emails.length - 1 && (
+                                    <span className="text-gray-500 mx-1">•</span>
+                                  )}
+                                </span>
+                              ))
+                            ) : (
+                              // Show first 2-3 emails based on length
+                              <>
+                                {emails.slice(0, 2).map((email, index) => (
+                                  <span key={index} className="flex items-center">
+                                    <a
+                                      href={`mailto:${email}`}
+                                      className="text-green-400 hover:text-green-300 hover:underline transition-colors"
+                                      title={email}
+                                    >
+                                      {email.length > 25 ? `${email.substring(0, 22)}...` : email}
+                                    </a>
+                                    {index === 0 && <span className="text-gray-500 mx-1">•</span>}
+                                  </span>
+                                ))}
+                                <span 
+                                  className="text-xs text-gray-400 bg-gray-700/50 px-2 py-0.5 rounded-full cursor-help ml-1"
+                                  title={`All emails: ${emails.join(', ')}`}
+                                >
+                                  +2
+                                </span>
+                              </>
+                            )}
+                          </div>
+                        ) : (
+                          // 5+ emails: Compact count display
+                          <span 
+                            className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs"
+                            title={`All emails: ${emails.join(', ')}`}
+                          >
+                            {emails.length} emails
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Years active - allow natural wrapping */}
+                  {org.years_active && (
+                    <div className="flex items-center gap-1">
+                      <span className="text-yellow-400 flex-shrink-0">📅</span>
+                      <span 
+                        className="text-gray-300 leading-tight"
+                        title={org.years_active}
+                        style={{ 
+                          wordBreak: org.years_active.length > 30 ? 'break-word' : 'normal',
+                          lineHeight: org.years_active.length > 30 ? '1.2' : 'normal'
+                        }}
+                      >
+                        {org.years_active}
+                      </span>
                     </div>
                   )}
                 </div>
               </div>
-              
-              <div className="flex items-center gap-2 flex-shrink-0">
-                {/* Alignment Score Badge with Label */}
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400">Alignment Score:</span>
-                  <span className={`px-3 py-1 rounded-full text-xs font-bold ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
-                    {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
-                  </span>
+            </div>
+
+            {/* Condensed highlights */}
+            <div className="space-y-2 mb-3">
+              {org.capacity && (
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-purple-400">👥</span>
+                  <span className="text-gray-300">{org.capacity}</span>
                 </div>
-                
-                {/* Status Badge */}
-                <span className={`px-3 py-1 rounded-full text-xs font-bold capitalize ${getStatusColor(org.approval_status)}`}>
-                  {org.approval_status}
-                </span>
-              </div>
-            </div>
-
-            {/* Quick Info Grid - Single Row Layout */}
-            <div className="grid grid-cols-3 gap-4 mb-6">
-              {/* Left Column - Website */}
-              <div className="flex items-center gap-2">
-                {org.website ? (
-                  <>
-                    <span className="text-blue-400">🌐</span>
-                    {websiteInfo?.isValid ? (
-                      <a
-                        href={websiteInfo.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate"
-                      >
-                        {websiteInfo.hostname}
-                      </a>
-                    ) : (
-                      <span className="text-sm text-gray-400 truncate">
-                        {org.website} (invalid URL)
-                      </span>
-                    )}
-                  </>
-                ) : (
-                  <span className="text-sm text-gray-500 italic">No website</span>
-                )}
-              </div>
+              )}
               
-              {/* Center Column - Email */}
-              <div className="flex flex-col items-center gap-1">
-                {emails.length > 0 ? (
-                  <>
-                    <div className="space-y-1 text-center">
-                      {emails.slice(0, 1).map((email, index) => (
-                        <div key={index} className="flex items-center gap-2 justify-center">
-                          <span className="text-green-400">📧</span>
-                          <a
-                            href={`mailto:${email}`}
-                            className="text-sm text-green-400 hover:text-green-300 hover:underline truncate max-w-full"
-                            title={email}
-                          >
-                            {email}
-                          </a>
-                        </div>
-                      ))}
-                      {emails.length > 1 && (
-                        <span className="text-xs text-gray-500">
-                          +{emails.length - 1} more
-                        </span>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <div className="flex items-center gap-2 text-center">
-                    <span className="text-gray-500">📧</span>
-                    <span className="text-sm text-gray-500 italic">No contact email</span>
-                  </div>
-                )}
-              </div>
+              {org.notable_success && (
+                <div className="p-2 bg-emerald-500/10 border-l-2 border-emerald-500 rounded-r text-sm">
+                  <span className="text-emerald-200 font-medium">🏆</span>
+                  <span className="text-gray-300 ml-2">{org.notable_success}</span>
+                </div>
+              )}
               
-              {/* Right Column - Years Active */}
-              <div className="flex items-center justify-end gap-2">
-                {org.years_active ? (
-                  <>
-                    <span className="text-yellow-400">📅</span>
-                    <span className="text-sm text-gray-300">Active: {org.years_active}</span>
-                  </>
-                ) : (
-                  <span className="text-sm text-gray-500 italic">Years not specified</span>
-                )}
-              </div>
+              {org.cta_notes && (
+                <div className="p-2 bg-blue-500/10 border-l-2 border-blue-500 rounded-r text-sm">
+                  <span className="text-blue-200 font-medium">📢</span>
+                  <span className="text-gray-300 ml-2">{org.cta_notes}</span>
+                </div>
+              )}
             </div>
-
-            {/* Capacity - Separate row if needed */}
-            {org.capacity && (
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-purple-400">👥</span>
-                <span className="text-sm text-gray-300">{org.capacity}</span>
-              </div>
-            )}
-
-            {/* Notable Success Highlight */}
-            {org.notable_success && (
-              <div className="mb-6 p-4 bg-emerald-500/10 border-l-4 border-emerald-500 rounded-r-lg">
-                <p className="text-sm text-emerald-200 font-medium">🏆 Notable Success</p>
-                <p className="text-sm text-gray-300 mt-1">{org.notable_success}</p>
-              </div>
-            )}
-
-            {/* CTA Notes */}
-            {org.cta_notes && (
-              <div className="mb-6 p-4 bg-blue-500/10 border-l-4 border-blue-500 rounded-r-lg">
-                <p className="text-sm text-blue-200 font-medium">📢 Call to Action</p>
-                <p className="text-sm text-gray-300 mt-1">{org.cta_notes}</p>
-              </div>
-            )}
           </>
         )}
 
-        {/* Status and Action Buttons - Enhanced positioning */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+        {/* Status and Action Buttons - Compact */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div 
             className="flex items-center gap-3 relative"
-            style={{ 
-              zIndex: 9999 // Very high z-index for dropdown container
-            }}
+            style={{ zIndex: 9999 }}
           >
             <span className="text-sm text-gray-400">Status:</span>
             <CustomDropdown
@@ -584,7 +625,7 @@ export function OrganizationCard({
             />
           </div>
 
-          {/* Action Buttons - Simple CSS transitions, no Framer Motion */}
+          {/* Action Buttons - Compact */}
           <div className="flex flex-wrap gap-2">
             {isEditing ? (
               // Edit mode buttons - simple appearance
