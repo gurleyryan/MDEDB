@@ -126,7 +126,7 @@ project-root/
 │   ├── org.ts              # Organization interface
 │   └── orgWithScore.ts     # Organization with scoring interface
 ├── public/                 # Static assets
-├── .env.local              # Environment variables
+├── .env                    # Environment variables
 ├── .gitignore
 ├── eslint.config.mjs
 ├── LICENSE
@@ -147,7 +147,7 @@ project-root/
 - `app/utils/` – Utility functions and Supabase client config
 - `models/` – TypeScript interfaces and types
 - `public/` – Static assets (images, favicon, etc.)
-- `.env.local` – Environment variables (not committed)
+- `.env` – Environment variables (not committed)
 - `middleware.ts` – Next.js middleware for Supabase
 
 #### **Pages & Routes**
@@ -158,12 +158,12 @@ project-root/
 - **`/api/metadata/*`** - Website metadata extraction
 
 #### **Component Architecture**
-- **AdminHeader** - Header with compact layout, filters, search, and real-time stats
-- **OrganizationCard** - Rich cards with glass effects, inline editing, and regional theming
 - **AddOrganizationModal** - Form modal with comprehensive validation and dropdown components
-- **ScoringSection** - Streamlined 13-criteria scoring interface with progress tracking
+- **AdminHeader** - Header with compact layout, filters, search, and real-time stats
 - **CustomDropdown** - Beautiful glass dropdown components with search and animations
-- **ScoringGuide** - Interactive scoring guide with visual recommendations
+- **Icons** - Custom SVG and Phosphor Icons
+- **OrganizationCard** - Rich cards with glass effects, inline editing, and regional theming
+- **ScoringSection** - Streamlined 13-criteria scoring interface with progress tracking
 
 #### **Custom Hooks**
 - **useOrganizations** - Organization CRUD and state management
@@ -171,9 +171,14 @@ project-root/
 - **useWebsiteMetadata** - Automatic metadata fetching and caching
 
 #### **Utility Functions**
-- **orgUtils** - Regional theming, colors, URL validation
-- **validation** - Field validation with real-time feedback
-- **scoring** - Scoring criteria and recommendation logic
+- **supabase/client.ts** - Supabase client configuration for client-side usage
+- **supabase/middleware.ts** - Supabase middleware utilities
+- **supabase/server.ts** - Supabase client configuration for server-side usage
+- **motion.ts** - Animation and motion utility functions
+- **orgUtils.ts** - Regional theming, color logic, and URL validation
+- **scoring.ts** - Scoring criteria and recommendation logic
+- **selectOptions.ts** - Dropdown and select menu options
+- **validation.ts** - Field validation with real-time feedback
 
 ### **Key Architectural Principles**
 - **Single Responsibility** - Each component/hook has one clear purpose
@@ -200,18 +205,17 @@ project-root/
    ```
 
 3. **Set up environment variables:**
-   Create a `.env.local` file with your Supabase credentials:
+   Create a `.env` file with your Supabase credentials:
    ```env
    NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-   SUPABASE_SERVICE_KEY=your-service-key
    ```
 
-4. **Set up the database:**
-   - Import the SQL schema from `/database/schema.sql`
-   - Configure Row Level Security policies
-   - Set up authentication with custom admin claims
-   - Enable real-time subscriptions
+4. **Set up Supabase:**
+   - Create a new project at [Supabase](https://supabase.com/).
+   - Set up your tables, authentication, and Row Level Security (RLS) policies using the Supabase web dashboard.
+   - Configure admin roles and enable real-time subscriptions as needed.
+   - No SQL schema file is required—everything can be managed through the Supabase UI.
 
 5. **Run the development server:**
    ```bash
@@ -413,6 +417,7 @@ We welcome contributions! Please see our contributing guidelines:
 - [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS
 - [Framer Motion](https://www.framer.com/motion/) - Animation library
 - [TypeScript](https://www.typescriptlang.org/) - Type safety
+- [Phosphor Icons](https://phosphoricons.com/) - Iconography
 
 ### **Inspiration**
 - [Music Declares Emergency](https://musicdeclares.net/) - Climate action in the music industry
