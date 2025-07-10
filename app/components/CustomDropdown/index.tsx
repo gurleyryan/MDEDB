@@ -19,6 +19,7 @@ interface CustomDropdownProps {
   placeholder?: string;
   className?: string;
   colorCoded?: boolean;
+  portal?: boolean; // <-- add this
 }
 
 export function CustomDropdown({
@@ -27,7 +28,8 @@ export function CustomDropdown({
   options,
   placeholder = "Select...",
   className = "",
-  colorCoded = false
+  colorCoded = false,
+  portal = true // default to true for backwards compatibility
 }: CustomDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -120,15 +122,26 @@ export function CustomDropdown({
   }, [isOpen]);
 
   useEffect(() => {
-    if (isOpen && isStatusDropdown && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setDropdownPos({
-        top: rect.bottom + window.scrollY,
-        left: rect.left + window.scrollX,
-        width: rect.width,
-      });
+    if (isOpen && portal && buttonRef.current) {
+      const updateDropdownPos = () => {
+        const rect = buttonRef.current!.getBoundingClientRect();
+        setDropdownPos({
+          top: rect.bottom + window.scrollY,
+          left: rect.left + window.scrollX,
+          width: rect.width,
+        });
+      };
+
+      updateDropdownPos();
+      window.addEventListener('scroll', updateDropdownPos, true);
+      window.addEventListener('resize', updateDropdownPos);
+
+      return () => {
+        window.removeEventListener('scroll', updateDropdownPos, true);
+        window.removeEventListener('resize', updateDropdownPos);
+      };
     }
-  }, [isOpen, isStatusDropdown]);
+  }, [isOpen, portal]);
 
   const renderDropdownOptions = () => (
     <div className="overflow-y-auto custom-scrollbar h-full">
@@ -179,21 +192,24 @@ export function CustomDropdown({
 
   const dropdownMenu = (
     <div
-      ref={isStatusDropdown ? dropdownMenuRef : undefined}
-      className={`${isStatusDropdown ? 'status-dropdown-glass' : 'dropdown-glass'} absolute top-full left-0 right-0 rounded-lg overflow-hidden mt-1`}
+      ref={dropdownMenuRef}
+      className="dropdown-glass rounded-lg overflow-hidden"
       style={
-        isStatusDropdown && dropdownPos
+        portal && dropdownPos
           ? {
               position: 'absolute',
               top: dropdownPos.top,
               left: dropdownPos.left,
               width: dropdownPos.width,
-              zIndex: 999999,
+              zIndex: 200000, // higher than modal/buttons
               height: `${calculateDropdownHeight()}px`,
             }
           : {
               position: 'absolute',
-              zIndex: isStatusDropdown ? 999999 : 50002,
+              top: '100%',
+              left: 0,
+              right: 0,
+              zIndex: 100000,
               height: `${calculateDropdownHeight()}px`,
             }
       }
@@ -203,14 +219,16 @@ export function CustomDropdown({
     </div>
   );
 
+  // Only portal if portal prop is true and isStatusDropdown
+  const shouldPortal = portal && isStatusDropdown;
+
   return (
     <div
       ref={dropdownRef}
       className={`relative ${className}`}
       style={{
         position: 'relative',
-        // Status dropdowns get special z-index treatment
-        zIndex: isOpen && isStatusDropdown ? 999999 : (isOpen ? 50002 : 'auto'),
+        zIndex: isOpen ? 100_000 : 'auto', // Ensure dropdown is above modal
         isolation: isOpen ? 'isolate' : 'auto'
       }}
     >
@@ -222,7 +240,7 @@ export function CustomDropdown({
         className={`btn-glass cursor-pointer w-full px-3 py-2 text-white text-sm font-body focus:outline-none transition-all duration-200 flex items-center justify-between ${isOpen ? 'ring-1 ring-blue-500/50' : ''}`}
         style={{
           position: 'relative',
-          zIndex: isOpen && isStatusDropdown ? 999998 : (isOpen ? 50001 : 'auto'),
+          zIndex: isOpen ? 100_000 : 'auto',
           ...(colorCoded && selectedOption?.color && {
             color: selectedOption.color,
             borderColor: selectedOption.color + '50'
@@ -249,7 +267,7 @@ export function CustomDropdown({
       </button>
 
       {/* Dropdown Options */}
-      {isOpen && isStatusDropdown
+      {isOpen && portal && dropdownPos
         ? createPortal(dropdownMenu, document.body)
         : isOpen && dropdownMenu}
     </div>

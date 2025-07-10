@@ -430,13 +430,27 @@ export function AddOrganizationModal({
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Initial Status
               </label>
-              <CustomDropdown
-                value={formData.approval_status || 'pending'}
-                onChange={(value) => setFormData({ ...formData, approval_status: value as 'pending' | 'approved' | 'rejected' })}
-                options={getStatusOptions()}
-                colorCoded={true}
-                className="w-full"
-              />
+              <div className="flex gap-3">
+                {['pending', 'approved', 'rejected'].map((status) => (
+                  <button
+                    key={status}
+                    type="button"
+                    className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors
+                      ${formData.approval_status === status
+                        ? status === 'approved'
+                          ? 'bg-green-600 text-white'
+                          : status === 'rejected'
+                            ? 'bg-red-600 text-white'
+                            : 'bg-yellow-500 text-gray-900'
+                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}
+                    `}
+                    onClick={() => setFormData({ ...formData, approval_status: status as 'pending' | 'approved' | 'rejected' })}
+                    disabled={isSubmitting}
+                  >
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                  </button>
+                ))}
+              </div>
             </div>
           </form>
         </div>
@@ -480,27 +494,3 @@ export function AddOrganizationModal({
 }
 
 export default AddOrganizationModal;
-
-{/* 
-Status and Action Buttons - Compact (removed because 'org' is undefined in this context)
-<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-  <div 
-    className="flex items-center gap-3 relative"
-    style={{ zIndex: 10000 }} // Increase z-index to be above scoring section
-  >
-    <span className="text-sm text-gray-400">Status:</span>
-    <div className="relative z-[10001]"> 
-      <CustomDropdown
-        value={org.approval_status}
-        onChange={(value) => onStatusUpdate(org.id, value as 'pending' | 'approved' | 'rejected')}
-        options={getStatusOptions()}
-        colorCoded={true}
-        className="min-w-[120px]"
-      />
-    </div>
-  </div>
-
-  <div className="flex flex-wrap gap-2">
-  </div>
-</div>
-*/}
