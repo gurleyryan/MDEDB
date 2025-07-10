@@ -84,16 +84,21 @@ The application follows a **clean architecture** pattern with clear separation o
 project-root/
 ├── app/                    # Next.js App Router
 │   ├── admin/              # Admin dashboard page
+│   │   ├── layout.tsx
 │   │   └── page.tsx        # Admin dashboard component
 │   ├── api/                # API routes and serverless functions
 │   │   └── metadata/
 │   │       └── route.ts
 │   ├── components/         # Reusable UI components
+│   │   ├── AddOrganizationModal/
+│   │   │   └── index.tsx
 │   │   ├── AdminHeader/
 │   │   │   └── index.tsx
-│   │   ├── OrganizationCard/
+│   │   ├── CustomDropdown/
 │   │   │   └── index.tsx
-│   │   ├── AddOrganizationModal/
+│   │   ├── Icons/
+│   │   │   └── index.tsx
+│   │   ├── OrganizationCard/
 │   │   │   └── index.tsx
 │   │   └── ScoringSection/
 │   │       └── index.tsx
@@ -104,23 +109,36 @@ project-root/
 │   ├── login/              # Authentication pages
 │   │   └── page.tsx        # Login page component
 │   ├── utils/              # Logic utilities
+│   │   ├── supabase/       # Supabase client configuration
+│   │   │   ├── client.ts
+│   │   │   ├── middleware.ts
+│   │   │   └── server.ts
+│   │   ├── motion.ts
 │   │   ├── orgUtils.ts
 │   │   ├── scoring.ts
+│   │   ├── selectOptions.ts
 │   │   └── validation.ts
 │   ├── favicon.ico
 │   ├── globals.css         # Global styles
 │   ├── layout.tsx          # Root layout component
 │   └── page.tsx            # Homepage component
-├── lib/                    # External library configurations
-│   └── supabaseClient.ts   # Supabase client configuration
 ├── models/                 # TypeScript interfaces
 │   ├── org.ts              # Organization interface
 │   └── orgWithScore.ts     # Organization with scoring interface
 ├── public/                 # Static assets
 ├── .env.local              # Environment variables
+├── .gitignore
+├── eslint.config.mjs
+├── LICENSE.md
+├── middleware.ts           # Supabase root middleware
+├── next.config.ts
+├── package-lock.json
 ├── package.json
-├── tsconfig.json
-└── next.config.js
+├── postcss.config.mjs
+├── README.md
+├── tailwind.config.js
+└── tsconfig.json
+
 ```
 
 ### **App Router Structure Details**
