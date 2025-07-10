@@ -283,6 +283,20 @@ body {
   background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
+/* Status dropdown glass - separate from regular dropdown-glass */
+.status-dropdown-glass {
+  background: rgba(8, 8, 8, 0.98) !important;
+  backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow:
+    0 32px 64px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  animation: fadeIn 0.1s ease-out !important;
+  z-index: 999999 !important;
+  position: absolute !important;
+}
+
 
 /* ============================================
    ADMIN HEADER
@@ -705,7 +719,7 @@ body {
   font-size: 1rem;
 }
 
-/* Responsive button text */
+/* Responsive button text
 @media (max-width: 640px) {
   .organization-card button span:last-child {
     display: none;
@@ -721,7 +735,7 @@ body {
 @media (max-width: 480px) {
   .organization-card .action-bar {
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
   }
 
   .organization-card .action-bar>div {
@@ -731,14 +745,14 @@ body {
 
   .organization-card .flex.justify-between {
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.5rem;
     align-items: stretch;
   }
 
   .organization-card .flex.justify-between>div {
     justify-content: center;
   }
-}
+} */
 
 /* ============================================
    STAINED GLASS EFFECTS
@@ -812,7 +826,7 @@ body {
    ============================================ */
 .scoring-section {
   position: relative !important;
-  z-index: 1000 !important;
+  z-index: 100 !important;
   transition: all 0.2s ease-out;
   /* Ensure scoring section doesn't interfere with card borders */
   margin-top: -1px;
@@ -855,81 +869,8 @@ body {
 
 /* Container spacing to prevent edge cutoff */
 .scoring-section .grid {
-  gap: 1.5rem !important;
+  gap: 0.5rem !important;
   /* Increase gap to prevent cutoff */
-}
-
-/* ============================================
-   Z-INDEX HIERARCHY (CLEAN)
-   ============================================ */
-
-/* Level 1: Base Card Elements */
-.organization-card {
-  position: relative !important;
-  z-index: 1 !important;
-  overflow: visible !important;
-}
-
-/* Level 2: Scoring Section (contained) */
-.scoring-section {
-  position: relative !important;
-  z-index: 100 !important;
-  isolation: isolate !important; /* Contains scoring dropdowns */
-}
-
-/* Level 3: Scoring Section Dropdowns (within scoring context) */
-.scoring-section .dropdown-glass {
-  position: absolute !important;
-  z-index: 500 !important; /* High within scoring context */
-}
-
-/* Level 4: Status Dropdown Container (escapes card context) */
-.status-dropdown-container {
-  position: relative !important;
-  z-index: 25000 !important; /* Much higher than scoring */
-  isolation: isolate !important;
-}
-
-/* Level 5: Status Dropdown (highest) */
-.status-dropdown-main .dropdown-glass,
-.organization-card .status-dropdown-container .dropdown-glass {
-  position: absolute !important;
-  top: 100% !important;
-  left: 0 !important;
-  right: 0 !important;
-  margin-top: 4px !important;
-  z-index: 50000 !important; /* Absolute highest */
-  background: rgba(31, 41, 55, 0.98) !important;
-  backdrop-filter: blur(24px) !important;
-  border: 2px solid rgba(255, 255, 255, 0.15) !important;
-  box-shadow: 
-    0 32px 64px rgba(0, 0, 0, 0.9),
-    0 0 0 1px rgba(255, 255, 255, 0.1) !important;
-}
-
-/* Status dropdown options */
-.status-dropdown-main .dropdown-option,
-.organization-card .status-dropdown-container .dropdown-option {
-  position: relative !important;
-  z-index: 50001 !important;
-}
-
-/* Admin Header (above everything) */
-.admin-header {
-  z-index: 99999 !important;
-}
-
-/* Force status dropdown visibility */
-.status-dropdown-container *,
-.status-dropdown-main * {
-  overflow: visible !important;
-}
-
-/* Ensure scoring section doesn't interfere */
-.scoring-section .scoring-criteria-container {
-  position: relative;
-  z-index: 200 !important; /* Lower than status dropdown */
-  overflow: visible !important;
 }
 
 /* ============================================
@@ -962,6 +903,7 @@ button {
   font-family: var(--font-outfit) !important;
   font-weight: 500;
 }
+
 
 ::placeholder {
   font-family: var(--font-ibm-plex) !important;
@@ -1159,6 +1101,95 @@ select::-webkit-scrollbar-thumb:hover {
 }
 
 /* ============================================
+   LOADING BARS
+   ============================================ */
+
+/* Search loading bar */
+.search-progress-bar {
+  background: linear-gradient(90deg,
+      rgba(59, 130, 246, 0.8),
+      rgba(147, 51, 234, 0.9),
+      rgba(59, 130, 246, 0.8));
+  box-shadow:
+    0 0 4px rgba(59, 130, 246, 0.4),
+    0 0 8px rgba(59, 130, 246, 0.2);
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Metadata loading bar */
+.metadata-progress-bar {
+  background: linear-gradient(90deg,
+      rgba(16, 185, 129, 0.8),
+      rgba(6, 182, 212, 0.9),
+      rgba(16, 185, 129, 0.8));
+  box-shadow:
+    0 0 4px rgba(16, 185, 129, 0.4),
+    0 0 8px rgba(16, 185, 129, 0.2);
+  transition: width 0.5s ease-out;
+}
+
+/* Shimmer animation for search bar */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(100%);
+    opacity: 0.6;
+  }
+}
+
+/* Loading bar container */
+.loading-bar-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(55, 65, 81, 0.5);
+  border-radius: 0 0 0.5rem 0.5rem;
+  overflow: hidden;
+}
+
+/* Metadata progress indicator */
+.metadata-progress-indicator {
+  position: absolute;
+  -bottom: 1.5rem;
+  right: 0;
+  background: rgba(15, 15, 15, 0.9);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  color: #10b981;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Pulse animation for metadata indicator */
+.metadata-pulse {
+  animation: metadataPulse 2s ease-in-out infinite;
+}
+
+@keyframes metadataPulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  }
+
+  50% {
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+  }
+}
+
+/* ============================================
    UTILITY CLASSES
    ============================================ */
 .focus-ring {
@@ -1240,4 +1271,710 @@ textarea:disabled {
 [data-framer-motion] * {
   transition: none !important;
   animation: none !important;
+}
+
+/* Remove white border/outline flash on AdminHeader status filter buttons - Enhanced */
+.admin-header button:focus,
+.admin-header button:active,
+.admin-header button:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+  /* Prevent any border color changes */
+  border: none !important;
+}
+
+/* Target specific button types in AdminHeader */
+.admin-header button[class*="flex items-center gap-2"]:focus,
+.admin-header button[class*="flex items-center gap-2"]:active {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  /* Override any inherited border styles */
+}
+
+/* Remove any transition effects that might cause flashing */
+.admin-header button {
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease !important;
+  /* Only animate these specific properties, not border */
+  border: none !important;
+  outline: none !important;
+}
+
+/* Ensure no webkit-specific outline/border issues */
+.admin-header button::-moz-focus-inner {
+  border: 0 !important;
+  outline: none !important;
+}
+
+/* Optional: Keep a custom focus style for accessibility that doesn't flash */
+.admin-header button:focus-visible {
+  outline: 2px solid #3b82f6 !important; /* blue-500 */
+  outline-offset: 2px !important;
+  /* This will only show for keyboard navigation, not mouse clicks */
+}
+
+/* Additional specificity for the status buttons */
+.admin-header div[class*="flex items-center gap-3"] button:focus,
+.admin-header div[class*="flex items-center gap-3"] button:active {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Disable scroll anchoring for organization list */
+.organization-list,
+.space-y-6 {
+  overflow-anchor: none !important;
+}
+
+/* Disable scroll anchoring globally for main content */
+body {
+  overflow-anchor: none !important;
+}
+
+/* Specific to organization cards */
+.organization-card {
+  overflow-anchor: none !important;
+}
+/* ============================================
+   SVG ICON STYLING
+   ============================================ */
+
+/* Base icon styling */
+.climate-icon {
+  stroke: currentColor;
+  fill: none;
+  transition: all 0.3s ease;
+}
+
+/* Status icons */
+.status-icon-pending {
+  color: #f59e0b;
+  filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.3));
+}
+
+.status-icon-approved {
+  color: #10b981;
+  filter: drop-shadow(0 0 4px rgba(16, 185, 129, 0.3));
+}
+
+.status-icon-rejected {
+  color: #ef4444;
+  filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.3));
+}
+
+/* Action button icons */
+.btn-glass svg {
+  transition: all 0.3s ease;
+}
+
+.btn-glass:hover svg {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 6px currentColor);
+}
+
+/* Dropdown icons */
+.dropdown-glass svg {
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+.dropdown-option:hover svg {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+/* Regional theme icons */
+.region-icon-north-america {
+  color: #60a5fa;
+}
+
+.region-icon-south-america {
+  color: #34d399;
+}
+
+.region-icon-europe {
+  color: #a78bfa;
+}
+
+.region-icon-africa {
+  color: #f59e0b;
+}
+
+.region-icon-asia {
+  color: #ef4444;
+}
+
+.region-icon-oceania {
+  color: #06b6d4;
+}
+
+.region-icon-middle-east {
+  color: #d97706;
+}
+
+/* Add to app/globals.css - Enhanced grid layout for comments section */
+
+/* ============================================
+   SCORING SECTION ENHANCEMENTS
+   ============================================ */
+
+/* Optimized responsive grid layout - Shift criteria to fill space better */
+@media (min-width: 1280px) {
+  .scoring-criteria-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(5, auto);
+    gap: 0rem;
+    /* Tighter spacing */
+    grid-template-areas:
+      "c1  c2  c3"
+      "c4  c5  c6"
+      "c7  c8  c9"
+      "c10 c11 c12"
+      "c13 comments comments";
+  }
+
+  /* Position items in optimized grid areas to fill space under 2 and 3 */
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(1) {
+    grid-area: c1;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(2) {
+    grid-area: c2;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(3) {
+    grid-area: c3;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(4) {
+    grid-area: c4;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(5) {
+    grid-area: c5;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(6) {
+    grid-area: c6;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(7) {
+    grid-area: c7;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(8) {
+    grid-area: c8;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(9) {
+    grid-area: c9;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(10) {
+    grid-area: c10;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(11) {
+    grid-area: c11;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(12) {
+    grid-area: c12;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(13) {
+    grid-area: c13;
+  }
+
+  .scoring-criteria-grid>.comments-section {
+    grid-area: comments;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .scoring-criteria-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0rem;
+    grid-template-areas:
+      "c1  c2"
+      "c3  c4"
+      "c5  c6"
+      "c7  c8"
+      "c9  c10"
+      "c11 c12"
+      "c13 comments";
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(1) {
+    grid-area: c1;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(2) {
+    grid-area: c2;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(3) {
+    grid-area: c3;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(4) {
+    grid-area: c4;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(5) {
+    grid-area: c5;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(6) {
+    grid-area: c6;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(7) {
+    grid-area: c7;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(8) {
+    grid-area: c8;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(9) {
+    grid-area: c9;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(10) {
+    grid-area: c10;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(11) {
+    grid-area: c11;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(12) {
+    grid-area: c12;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(13) {
+    grid-area: c13;
+  }
+
+  .scoring-criteria-grid>.comments-section {
+    grid-area: comments;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 1023px) {
+  .scoring-criteria-grid {
+    grid-template-columns: 1fr;
+    gap: 0rem;
+    grid-template-areas:
+      "c1"
+      "c2"
+      "c3"
+      "c4"
+      "c5"
+      "c6"
+      "c7"
+      "c8"
+      "c9"
+      "c10"
+      "c11"
+      "c12"
+      "c13"
+      "comments";
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(1) {
+    grid-area: c1;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(2) {
+    grid-area: c2;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(3) {
+    grid-area: c3;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(4) {
+    grid-area: c4;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(5) {
+    grid-area: c5;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(6) {
+    grid-area: c6;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(7) {
+    grid-area: c7;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(8) {
+    grid-area: c8;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(9) {
+    grid-area: c9;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(10) {
+    grid-area: c10;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(11) {
+    grid-area: c11;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(12) {
+    grid-area: c12;
+  }
+
+  .scoring-criteria-grid>.scoring-criterion-card:nth-child(13) {
+    grid-area: c13;
+  }
+
+  .scoring-criteria-grid>.comments-section {
+    grid-area: comments;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* Enhanced scoring criterion cards with reduced padding */
+.scoring-criterion-card {
+  min-height: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 0rem !important;
+  /* Reduced from 1rem */
+}
+
+/* Comments section enhanced styling with reduced padding */
+.comments-section {
+  background: linear-gradient(135deg,
+      rgba(31, 41, 55, 0.3),
+      rgba(17, 24, 39, 0.4),
+      rgba(31, 41, 55, 0.3)) !important;
+  backdrop-filter: blur(8px);
+  min-height: 0px;
+  /* Ensure proper alignment with c13 */
+  padding: 0rem !important;
+  /* Reduced padding */
+}
+
+.comments-section:hover {
+  background: linear-gradient(135deg,
+      rgba(31, 41, 55, 0.4),
+      rgba(17, 24, 39, 0.5),
+      rgba(31, 41, 55, 0.4)) !important;
+}
+
+/* Enhanced description text with tighter spacing */
+.scoring-criterion-card p {
+  line-height: 1.25 !important;
+  /* Reduced from 1.4 */
+  margin-bottom: 0 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: initial !important;
+  -webkit-line-clamp: none !important;
+  line-clamp: none !important;
+  display: block !important;
+  -webkit-box-orient: initial !important;
+}
+
+/* Tighter header spacing */
+.scoring-criterion-card .flex.justify-between {
+  margin-bottom: 0rem !important;
+  /* Reduced from mb-2 */
+}
+
+.scoring-criterion-card .flex.items-center.gap-2.mb-1 {
+  margin-bottom: 0rem !important;
+  /* Reduced spacing */
+}
+
+/* Remove line-clamp utilities from scoring section */
+.scoring-section .line-clamp-2,
+.scoring-section .line-clamp-3 {
+  display: block !important;
+  -webkit-line-clamp: none !important;
+  line-clamp: none !important;
+  -webkit-box-orient: initial !important;
+  overflow: visible !important;
+}
+
+/* Enhanced textarea styling with flexible height */
+.comments-section textarea {
+  font-family: var(--font-ibm-plex) !important;
+  line-height: 1 !important;
+  /* Reduced line height */
+  scrollbar-width: thin;
+  scrollbar-color: #4b5563 #1f2937;
+  flex: 1;
+  min-height: 0px;
+  /* Reduced from 80px */
+  resize: vertical;
+}
+
+.comments-section textarea::-webkit-scrollbar {
+  width: 4px;
+}
+
+.comments-section textarea::-webkit-scrollbar-track {
+  background: #1f2937;
+  border-radius: 2px;
+}
+
+.comments-section textarea::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 2px;
+}
+
+.comments-section textarea::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* Character count color transitions */
+.comments-section .text-orange-400,
+.comments-section .text-yellow-400 {
+  transition: color 0.3s ease;
+}
+
+/* Ensure proper spacing and alignment */
+.scoring-criteria-grid {
+  align-items: start;
+}
+
+/* Enhanced hover effects with subtle movement */
+.scoring-criterion-card:hover {
+  transform: translateY(-0.5px);
+  /* Reduced movement */
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  /* Reduced shadow */
+}
+
+.comments-section:hover {
+  transform: translateY(-0.5px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Grid alignment enhancement */
+@media (min-width: 1280px) {
+  .scoring-criteria-grid {
+    align-items: stretch;
+    /* Ensure equal heights */
+  }
+
+  /* Ensure comments section aligns properly with c13 */
+  .scoring-criteria-grid>.comments-section {
+    align-self: stretch;
+  }
+
+  /* Optimize row heights for better alignment */
+  .scoring-criteria-grid {
+    grid-template-rows: auto auto auto minmax(0px, auto) auto;
+    /* Fourth row has min height */
+  }
+}
+
+/* Reduce overall section margins */
+.scoring-section .mb-4 {
+  margin-bottom: 0.625rem !important;
+  /* Reduced from 1rem */
+}
+
+/* Tighter spacing for scoring guide */
+.scoring-section .p-3 {
+  padding: 0.625rem !important;
+  /* Slightly reduced */
+}
+
+/* Compact header spacing */
+.scoring-section h4 {
+  font-size: 1.125rem !important;
+  line-height: 1.2 !important;
+}
+
+/* Minimize gaps in grid areas */
+@media (min-width: 1280px) {
+  .scoring-criteria-grid>* {
+    margin: 0 !important;
+  }
+}
+
+/* ============================================
+   CLEAR Z-INDEX HIERARCHY
+   ============================================ */
+
+/* Level 1: Base Card Elements (1-99) */
+.organization-card {
+  position: relative !important;
+  overflow: visible !important;
+  transform: none !important;
+  filter: none !important;
+  isolation: auto !important;
+}
+
+.organization-card.expanded-card {
+  z-index: 2 !important;
+  /* Slightly higher when expanded */
+}
+
+/* Level 2: Scoring Section (50-99) - MUCH LOWER */
+.scoring-section {
+  position: relative !important;
+  z-index: 50 !important;
+  /* Don't create stacking context */
+  isolation: auto !important;
+}
+
+/* Level 3: Scoring Components (200-399) */
+
+.scoring-section .dropdown-glass {
+  position: absolute !important;
+  z-index: 400 !important;
+  /* Fixed z-index for scoring dropdowns */
+}
+
+/* Level 4: Header (9999) */
+.admin-header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 9999 !important;
+}
+
+.admin-header .dropdown-glass {
+  position: absolute !important;
+  z-index: 10000 !important;
+}
+
+/* Level 5: Status Dropdown (999990+) - ALWAYS ON TOP */
+.status-dropdown-container {
+  position: relative !important;
+  z-index: 99999 !important;
+  isolation: isolate !important;
+  overflow: visible !important;
+}
+
+.status-dropdown-container button {
+  position: relative !important;
+  z-index: 999998 !important;
+}
+.scoring-section .status-dropdown-glass {
+  /* Override any scoring section rules */
+  z-index: 999999 !important;
+  position: absolute !important;
+}
+
+/* Ensure status dropdown glass is never overridden */
+.organization-card .status-dropdown-glass,
+.scoring-section .status-dropdown-glass,
+* .status-dropdown-glass {
+  background: rgba(8, 8, 8, 0.98) !important;
+  backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow:
+    0 32px 64px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  z-index: 999999 !important;
+  position: absolute !important;
+}
+
+/* CRITICAL: Ensure organization cards don't create stacking contexts */
+.organization-card,
+.organization-card *:not(.status-dropdown-container):not(.status-dropdown-container *) {
+  /* Remove any properties that create stacking contexts */
+  filter: none !important;
+  isolation: auto !important;
+}
+
+/* Level 6: Modals (99999+) */
+.modal-overlay,
+[class*="modal"] {
+  z-index: 99999 !important;
+}
+
+/* Add to app/globals.css - Fixed responsive organization card layout */
+
+/* Enhanced responsive behavior for organization card content */
+.organization-card .flex.justify-between {
+  transition: all 0.3s ease-out;
+  align-items: flex-start;
+}
+
+/* Default state: Website and email positioned to left of badges/years */
+@media (min-width: 769px) {
+  .organization-card .website-row {
+    /* Position website to the left of badges */
+    position: absolute;
+    top: 0;
+    right: 100%;
+    margin-right: 0.75rem;
+    width: max-content;
+    max-width: 200px;
+  }
+  
+  .organization-card .email-row {
+    /* Position email to the left of years active */
+    position: absolute;
+    top: 1.75rem; /* Align with years active row */
+    right: 100%;
+    margin-right: 0.75rem;
+    width: max-content;
+    max-width: 200px;
+  }
+}
+
+/* Responsive breakpoint: Move website and email down when screen gets narrow */
+@media (max-width: 768px) {
+  .organization-card .website-row,
+  .organization-card .email-row {
+    /* Reset positioning - let them stack naturally */
+    position: static;
+    width: 100%;
+    max-width: none;
+    margin-right: 0;
+  }
+  
+  /* Ensure proper stacking order */
+  .organization-card .flex.flex-col.items-end {
+    gap: 0.375rem !important;
+  }
+}
+
+/* Ensure badges and years active never move */
+.organization-card .flex.flex-col.items-end > div:first-child,
+.organization-card .flex.flex-col.items-end > div:nth-child(2) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Smooth transitions for moving elements */
+.organization-card .website-row,
+.organization-card .email-row {
+  transition: all 0.3s ease-out;
+}
+
+/* Enhanced flex item behavior */
+.organization-card .flex.flex-col.items-end {
+  position: relative;
+  transition: all 0.2s ease-out;
+}
+
+/* Ensure text sizing consistency */
+.organization-card .website-row .text-sm,
+.organization-card .email-row .text-sm {
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
 }

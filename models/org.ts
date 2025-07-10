@@ -15,4 +15,5 @@ export interface Org {
   logo?: string;
   tags?: string[];
   approval_status: 'pending' | 'approved' | 'rejected' | 'under_review';
+  created_at?: string;
 }

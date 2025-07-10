@@ -112,7 +112,6 @@ export type ScoreCategory = 'strong' | 'promising' | 'low' | 'none';
 export interface ScoreRecommendation {
   text: string;
   color: string;
-  emoji: string;
   category: ScoreCategory;
   description: string;
 }
@@ -131,7 +130,6 @@ export const getScoreRecommendation = (score: number | null): ScoreRecommendatio
     return {
       text: 'Not Scored',
       color: 'text-gray-300',
-      emoji: '⚪',
       category: 'none',
       description: 'This organization has not been scored yet.'
     };
@@ -141,7 +139,6 @@ export const getScoreRecommendation = (score: number | null): ScoreRecommendatio
     return {
       text: 'Strong Candidate',
       color: 'text-green-300',
-      emoji: '🟢',
       category: 'strong',
       description: 'This organization meets most criteria and is ready for partnership.'
     };
@@ -149,7 +146,6 @@ export const getScoreRecommendation = (score: number | null): ScoreRecommendatio
     return {
       text: 'Promising, Needs Follow-Up',
       color: 'text-orange-300',
-      emoji: '🟡',
       category: 'promising',
       description: 'This organization shows potential but requires additional evaluation.'
     };
@@ -157,7 +153,6 @@ export const getScoreRecommendation = (score: number | null): ScoreRecommendatio
     return {
       text: 'Low Priority / Not Suitable',
       color: 'text-red-300',
-      emoji: '🔴',
       category: 'low',
       description: 'This organization does not currently meet the minimum criteria.'
     };

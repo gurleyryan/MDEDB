@@ -1,10 +1,11 @@
 'use client';
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { CustomDropdown } from '../CustomDropdown';
 import { Org } from '@/models/org';
 import { validateField, formatUrl, formatCountryCode, isFormReady } from '../../utils/validation';
 import { createPortal } from 'react-dom';
+import { ClimateIcons } from '../Icons';
+import { getStatusOptions } from '../../utils/selectOptions';
 
 interface AddOrganizationModalProps {
   isOpen: boolean;
@@ -20,25 +21,6 @@ interface FormErrors {
 interface FormWarnings {
   [key: string]: string | null;
 }
-
-const getCountryOptions = () => [
-  { value: '', label: 'Select Country', color: '#9ca3af', bgColor: '#374151' },
-  { value: 'US', label: 'United States', emoji: '🇺🇸', color: '#60a5fa', bgColor: '#1e40af' },
-  { value: 'CA', label: 'Canada', emoji: '🇨🇦', color: '#60a5fa', bgColor: '#1e40af' },
-  { value: 'GB', label: 'United Kingdom', emoji: '🇬🇧', color: '#10b981', bgColor: '#065f46' },
-  { value: 'DE', label: 'Germany', emoji: '🇩🇪', color: '#10b981', bgColor: '#065f46' },
-  { value: 'FR', label: 'France', emoji: '🇫🇷', color: '#10b981', bgColor: '#065f46' },
-  { value: 'BR', label: 'Brazil', emoji: '🇧🇷', color: '#34d399', bgColor: '#065f46' },
-  { value: 'IN', label: 'India', emoji: '🇮🇳', color: '#f59e0b', bgColor: '#92400e' },
-  { value: 'AU', label: 'Australia', emoji: '🇦🇺', color: '#06b6d4', bgColor: '#0e7490' },
-  { value: 'JP', label: 'Japan', emoji: '🇯🇵', color: '#a78bfa', bgColor: '#5b21b6' },
-];
-
-const getStatusOptions = () => [
-  { value: 'pending', label: 'Pending Review', emoji: '⏳', color: '#f59e0b', bgColor: '#92400e' },
-  { value: 'approved', label: 'Approved', emoji: '✅', color: '#10b981', bgColor: '#065f46' },
-  { value: 'rejected', label: 'Rejected', emoji: '❌', color: '#ef4444', bgColor: '#991b1b' },
-];
 
 export function AddOrganizationModal({ 
   isOpen, 
@@ -203,20 +185,24 @@ export function AddOrganizationModal({
         className="bg-gray-800 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl transform scale-100"
         style={{
           transition: 'transform 0.15s ease-out, opacity 0.15s ease-out',
-          opacity: 1
+          opacity: 1,
+          overflow: 'visible' // Allow dropdowns to escape
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-white">Add New Organization</h2>
+          <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+            {ClimateIcons.plus}
+            <span>Add New Organization</span>
+          </h2>
           <button
             onClick={handleClose}
             disabled={isSubmitting}
-            className="text-gray-400 hover:text-white text-2xl transition-colors disabled:opacity-50"
+            className="text-gray-400 hover:text-white transition-colors disabled:opacity-50 p-1"
             title="Close modal"
           >
-            ×
+            {ClimateIcons.cancel}
           </button>
         </div>
 
@@ -229,26 +215,54 @@ export function AddOrganizationModal({
               </label>
               <input
                 type="text"
-                value={formData.org_name}
-                onChange={(e) => setFormData({ ...formData, org_name: e.target.value })}
-                className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none transition-colors font-body"
+                value={formData.org_name || ''}
+                onChange={(e) => handleFieldChange('org_name', e.target.value)}
+                onBlur={() => handleFieldBlur('org_name')}
+                className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors font-body ${
+                  errors.org_name 
+                    ? 'border-red-500 focus:border-red-400' 
+                    : warnings.org_name
+                    ? 'border-yellow-500 focus:border-yellow-400'
+                    : 'border-gray-600 focus:border-blue-500'
+                }`}
                 placeholder="Enter organization name"
                 required
               />
+              {touched.org_name && errors.org_name && (
+                <p className="text-red-400 text-xs mt-1">{errors.org_name}</p>
+              )}
+              {touched.org_name && warnings.org_name && !errors.org_name && (
+                <p className="text-yellow-400 text-xs mt-1">{warnings.org_name}</p>
+              )}
             </div>
             
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                Country *
+                Country Code *
+                <span className="text-gray-400 text-xs ml-1">(2 letters, e.g., US, CA, GB)</span>
               </label>
-              <CustomDropdown
+              <input
+                type="text"
                 value={formData.country_code || ''}
-                onChange={(value) => setFormData({ ...formData, country_code: value })}
-                options={getCountryOptions()}
-                colorCoded={true}
-                className="w-full"
-                placeholder="Select Country"
+                onChange={(e) => handleFieldChange('country_code', e.target.value.toUpperCase())}
+                onBlur={() => handleFieldBlur('country_code')}
+                className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors font-body uppercase ${
+                  errors.country_code 
+                    ? 'border-red-500 focus:border-red-400' 
+                    : warnings.country_code
+                    ? 'border-yellow-500 focus:border-yellow-400'
+                    : 'border-gray-600 focus:border-blue-500'
+                }`}
+                placeholder="US"
+                maxLength={2}
+                required
               />
+              {touched.country_code && errors.country_code && (
+                <p className="text-red-400 text-xs mt-1">{errors.country_code}</p>
+              )}
+              {touched.country_code && warnings.country_code && !errors.country_code && (
+                <p className="text-yellow-400 text-xs mt-1">{warnings.country_code}</p>
+              )}
             </div>
           </div>
 
@@ -258,11 +272,24 @@ export function AddOrganizationModal({
               <label className="block text-sm font-medium text-gray-300 mb-2">Website</label>
               <input
                 type="url"
-                value={formData.website}
-                onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none transition-colors font-body"
+                value={formData.website || ''}
+                onChange={(e) => handleFieldChange('website', e.target.value)}
+                onBlur={() => handleFieldBlur('website')}
+                className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors font-body ${
+                  errors.website 
+                    ? 'border-red-500 focus:border-red-400' 
+                    : warnings.website
+                    ? 'border-yellow-500 focus:border-yellow-400'
+                    : 'border-gray-600 focus:border-blue-500'
+                }`}
                 placeholder="https://example.org"
               />
+              {touched.website && errors.website && (
+                <p className="text-red-400 text-xs mt-1">{errors.website}</p>
+              )}
+              {touched.website && warnings.website && !errors.website && (
+                <p className="text-yellow-400 text-xs mt-1">{warnings.website}</p>
+              )}
             </div>
             
             <div>
@@ -280,6 +307,12 @@ export function AddOrganizationModal({
                 }`}
                 placeholder="contact@example.org (multiple emails separated by commas or line breaks)"
               />
+              {touched.email && errors.email && (
+                <p className="text-red-400 text-xs mt-1">{errors.email}</p>
+              )}
+              {touched.email && warnings.email && !errors.email && (
+                <p className="text-yellow-400 text-xs mt-1">{warnings.email}</p>
+              )}
             </div>
           </div>
 
@@ -418,21 +451,22 @@ export function AddOrganizationModal({
             />
           </div>
 
-          {/* Action Buttons */}
+          {/* Action Buttons - Equal width */}
           <div className="flex gap-3 pt-4">
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleClose}
               disabled={isSubmitting}
-              className="px-6 py-2 bg-gray-600 text-white rounded-lg font-medium hover:bg-gray-500 transition-colors disabled:opacity-50"
+              className="flex-1 px-6 py-2 bg-gray-600 text-white rounded-lg font-medium hover:bg-gray-500 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
-              Cancel
+              {ClimateIcons.cancel}
+              <span>Cancel</span>
             </button>
             
             <button
               type="submit"
-              disabled={isSubmitting || !formData.org_name || !formData.country_code}
-              className="px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-medium hover:shadow-glow-green transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              disabled={isSubmitting || !formData.org_name?.trim() || !formData.country_code?.trim()}
+              className="flex-1 px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-medium hover:shadow-glow-green transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>
@@ -441,19 +475,12 @@ export function AddOrganizationModal({
                 </>
               ) : (
                 <>
-                  <span>➕</span>
+                  {ClimateIcons.plus}
                   Add Organization
                 </>
               )}
             </button>
           </div>
-
-          {/* Form Status Indicator */}
-          {hasUnsavedChanges && !isSubmitting && (
-            <div className="text-xs text-gray-400 text-center pt-2">
-              * Fields marked with asterisk are required
-            </div>
-          )}
         </form>
       </div>
     </div>

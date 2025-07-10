@@ -1,13 +1,11 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { snapTransition } from '../../utils/motion';
+import { useState} from 'react';
 import { CustomDropdown } from '../CustomDropdown';
-import { getScoringOptions } from '../../utils/selectOptions';
+import { getStatusOptions } from '../../utils/selectOptions';
 import { Org } from '@/models/org';
 import { OrgWithScore } from '@/models/orgWithScore';
 import { WebsiteMetadata } from '../../hooks/useWebsiteMetadata';
-import { OrgScoring, SCORING_CRITERIA } from '../../utils/scoring';
+import { OrgScoring} from '../../utils/scoring';
 import { 
   getRegionalTheme, 
   getAlignmentScoreColor,
@@ -19,6 +17,7 @@ import {
   getScoreRecommendation
 } from '../../utils/orgUtils';
 import { validateField, formatUrl, formatCountryCode } from '../../utils/validation';
+import { ClimateIcons } from '../Icons';
 
 interface OrganizationCardProps {
   org: OrgWithScore;
@@ -37,12 +36,7 @@ interface OrganizationCardProps {
   onScoringSave: (orgId: string) => Promise<boolean>;
 }
 
-// Add status options
-const getStatusOptions = () => [
-  { value: 'pending', label: 'Pending', emoji: '⏳', color: '#f59e0b', bgColor: '#92400e' },
-  { value: 'approved', label: 'Approved', emoji: '✅', color: '#10b981', bgColor: '#065f46' },
-  { value: 'rejected', label: 'Rejected', emoji: '❌', color: '#ef4444', bgColor: '#991b1b' },
-];
+// Status options are now imported from utils/selectOptions
 
 export function OrganizationCard({
   org,
@@ -51,14 +45,11 @@ export function OrganizationCard({
   isExpanded,
   isEditing,
   updatingId,
-  savingScores,
   onExpand,
   onEdit,
   onSave,
   onCancel,
-  onStatusUpdate,
-  onScoreUpdate,
-  onScoringSave
+  onStatusUpdate
 }: OrganizationCardProps) {
   const [editForm, setEditForm] = useState<Partial<Org>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -170,10 +161,12 @@ export function OrganizationCard({
       style={{ 
         overflow: 'visible',
         position: 'relative',
-        zIndex: 'auto',
         // Remove hover transform when expanded/editing
         transform: isExpanded || isEditing ? 'none' : undefined
       }}
+      // Remove any tabIndex or focus-related attributes
+      tabIndex={-1} // Prevent card from receiving focus
+      onFocus={(e) => e.preventDefault()} // Prevent focus events
     >
       {/* Banner Image with proper rounding */}
       {org.website && (
@@ -386,7 +379,7 @@ export function OrganizationCard({
         ) : (
           // Display Mode
           <>
-            {/* Header with organized two-column layout */}
+            {/* Header with responsive two-column layout */}
             <div className="flex justify-between items-start mb-3 gap-4">
               {/* Left Column: Favicon + Org Info */}
               <div className="flex items-start gap-3 flex-1 min-w-0">
@@ -417,154 +410,144 @@ export function OrganizationCard({
                   </div>
                 )}
                 
-                {/* Left side organization info */}
-                <div className="flex-1 min-w-0">
-                  {/* Org name */}
-                  <h3 className="text-heading text-white break-words text-balance mb-1">
-                    {org.org_name}
-                  </h3>
+                {/* Left side organization info - Enhanced responsive layout */}
+                <div className="flex-1 min-w-0 overflow-hidden">
+                  {/* Org name with better responsive handling */}
+                  <div className="mb-1">
+                    <h3 className="org-name-heading text-heading text-white break-words leading-tight">
+                      {org.org_name}
+                    </h3>
+                  </div>
                   
                   {/* Country code and type of work */}
-                  <div className="flex items-center gap-1 text-sm">
-                    <span className="text-gray-300">{org.country_code} • {org.type_of_work}</span>
+                  <div className="flex items-center gap-1 text-sm flex-wrap">
+                    <span className="text-gray-300 flex-shrink-0">{org.country_code}</span>
+                    {org.type_of_work && (
+                      <>
+                        <span className="text-gray-500 flex-shrink-0">•</span>
+                        <span className="text-gray-300 break-words min-w-0">{org.type_of_work}</span>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
               
-              {/* Right Column: Website, Badges, Emails, Years */}
-              <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                {/* Top row: Website and Badges */}
-                <div className="flex items-center gap-3">
-                  {/* Website - show full URL */}
-                  {org.website && (
-                    <div className="flex items-center gap-1">
-                      <span className="text-blue-400 flex-shrink-0">🌐</span>
-                      {websiteInfo?.isValid ? (
-                        <a
-                          href={websiteInfo.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-blue-400 hover:text-blue-300 hover:underline"
-                          title={org.website}
-                        >
-                          {websiteInfo.hostname}
-                        </a>
+              {/* Right Column: Fixed layout - Badges and Years stay right, Website and Email move down */}
+              <div className="flex flex-col items-end gap-1 flex-shrink-0 min-w-0 max-w-[45%] sm:max-w-none">
+                {/* Row 1: Badges - ALWAYS stay at top right */}
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <span className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
+                    {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
+                  </span>
+                  
+                  <span className={`px-2 py-1 rounded text-xs font-bold capitalize whitespace-nowrap ${getStatusColor(org.approval_status)}`}>
+                    {org.approval_status}
+                  </span>
+                </div>
+                
+                {/* Row 2: Years Active - ALWAYS stay at second row right */}
+                {org.years_active && (
+                  <div className="flex items-center gap-1 min-w-0 flex-shrink-0">
+                    <span className="text-yellow-400 flex-shrink-0">
+                      {ClimateIcons.calendar}
+                    </span>
+                    <span 
+                      className="text-gray-300 leading-tight text-xs sm:text-sm truncate min-w-0 max-w-[100px] sm:max-w-[120px] md:max-w-[150px]"
+                      title={org.years_active}
+                    >
+                      {org.years_active}
+                    </span>
+                  </div>
+                )}
+
+                {/* Row 3: Website - Moves down from top when needed */}
+                {org.website && (
+                  <div className="flex items-center gap-1 min-w-0 website-row">
+                    <span className="text-blue-400 flex-shrink-0">
+                      {ClimateIcons.website}
+                    </span>
+                    {websiteInfo?.isValid ? (
+                      <a
+                        href={websiteInfo.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0"
+                        title={org.website}
+                      >
+                        {websiteInfo.hostname}
+                      </a>
+                    ) : (
+                      <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>
+                        Invalid URL
+                      </span>
+                    )}
+                  </div>
+                )}
+
+                {/* Row 4: Emails - Moves down from second row when needed */}
+                {emails.length > 0 && (
+                  <div className="flex items-center gap-1 min-w-0 email-row">
+                    <span className="text-green-400 flex-shrink-0">
+                      {ClimateIcons.email}
+                    </span>
+                    <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 min-w-0">
+                      {emails.length <= 2 ? (
+                        // 1-2 emails: Show all with mobile-optimized truncation
+                        emails.map((email, index) => (
+                          <span key={index} className="flex items-center min-w-0">
+                            <a
+                              href={`mailto:${email}`}
+                              className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors truncate min-w-0 max-w-full sm:max-w-[120px] md:max-w-[200px]"
+                              title={email}
+                            >
+                              {email}
+                            </a>
+                            {index < emails.length - 1 && (
+                              <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
+                            )}
+                          </span>
+                        ))
+                      ) : emails.length === 3 ? (
+                        // 3 emails: Adaptive display
+                        <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 min-w-0">
+                          {emails.every(email => email.length <= 12) ? (
+                            // All short emails, try to show all
+                            emails.map((email, index) => (
+                              <span key={index} className="flex items-center min-w-0">
+                                <a
+                                  href={`mailto:${email}`}
+                                  className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors truncate min-w-0 max-w-[80px] sm:max-w-[100px] md:max-w-[150px]"
+                                  title={email}
+                                >
+                                  {email}
+                                </a>
+                                {index < emails.length - 1 && (
+                                  <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
+                                )}
+                              </span>
+                            ))
+                          ) : (
+                            // Show count for compact display
+                            <span 
+                              className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
+                              title={`All emails: ${emails.join(', ')}`}
+                            >
+                              {emails.length} emails
+                            </span>
+                          )}
+                        </div>
                       ) : (
-                        <span className="text-sm text-gray-400" title={org.website}>
-                          Invalid URL
+                        // 4+ emails: Always show count
+                        <span 
+                          className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
+                          title={`All emails: ${emails.join(', ')}`}
+                        >
+                          {emails.length} emails
                         </span>
                       )}
                     </div>
-                  )}
-                  
-                  {/* Score and Status badges */}
-                  <div className="flex items-center gap-2">
-                    <span className={`px-2 py-1 rounded text-xs font-bold ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
-                      {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
-                    </span>
-                    
-                    <span className={`px-2 py-1 rounded text-xs font-bold capitalize ${getStatusColor(org.approval_status)}`}>
-                      {org.approval_status}
-                    </span>
                   </div>
-                </div>
-                
-                {/* Bottom row: Emails and Years Active */}
-                <div className="flex items-start gap-3 text-sm">
-                  {/* Emails - generous space allocation */}
-                  {emails.length > 0 && (
-                    <div className="flex items-center gap-1">
-                      <span className="text-green-400 flex-shrink-0">📧</span>
-                      <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 min-w-0">
-                        {emails.length <= 3 ? (
-                          // 1-3 emails: Show all unless extremely long
-                          emails.map((email, index) => (
-                            <span key={index} className="flex items-center">
-                              <a
-                                href={`mailto:${email}`}
-                                className="text-green-400 hover:text-green-300 hover:underline transition-colors"
-                                title={email}
-                              >
-                                {email.length > 30 ? `${email.substring(0, 27)}...` : email}
-                              </a>
-                              {index < emails.length - 1 && (
-                                <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
-                              )}
-                            </span>
-                          ))
-                        ) : emails.length === 4 ? (
-                          // 4 emails: Smart display based on total length
-                          <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5">
-                            {emails.every(email => email.length <= 18) ? (
-                              // All short emails, show all
-                              emails.map((email, index) => (
-                                <span key={index} className="flex items-center">
-                                  <a
-                                    href={`mailto:${email}`}
-                                    className="text-green-400 hover:text-green-300 hover:underline transition-colors"
-                                    title={email}
-                                  >
-                                    {email}
-                                  </a>
-                                  {index < emails.length - 1 && (
-                                    <span className="text-gray-500 mx-1">•</span>
-                                  )}
-                                </span>
-                              ))
-                            ) : (
-                              // Show first 2-3 emails based on length
-                              <>
-                                {emails.slice(0, 2).map((email, index) => (
-                                  <span key={index} className="flex items-center">
-                                    <a
-                                      href={`mailto:${email}`}
-                                      className="text-green-400 hover:text-green-300 hover:underline transition-colors"
-                                      title={email}
-                                    >
-                                      {email.length > 25 ? `${email.substring(0, 22)}...` : email}
-                                    </a>
-                                    {index === 0 && <span className="text-gray-500 mx-1">•</span>}
-                                  </span>
-                                ))}
-                                <span 
-                                  className="text-xs text-gray-400 bg-gray-700/50 px-2 py-0.5 rounded-full cursor-help ml-1"
-                                  title={`All emails: ${emails.join(', ')}`}
-                                >
-                                  +2
-                                </span>
-                              </>
-                            )}
-                          </div>
-                        ) : (
-                          // 5+ emails: Compact count display
-                          <span 
-                            className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs"
-                            title={`All emails: ${emails.join(', ')}`}
-                          >
-                            {emails.length} emails
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Years active - allow natural wrapping */}
-                  {org.years_active && (
-                    <div className="flex items-center gap-1">
-                      <span className="text-yellow-400 flex-shrink-0">📅</span>
-                      <span 
-                        className="text-gray-300 leading-tight"
-                        title={org.years_active}
-                        style={{ 
-                          wordBreak: org.years_active.length > 30 ? 'break-word' : 'normal',
-                          lineHeight: org.years_active.length > 30 ? '1.2' : 'normal'
-                        }}
-                      >
-                        {org.years_active}
-                      </span>
-                    </div>
-                  )}
-                </div>
+                )}
               </div>
             </div>
 
@@ -572,21 +555,27 @@ export function OrganizationCard({
             <div className="space-y-2 mb-3">
               {org.capacity && (
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="text-purple-400">👥</span>
+                  <span className="text-purple-400">
+                    {ClimateIcons.capacity}
+                  </span>
                   <span className="text-gray-300">{org.capacity}</span>
                 </div>
               )}
               
               {org.notable_success && (
                 <div className="p-2 bg-emerald-500/10 border-l-2 border-emerald-500 rounded-r text-sm">
-                  <span className="text-emerald-200 font-medium">🏆</span>
+                  <span className="text-emerald-200 font-medium">
+                    {ClimateIcons.trophy}
+                  </span>
                   <span className="text-gray-300 ml-2">{org.notable_success}</span>
                 </div>
               )}
               
               {org.cta_notes && (
                 <div className="p-2 bg-blue-500/10 border-l-2 border-blue-500 rounded-r text-sm">
-                  <span className="text-blue-200 font-medium">📢</span>
+                  <span className="text-blue-200 font-medium">
+                    {ClimateIcons.announcement}
+                  </span>
                   <span className="text-gray-300 ml-2">{org.cta_notes}</span>
                 </div>
               )}
@@ -594,79 +583,90 @@ export function OrganizationCard({
           </>
         )}
 
-        {/* Status and Action Buttons - Fix z-index hierarchy */}
-        <div className="flex items-center justify-between gap-4 mt-4">
-          {/* Left: Status Dropdown with explicit z-index */}
+        {/* Status and Action Buttons - Fixed z-index for status dropdown */}
+        <div className="flex flex-col gap-3 mt-4 sm:flex-row sm:items-center sm:justify-between">
+          {/* Status Dropdown - Force highest z-index when open */}
           <div 
-            className="flex items-center gap-2 status-dropdown-container"
+            className="flex items-center gap-2 w-full sm:w-auto"
             style={{ 
               position: 'relative',
-              zIndex: 25000, // Much higher than scoring section
-              isolation: 'isolate' // Create own stacking context
             }}
+            onClick={(e) => e.stopPropagation()} // Prevent card click events
           >
-            <span className="text-yellow-400">⚡</span>
-            <div 
-              className="relative"
-              style={{ 
-                position: 'relative',
-                zIndex: 25001,
-                overflow: 'visible'
-              }}
-            >
+            <span className="text-yellow-400 flex items-center flex-shrink-0">
+              {ClimateIcons.energy}
+            </span>
+            <div className="flex-1 sm:flex-initial">
               <CustomDropdown
                 value={org.approval_status}
-                onChange={(value) => onStatusUpdate(org.id, value as 'pending' | 'approved' | 'rejected')}
+                onChange={(newValue) => {
+                  console.log('Status changing from', org.approval_status, 'to', newValue);
+                  
+                  // Ensure we have a valid status value
+                  if (newValue === 'pending' || newValue === 'approved' || newValue === 'rejected') {
+                    onStatusUpdate(org.id, newValue);
+                  } else {
+                    console.error('Invalid status value:', newValue);
+                  }
+                }}
                 options={getStatusOptions()}
                 colorCoded={true}
-                className="min-w-[100px] text-xs status-dropdown-main"
+                className="w-full min-w-[100px] text-xs status-dropdown"
               />
             </div>
           </div>
 
-          {/* Right: Action Buttons */}
-          <div className="flex items-center gap-4">
+          {/* Action Buttons - Keep existing code */}
+          <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
             {isEditing ? (
               <>
                 <button
                   onClick={handleSave}
                   disabled={updatingId === org.id || Object.keys(errors).length > 0}
-                  className="btn-glass btn-glass-green px-8 py-3 rounded-xl text-base font-semibold disabled:opacity-50 flex items-center gap-3 hover:translate-y-[-2px] transition-all duration-150 shadow-xl"
+                  className="btn-glass btn-glass-green px-4 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
                 >
-                  <span className="text-lg">💾</span>
-                  <span>{updatingId === org.id ? 'Saving...' : 'Save Changes'}</span>
+                  {ClimateIcons.save}
+                  <span className="transition-opacity duration-200">
+                    {updatingId === org.id ? 'Saving...' : 'Save'}
+                  </span>
                 </button>
                 
                 <button
                   onClick={handleCancel}
-                  className="btn-glass text-gray-300 px-8 py-3 rounded-xl text-base font-semibold flex items-center gap-3 hover:translate-y-[-2px] transition-all duration-150 shadow-xl"
+                  className="btn-glass text-gray-300 px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
                 >
-                  <span className="text-lg">❌</span>
-                  <span>Cancel</span>
+                  {ClimateIcons.cancel}
+                  <span className="transition-opacity duration-200">Cancel</span>
                 </button>
               </>
             ) : (
               <>
                 <button
                   onClick={startEdit}
-                  className="btn-glass btn-glass-blue px-7 py-3 rounded-xl text-base font-semibold hover:shadow-glow-blue flex items-center gap-3 hover:translate-y-[-2px] transition-all duration-150 shadow-xl"
+                  onMouseDown={(e) => e.preventDefault()} // Prevent focus
+                  className="btn-glass btn-glass-blue px-4 py-2.5 rounded-lg text-sm font-medium hover:shadow-glow-blue flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
                 >
-                  <span className="text-lg">✏️</span>
-                  <span>Edit Info</span>
+                  {ClimateIcons.edit}
+                  <span className="transition-opacity duration-200">Edit Info</span>
                 </button>
 
                 <button
                   onClick={() => onExpand(org.id)}
-                  className="btn-glass btn-glass-purple px-7 py-3 rounded-xl text-base font-semibold hover:shadow-glow-purple flex items-center gap-3 hover:translate-y-[-2px] transition-all duration-150 shadow-xl"
+                  onMouseDown={(e) => e.preventDefault()} // Prevent focus
+                  className="btn-glass btn-glass-purple px-4 py-2.5 rounded-lg text-sm font-medium hover:shadow-glow-purple flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
                 >
-                  <span className="text-lg">📊</span>
-                  <span>{isExpanded ? 'Hide Scoring' : 'Edit Scoring'}</span>
+                  {ClimateIcons.scoring}
+                  <span className="transition-opacity duration-200">
+                    {isExpanded ? 'Hide Scoring' : 'Edit Scoring'}
+                  </span>
                 </button>
               </>
             )}
           </div>
         </div>
       </div>
+
+      {/* ... existing ScoringSection ... */}
     </div>
   );
 }

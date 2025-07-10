@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 // Import the interface from scoring.ts instead of defining it here
 import { OrgScoring, SCORING_CRITERIA } from '../utils/scoring';
+import { ClimateIcons } from '../components/Icons';
 
 export function useScoring() {
   const [orgScores, setOrgScores] = useState<Record<string, OrgScoring>>({});
@@ -130,7 +131,7 @@ export function useScoring() {
   };
 
   // Get score recommendation based on total score
-  const getScoreRecommendation = (orgId: string): { text: string; color: string; emoji: string } | null => {
+  const getScoreRecommendation = (orgId: string): { text: string; color: string; icon: React.ReactNode } | null => {
     const totalScore = calculateAlignmentScore(orgId);
     
     if (totalScore === null || totalScore === 0) return null;
@@ -139,19 +140,19 @@ export function useScoring() {
       return {
         text: 'Strong Candidate',
         color: 'text-green-300',
-        emoji: '🟢'
+        icon: ClimateIcons.strong
       };
     } else if (totalScore >= 13) {
       return {
         text: 'Promising, Needs Follow-Up',
         color: 'text-orange-300',
-        emoji: '🟡'
+        icon: ClimateIcons.promising
       };
     } else {
       return {
         text: 'Low Priority / Not Suitable',
         color: 'text-red-300',
-        emoji: '🔴'
+        icon: ClimateIcons.low
       };
     }
   };

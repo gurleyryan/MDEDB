@@ -16,6 +16,7 @@ import AdminHeader from '../components/AdminHeader';
 import OrganizationCard from '../components/OrganizationCard';
 import AddOrganizationModal from '../components/AddOrganizationModal';
 import ScoringSection from '../components/ScoringSection';
+import { ClimateIcons } from '../components/Icons';
 import type { OrgWithScore } from '../../models/orgWithScore';
 
 export default function AdminOrgs() {
@@ -56,6 +57,7 @@ export default function AdminOrgs() {
   const [expandedOrg, setExpandedOrg] = useState<string | null>(null);
   const [editingOrg, setEditingOrg] = useState<string | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   // New organizational tool states
   const [searchQuery, setSearchQuery] = useState('');
@@ -68,12 +70,10 @@ export default function AdminOrgs() {
     status: 'all' | 'pending' | 'approved' | 'rejected';
     continent: string;
     scoreRange: string;
-    hasWebsite: boolean | null;
   }>({
     status: 'all',
     continent: 'all',
     scoreRange: 'all',
-    hasWebsite: null,
   });
 
   // Calculate metadata loading progress
@@ -87,13 +87,14 @@ export default function AdminOrgs() {
   const getProcessedOrgs = () => {
     let processed = [...orgs];
 
-    // Apply status filter
-    if (filter !== 'all') {
-      processed = processed.filter(org => org.approval_status === filter);
+    // Apply status filter from both filter state and filterOptions.status
+    const activeStatusFilter = filter !== 'all' ? filter : filterOptions.status;
+    if (activeStatusFilter !== 'all') {
+      processed = processed.filter(org => org.approval_status === activeStatusFilter);
     }
 
     // Hide rejected orgs unless specifically showing them
-    if (!showRejected && filter !== 'rejected') {
+    if (!showRejected && activeStatusFilter !== 'rejected') {
       processed = processed.filter(org => org.approval_status !== 'rejected');
     }
 
@@ -137,13 +138,6 @@ export default function AdminOrgs() {
       });
     }
 
-    // Apply website filter
-    if (filterOptions.hasWebsite !== null) {
-      processed = processed.filter(org => 
-        filterOptions.hasWebsite ? !!org.website : !org.website
-      );
-    }
-
     // Apply sorting
     processed.sort((a, b) => {
       let comparison = 0;
@@ -158,28 +152,32 @@ export default function AdminOrgs() {
           comparison = scoreA - scoreB;
           break;
         case 'status':
-          const statusOrder = { pending: 0, approved: 1, rejected: 2, under_review: 3 };
+          const statusOrder: Record<'pending' | 'approved' | 'rejected' | 'under_review', number> = { 
+            pending: 0, 
+            approved: 1, 
+            rejected: 2, 
+            under_review: 3 
+          };
           comparison = statusOrder[a.approval_status] - statusOrder[b.approval_status];
           break;
         case 'country':
           comparison = a.country_code.localeCompare(b.country_code);
           break;
         case 'recent':
-          // Use a fallback if created_at does not exist
-          const dateA = new Date((a as any).created_at || 0);
-          const dateB = new Date((b as any).created_at || 0);
-          comparison = dateB.getTime() - dateA.getTime();
+          const dateA = new Date(a.created_at || 0).getTime();
+          const dateB = new Date(b.created_at || 0).getTime();
+          comparison = dateA - dateB;
           break;
         case 'website':
           const hasWebsiteA = !!a.website;
           const hasWebsiteB = !!b.website;
-          comparison = hasWebsiteA === hasWebsiteB ? 0 : hasWebsiteA ? -1 : 1;
+          comparison = hasWebsiteA === hasWebsiteB ? 0 : hasWebsiteA ? 1 : -1;
           break;
         default:
           comparison = 0;
       }
       
-      return sortOptions.direction === 'desc' ? -comparison : comparison;
+      return sortOptions.direction === 'asc' ? comparison : -comparison;
     });
 
     return processed;
@@ -280,6 +278,58 @@ export default function AdminOrgs() {
     });
   };
 
+  // Add scroll position tracking
+  const [savedScrollPosition, setSavedScrollPosition] = useState<number>(0);
+
+  // Enhanced filter change handler with scroll position management
+  const handleFilterChange = (newFilter: 'all' | 'pending' | 'approved' | 'rejected') => {
+    // Save current scroll position
+    const currentScrollY = window.scrollY;
+    
+    // Apply filter change
+    setFilter(newFilter);
+    
+    // For switching TO "All" when scrolled down, force scroll reset
+    if (newFilter === 'all' && currentScrollY > 100) {
+      // Temporarily hide scrollbar to prevent browser scroll anchoring
+      document.body.style.overflow = 'hidden';
+      
+      // Use multiple animation frames to ensure DOM is fully updated
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            // Reset scroll position
+            window.scrollTo({
+              top: currentScrollY,
+              behavior: 'instant'
+            });
+            
+            // Restore scrollbar
+            document.body.style.overflow = '';
+          });
+        });
+      });
+    }
+  };
+
+  // Alternative approach: Use useEffect to restore scroll position after filter changes
+  useEffect(() => {
+    // Only restore scroll position when switching to "All" and we have a saved position
+    if (filter === 'all' && savedScrollPosition > 200) {
+      // Small delay to ensure DOM has fully updated
+      const timeoutId = setTimeout(() => {
+        window.scrollTo({
+          top: savedScrollPosition,
+          behavior: 'instant'
+        });
+        // Clear saved position after restoring
+        setSavedScrollPosition(0);
+      }, 10);
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [filter, filteredOrgs.length]); // Depend on filteredOrgs.length to ensure DOM is ready
+
   // Loading and error states
   if (loading) {
     return (
@@ -323,15 +373,50 @@ export default function AdminOrgs() {
   }
 
   async function handleStatusUpdate(orgId: string, status: 'approved' | 'rejected' | 'pending'): Promise<void> {
-    await updateOrganization(orgId, { approval_status: status });
-    if (editingOrg === orgId) {
-      setEditingOrg(null);
-    }
-    if (expandedOrg === orgId) {
-      setExpandedOrg(null);
+    console.log('=== STATUS UPDATE DEBUG ===');
+    console.log('handleStatusUpdate called with:', { orgId, status });
+    console.log('Current org status:', orgs.find(o => o.id === orgId)?.approval_status);
+    
+    try {
+      // Call the updateStatus function from useOrganizations hook
+      console.log('Calling updateStatus...');
+      await updateStatus(orgId, status);
+      console.log('updateStatus completed successfully');
+      
+      // Close any open editing/expanded states for this org
+      if (editingOrg === orgId) {
+        console.log('Closing editing state for org:', orgId);
+        setEditingOrg(null);
+      }
+      if (expandedOrg === orgId) {
+        console.log('Closing expanded state for org:', orgId);
+        setExpandedOrg(null);
+      }
+      
+      console.log('=== STATUS UPDATE SUCCESS ===');
+    } catch (error) {
+      console.error('=== STATUS UPDATE FAILED ===', error);
     }
   }
 
+  // Enhanced search change handler
+  const handleSearchChange = (value: string) => {
+    setIsSearching(true);
+    setSearchQuery(value);
+    
+    // Simulate search delay with realistic timing
+    setTimeout(() => {
+      setIsSearching(false);
+    }, 300);
+  };
+
+  // In your filter change handler, make sure there's no scrollIntoView or focus calls
+  const handleFilterChangeNoScroll = (newFilter: 'all' | 'pending' | 'approved' | 'rejected') => {
+    setFilter(newFilter);
+    // Don't add any focus or scroll logic here
+  };
+
+  // Update the AdminHeader to use the new handler
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
       {/* Stained glass background overlay */}
@@ -353,7 +438,7 @@ export default function AdminOrgs() {
         {/* Enhanced Admin Header */}
         <AdminHeader
           filter={filter}
-          onFilterChange={setFilter}
+          onFilterChange={handleFilterChange} // Use our enhanced handler
           showRejected={showRejected}
           onToggleRejected={() => setShowRejected(!showRejected)}
           onAddNew={() => setShowAddForm(true)}
@@ -367,13 +452,14 @@ export default function AdminOrgs() {
             percentage: progressPercentage
           }}
           searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
+          onSearchChange={handleSearchChange}
           sortOptions={sortOptions}
           onSortChange={setSortOptions}
           filterOptions={filterOptions}
           onFilterOptionsChange={setFilterOptions}
           filteredCount={filteredOrgs.length}
           totalOrgs={orgs.length}
+          isSearching={isSearching}
         />
 
         {/* Metadata Error Banner */}
@@ -407,9 +493,15 @@ export default function AdminOrgs() {
                 key={org.id}
                 className="will-change-auto relative"
                 style={{ 
-                  zIndex: expandedOrg === org.id ? 1001 : Math.max(1, 50 - index), // Higher z-index for expanded cards
-                  animation: `fadeIn 0.2s ease-out ${index * 0.02}s both`
+                  // Status dropdowns need to escape this container
+                  zIndex: expandedOrg === org.id ? 1001 : Math.max(1, 50 - index),
+                  // Critical: Don't create stacking context that traps status dropdowns
+                  transform: 'none',
+                  filter: 'none',
+                  position: 'relative',
+                  overflow: 'visible'
                 }}
+                tabIndex={-1} // Prevent container from receiving focus
               >
                 <div className="space-y-0">
                   {/* Organization Card */}
@@ -573,19 +665,9 @@ export default function AdminOrgs() {
               `
             }}
           >
-            <svg 
-              className="w-7 h-7 text-blue-300 group-hover:text-blue-200 transition-all duration-200 group-hover:translate-y-[-1px]" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-              strokeWidth={2.5}
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                d="M5 15l7-7 7 7"
-              />
-            </svg>
+            <div className="text-blue-300 group-hover:text-blue-200 transition-all duration-200 group-hover:translate-y-[-1px]">
+              {ClimateIcons.scrollToTop}
+            </div>
           </button>
         )}
       </div>

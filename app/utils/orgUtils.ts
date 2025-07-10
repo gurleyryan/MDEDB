@@ -1,3 +1,5 @@
+import { ClimateIcons } from '../components/Icons';
+
 // Helper function to get continent from country code
 const getContinent = (countryCode: string): string => {
   const continentMap: Record<string, string> = {
@@ -94,40 +96,40 @@ export const isPlaceholderUrl = (url?: string): boolean => {
 };
 
 // Utility to get score recommendation
-export const getScoreRecommendation = (score: number | null): { 
+export const getScoreRecommendation = (score?: number | null): { 
   text: string; 
   color: string; 
-  emoji: string; 
-  category: 'strong' | 'promising' | 'low' | 'none';
+  icon: React.ReactNode; 
+  category: string 
 } => {
-  if (score === null || score === 0) {
+  if (score === undefined || score === null) {
     return {
       text: 'Not Scored',
-      color: 'text-gray-300',
-      emoji: '⚪',
-      category: 'none'
+      color: 'text-gray-200 bg-gray-700',
+      icon: ClimateIcons.unscored,
+      category: 'unscored'
     };
   }
-  
+
   if (score >= 21) {
     return {
       text: 'Strong Candidate',
-      color: 'text-green-300',
-      emoji: '🟢',
+      color: 'text-green-200 bg-green-800',
+      icon: ClimateIcons.strong,
       category: 'strong'
     };
   } else if (score >= 13) {
     return {
       text: 'Promising, Needs Follow-Up',
-      color: 'text-orange-300',
-      emoji: '🟡',
+      color: 'text-orange-200 bg-orange-800',
+      icon: ClimateIcons.promising,
       category: 'promising'
     };
   } else {
     return {
       text: 'Low Priority / Not Suitable',
-      color: 'text-red-300',
-      emoji: '🔴',
+      color: 'text-red-200 bg-red-800',
+      icon: ClimateIcons.low,
       category: 'low'
     };
   }
@@ -163,19 +165,6 @@ export const createPlaceholderImage = (text: string, width: number = 1200, heigh
 export const truncateText = (text: string, maxLength: number): string => {
   if (text.length <= maxLength) return text;
   return text.substring(0, maxLength) + '...';
-};
-
-// Utility to get country flag emoji (basic implementation)
-export const getCountryFlag = (countryCode: string): string => {
-  const flagMap: Record<string, string> = {
-    'US': '🇺🇸', 'CA': '🇨🇦', 'MX': '🇲🇽', 'BR': '🇧🇷', 'AR': '🇦🇷', 'CL': '🇨🇱',
-    'DE': '🇩🇪', 'FR': '🇫🇷', 'UK': '🇬🇧', 'GB': '🇬🇧', 'IT': '🇮🇹', 'ES': '🇪🇸',
-    'AU': '🇦🇺', 'JP': '🇯🇵', 'CN': '🇨🇳', 'IN': '🇮🇳', 'KR': '🇰🇷', 'TH': '🇹🇭',
-    'NG': '🇳🇬', 'ZA': '🇿🇦', 'KE': '🇰🇪', 'GH': '🇬🇭', 'EG': '🇪🇬', 'MA': '🇲🇦',
-    // Add more as needed
-  };
-  
-  return flagMap[countryCode] || '🌍';
 };
 
 // Utility to get readable region name
