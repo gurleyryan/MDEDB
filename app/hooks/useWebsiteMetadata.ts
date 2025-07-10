@@ -9,6 +9,44 @@ export interface WebsiteMetadata {
   description?: string;
 }
 
+const METADATA_CACHE_KEY = 'mdedb_metadata_cache';
+const CACHE_EXPIRY_HOURS = 24;
+
+const saveToLocalCache = (url: string, metadata: any) => {
+  try {
+    const cache = JSON.parse(localStorage.getItem(METADATA_CACHE_KEY) || '{}');
+    cache[url] = {
+      data: metadata,
+      timestamp: Date.now(),
+      expires: Date.now() + (CACHE_EXPIRY_HOURS * 60 * 60 * 1000)
+    };
+    localStorage.setItem(METADATA_CACHE_KEY, JSON.stringify(cache));
+  } catch (error) {
+    console.warn('Failed to save metadata to local cache:', error);
+  }
+};
+
+const getFromLocalCache = (url: string) => {
+  try {
+    const cache = JSON.parse(localStorage.getItem(METADATA_CACHE_KEY) || '{}');
+    const cached = cache[url];
+    
+    if (cached && Date.now() < cached.expires) {
+      return cached.data;
+    }
+    
+    // Clean expired entries
+    if (cached && Date.now() >= cached.expires) {
+      delete cache[url];
+      localStorage.setItem(METADATA_CACHE_KEY, JSON.stringify(cache));
+    }
+  } catch (error) {
+    console.warn('Failed to read metadata from local cache:', error);
+  }
+  
+  return null;
+};
+
 export function useWebsiteMetadata() {
   const [websiteMetadata, setWebsiteMetadata] = useState<Record<string, WebsiteMetadata>>({});
   const [loadingMetadata, setLoadingMetadata] = useState<Record<string, boolean>>({});
@@ -19,6 +57,13 @@ export function useWebsiteMetadata() {
   const getWebsiteMetadata = async (url: string, retryCount = 0): Promise<WebsiteMetadata> => {
     const MAX_RETRIES = 2;
     
+    // Check local cache first
+    const cached = getFromLocalCache(url);
+    if (cached) {
+      console.log(`📦 Using cached metadata for ${url}`);
+      return cached;
+    }
+
     try {
       // Validate URL first
       let validUrl: string;
@@ -50,6 +95,9 @@ export function useWebsiteMetadata() {
       }
       
       const metadata = await response.json();
+      
+      // Cache successful results
+      saveToLocalCache(url, metadata);
       
       // Reset retry count on success
       setRetryAttempts(prev => {
@@ -90,7 +138,7 @@ export function useWebsiteMetadata() {
     }
   };
 
-  // Enhanced batch fetching with progressive loading
+  // Update the batch processing logic
   const fetchMetadataForOrgs = async (orgs: OrgWithScore[]) => {
     if (orgs.length === 0) return;
 
@@ -100,6 +148,15 @@ export function useWebsiteMetadata() {
     
     if (orgsWithWebsites.length === 0) return;
 
+    // Reduce batch size for better performance
+    const BATCH_SIZE = 2; // Reduced from 3
+    const BATCH_DELAY = 1000; // Increased delay between batches
+    
+    const batches = [];
+    for (let i = 0; i < orgsWithWebsites.length; i += BATCH_SIZE) {
+      batches.push(orgsWithWebsites.slice(i, i + BATCH_SIZE));
+    }
+
     // Set loading state for all orgs
     const loadingState = orgsWithWebsites.reduce((acc, org) => {
       acc[org.id] = true;
@@ -107,71 +164,50 @@ export function useWebsiteMetadata() {
     }, {} as Record<string, boolean>);
     setLoadingMetadata(prev => ({ ...prev, ...loadingState }));
 
-    // Process in smaller batches to avoid overwhelming the API
-    const BATCH_SIZE = 3;
-    const batches = [];
-    for (let i = 0; i < orgsWithWebsites.length; i += BATCH_SIZE) {
-      batches.push(orgsWithWebsites.slice(i, i + BATCH_SIZE));
-    }
-
     try {
-      // Process batches sequentially with delay between batches
+      // Process batches with longer delays
       for (const [batchIndex, batch] of batches.entries()) {
-        console.log(`Processing metadata batch ${batchIndex + 1}/${batches.length} (${batch.length} orgs)`);
+        console.log(`📦 Processing metadata batch ${batchIndex + 1}/${batches.length} (${batch.length} orgs)`);
         
         const batchPromises = batch.map(async (org) => {
           try {
             const metadata = await getWebsiteMetadata(org.website!);
             return { id: org.id, metadata, success: true };
           } catch (error) {
-            console.error(`Failed to fetch metadata for ${org.org_name}:`, error);
+            console.error(`❌ Failed to fetch metadata for ${org.org_name}:`, error);
             return { 
               id: org.id, 
-              metadata: null, 
+              metadata: getFallbackMetadata(org.org_name, org.website),
               success: false,
               error: error instanceof Error ? error.message : 'Unknown error'
             };
           }
         });
-        
+
         const batchResults = await Promise.allSettled(batchPromises);
         
-        // Update metadata as each batch completes
+        // Process results
         batchResults.forEach((result, index) => {
           const org = batch[index];
+          setLoadingMetadata(prev => ({ ...prev, [org.id]: false }));
           
-          if (result.status === 'fulfilled' && result.value.success && result.value.metadata) {
+          if (result.status === 'fulfilled' && result.value.metadata) {
             setWebsiteMetadata(prev => ({
               ...prev,
-              [result.value.id]: result.value.metadata!
+              [org.id]: result.value.metadata
             }));
           }
-          
-          // Clear loading state for this org
-          setLoadingMetadata(prev => {
-            const newState = { ...prev };
-            delete newState[org.id];
-            return newState;
-          });
         });
-        
-        // Small delay between batches to be respectful to the API
+
+        // Wait between batches (except for last batch)
         if (batchIndex < batches.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, 500));
+          console.log(`⏳ Waiting ${BATCH_DELAY}ms before next batch...`);
+          await new Promise(resolve => setTimeout(resolve, BATCH_DELAY));
         }
       }
-      
-      setError(null);
-    } catch (err) {
-      console.error('Error in batch metadata fetching:', err);
-      setError('Failed to fetch some website metadata');
-      
-      // Clear loading state for all orgs in case of error
-      const clearedLoadingState = orgsWithWebsites.reduce((acc, org) => {
-        acc[org.id] = false;
-        return acc;
-      }, {} as Record<string, boolean>);
-      setLoadingMetadata(prev => ({ ...prev, ...clearedLoadingState }));
+    } catch (error) {
+      console.error('Batch processing error:', error);
+      setError('Failed to load website metadata');
     }
   };
 
@@ -356,4 +392,15 @@ export function useAutoWebsiteMetadata(orgs: OrgWithScore[]) {
   }, [orgs.length]); // Only trigger when the number of orgs changes
   
   return metadataHook;
+}
+
+function getFallbackMetadata(org_name: string, website: string | undefined): WebsiteMetadata {
+  const domain = website ? website.replace(/^https?:\/\//, '').split('/')[0] : org_name;
+  
+  return {
+    title: org_name,
+    description: 'Climate organization working for environmental justice',
+    image: `https://via.placeholder.com/1200x630/059669/ffffff?text=${encodeURIComponent(org_name)}`,
+    favicon: website ? `https://www.google.com/s2/favicons?domain=${domain}&sz=64` : 'https://via.placeholder.com/64x64/666666/ffffff?text=?',
+  };
 }

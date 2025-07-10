@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/app/utils/supabase/client';
 import { Org } from '@/models/org';
 import { OrgWithScore } from '@/models/orgWithScore';
 
 export function useOrganizations() {
+  const supabase = createClient();
   const [orgs, setOrgs] = useState<OrgWithScore[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

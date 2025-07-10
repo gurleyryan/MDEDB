@@ -4,6 +4,77 @@ import * as cheerio from 'cheerio';
 const metadataCache = new Map<string, { data: any; timestamp: number }>();
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 
+// Add to app/api/metadata/route.ts - Enhanced retry mechanism
+async function fetchWithFallbacks(url: string): Promise<Response> {
+  const attempts = [
+    { url: url.startsWith('http') ? url : `https://${url}`, protocol: 'HTTPS' },
+    { url: url.replace('https://', 'http://'), protocol: 'HTTP' },
+    { url: `https://${url.replace(/^https?:\/\//, '')}`, protocol: 'HTTPS Alt' }
+  ];
+
+  for (const attempt of attempts) {
+    try {
+      console.log(`Trying ${attempt.protocol} for ${attempt.url}`);
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+      const response = await fetch(attempt.url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        },
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (response.ok) {
+        console.log(`✅ Success with ${attempt.protocol} for ${attempt.url}`);
+        return response;
+      }
+    } catch (error: any) {
+      console.log(`❌ ${attempt.protocol} failed for ${attempt.url}:`, error.code || error.message);
+      continue;
+    }
+  }
+
+  throw new Error('All connection attempts failed');
+}
+
+// Update app/api/metadata/route.ts - Enhanced debugging for failing sites
+
+// Add this debugging function at the top
+async function debugFailingSite(url: string) {
+  console.log(`🔍 DEBUGGING FAILING SITE: ${url}`);
+  
+  const attempts = [
+    `https://${url.replace(/^https?:\/\//, '')}`,
+    `http://${url.replace(/^https?:\/\//, '')}`,
+    `https://www.${url.replace(/^https?:\/\/(www\.)?/, '')}`,
+    `http://www.${url.replace(/^https?:\/\/(www\.)?/, '')}`
+  ];
+
+  for (const attempt of attempts) {
+    try {
+      console.log(`  Testing: ${attempt}`);
+      const response = await fetch(attempt, {
+        method: 'HEAD',
+        signal: AbortSignal.timeout(5000),
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+      });
+      console.log(`  ✅ ${attempt} responded with ${response.status}`);
+      return attempt;
+    } catch (error: any) {
+      console.log(`  ❌ ${attempt} failed: ${error.message}`);
+    }
+  }
+  
+  return null;
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const url = searchParams.get('url');
@@ -18,50 +89,77 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(cached.data);
   }
 
+  // Special handling for problematic sites
+  if (url.includes('amigosdaterrabrasil.org.br') || url.includes('climaesociedade.org')) {
+    console.log(`🚨 SPECIAL HANDLING for ${url}`);
+    const workingUrl = await debugFailingSite(url);
+    if (workingUrl) {
+      console.log(`🎯 Found working URL: ${workingUrl}`);
+    }
+  }
+
   try {
-    // Validate and normalize the URL
-    let normalizedUrl: string;
+    const normalizedUrl = url.startsWith('http') ? url : `https://${url}`;
+    const domain = new URL(normalizedUrl).hostname;
+
+    let response;
     try {
-      normalizedUrl = url.startsWith('http') ? url : `https://${url}`;
-      new URL(normalizedUrl); // Validate URL format
-    } catch {
-      return NextResponse.json({ error: 'Invalid URL format' }, { status: 400 });
+      response = await fetchWithFallbacks(normalizedUrl);
+    } catch (fetchError: any) {
+      console.error(`📍 Primary fetch failed for ${url}:`, fetchError.code || fetchError.message);
+      
+      // Enhanced fallback for specific failing sites
+      if (url.includes('climaesociedade.org')) {
+        // Try alternative domains/paths for Instituto Clima e Sociedade
+        const alternatives = [
+          'http://climaesociedade.org',
+          'https://climaesociedade.org',
+          'http://www.climaesociedade.org',
+          'https://instituto.climaesociedade.org'
+        ];
+        
+        for (const alt of alternatives) {
+          try {
+            console.log(`🔄 Trying alternative for climaesociedade: ${alt}`);
+            response = await fetchWithFallbacks(alt);
+            if (response.ok) {
+              console.log(`✅ Success with alternative: ${alt}`);
+              break;
+            }
+          } catch (altError) {
+            console.log(`❌ Alternative failed: ${alt}`);
+            continue;
+          }
+        }
+      }
+      
+      if (!response) {
+        throw fetchError;
+      }
     }
 
-    // Fetch the webpage with better error handling
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
-    const response = await fetch(normalizedUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'DNT': '1',
-        'Connection': 'keep-alive',
-        'Upgrade-Insecure-Requests': '1',
-        'Sec-Fetch-Dest': 'document',
-        'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-Site': 'none',
-        'Cache-Control': 'max-age=0',
-      },
-      signal: controller.signal,
-    });
-
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      // Don't log 403 errors as they're expected for sites that block scrapers
-      if (response.status !== 403) {
-        console.error(`HTTP ${response.status} for ${url}`);
-      }
-      throw new Error(`HTTP ${response.status}`);
+    if (!response || !response.ok) {
+      console.error(`📍 Response not OK for ${url}: ${response?.status}`);
+      
+      // Return enhanced fallback with Brazilian Portuguese support
+      const domain = url.replace(/^https?:\/\//, '').split('/')[0];
+      const isBrazilian = domain.includes('.br') || domain.includes('brasil');
+      
+      return NextResponse.json({
+        title: isBrazilian ? 'Organização Climática Brasileira' : domain,
+        description: isBrazilian 
+          ? 'Organização brasileira trabalhando pela justiça climática e sustentabilidade ambiental'
+          : 'Climate organization working for environmental justice',
+        image: `https://via.placeholder.com/1200x630/059669/ffffff?text=${encodeURIComponent(domain)}`,
+        favicon: `https://www.google.com/s2/favicons?domain=${domain}&sz=64`,
+        url: url,
+        domain: domain,
+        error: `HTTP ${response?.status || 'connection failed'}`
+      });
     }
 
     const html = await response.text();
     const $ = cheerio.load(html);
-    const domain = new URL(normalizedUrl).hostname;
 
     // Helper function to get non-empty attribute value and filter out placeholders
     const getNonEmpty = (value: string | undefined): string | null => {
@@ -284,7 +382,9 @@ export async function GET(request: NextRequest) {
     // Resolve relative URLs to absolute URLs
     if (metadata.image && !metadata.image.startsWith('http')) {
       try {
-        metadata.image = new URL(metadata.image, normalizedUrl).href;
+        // Use the actual response URL (which might be HTTP after fallback)
+        const baseUrl = response.url || normalizedUrl;
+        metadata.image = new URL(metadata.image, baseUrl).href;
       } catch {
         metadata.image = null;
       }
@@ -292,16 +392,47 @@ export async function GET(request: NextRequest) {
     
     if (metadata.favicon && !metadata.favicon.startsWith('http') && !metadata.favicon.startsWith('data:')) {
       try {
-        metadata.favicon = new URL(metadata.favicon, normalizedUrl).href;
+        // Use the actual response URL (which might be HTTP after fallback)
+        const baseUrl = response.url || normalizedUrl;
+        metadata.favicon = new URL(metadata.favicon, baseUrl).href;
       } catch {
         metadata.favicon = null;
       }
     }
 
-    // If still no favicon, try to fetch common paths
+    // Convert HTTPS URLs to HTTP if the site only works via HTTP
+    if (response.url && response.url.startsWith('http://')) {
+      if (metadata.image && metadata.image.startsWith('https://')) {
+        // Check if the image domain matches the site domain
+        try {
+          const imageUrl = new URL(metadata.image);
+          const siteUrl = new URL(response.url);
+          if (imageUrl.hostname === siteUrl.hostname) {
+            metadata.image = metadata.image.replace('https://', 'http://');
+          }
+        } catch {
+          // Keep original URL if parsing fails
+        }
+      }
+      
+      if (metadata.favicon && metadata.favicon.startsWith('https://')) {
+        try {
+          const faviconUrl = new URL(metadata.favicon);
+          const siteUrl = new URL(response.url);
+          if (faviconUrl.hostname === siteUrl.hostname) {
+            metadata.favicon = metadata.favicon.replace('https://', 'http://');
+          }
+        } catch {
+          // Keep original URL if parsing fails
+        }
+      }
+    }
+
+    // If still no favicon, try to fetch common paths using the correct protocol
     if (!metadata.favicon) {
       try {
-        const faviconUrl = new URL('/favicon.ico', normalizedUrl).href;
+        const baseUrl = response.url || normalizedUrl;
+        const faviconUrl = new URL('/favicon.ico', baseUrl).href;
         const faviconResponse = await fetch(faviconUrl, { 
           method: 'HEAD',
           signal: AbortSignal.timeout(3000) // 3 second timeout for favicon check
@@ -317,11 +448,37 @@ export async function GET(request: NextRequest) {
     // Cache successful results
     metadataCache.set(url, { data: metadata, timestamp: Date.now() });
 
+    console.log(`🔍 Metadata for ${url}:`, {
+      title: metadata.title,
+      hasImage: !!metadata.image,
+      imageUrl: metadata.image
+        ? metadata.image.substring(0, 100) + (metadata.image.length > 100 ? '...' : '')
+        : null,
+      hasFavicon: !!metadata.favicon,
+      faviconUrl: metadata.favicon
+        ? metadata.favicon.substring(0, 100) + (metadata.favicon.length > 100 ? '...' : '')
+        : null,
+      responseUrl: response.url
+    });
+
     return NextResponse.json(metadata);
 
-  } catch (error) {
-    console.error('Error fetching metadata for', url, ':', error);
+  } catch (error: any) {
+    console.error(`Error fetching metadata for ${url}:`, error.message);
     
+    // Return graceful fallback for TLS errors
+    if (error.code === 'ERR_TLS_CERT_ALTNAME_INVALID' || 
+        error.message?.includes('certificate')) {
+      const domain = url.replace(/^https?:\/\//, '').split('/')[0];
+      return NextResponse.json({
+        title: domain,
+        description: 'Climate organization (TLS certificate issue - content not accessible)',
+        image: `https://via.placeholder.com/1200x630/dc2626/ffffff?text=TLS+Error`,
+        favicon: `https://www.google.com/s2/favicons?domain=${domain}&sz=64`,
+        error: 'TLS certificate configuration issue on target website'
+      });
+    }
+
     // Return comprehensive fallback metadata
     const domain = (() => {
       try {

@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/app/utils/supabase/client';
 import { getScoringProgress } from '../utils/scoring';
 
 // Hooks
@@ -20,8 +20,9 @@ import { ClimateIcons } from '../components/Icons';
 import type { OrgWithScore } from '../../models/orgWithScore';
 
 export default function AdminOrgs() {
+  const supabase = createClient();
   const router = useRouter();
-  
+
   // Hooks
   const {
     orgs,
@@ -43,11 +44,11 @@ export default function AdminOrgs() {
     fetchOrgScoring
   } = useScoring();
 
-  const { 
-    websiteMetadata, 
-    loadingMetadata, 
+  const {
+    websiteMetadata,
+    loadingMetadata,
     error: metadataError,
-    retryAttempts 
+    retryAttempts
   } = useAutoWebsiteMetadata(orgs);
 
   // Enhanced local state for organizational tools
@@ -65,7 +66,7 @@ export default function AdminOrgs() {
     field: 'name' | 'score' | 'status' | 'country' | 'recent' | 'website';
     direction: 'asc' | 'desc';
   }>({ field: 'name', direction: 'asc' });
-  
+
   const [filterOptions, setFilterOptions] = useState<{
     status: 'all' | 'pending' | 'approved' | 'rejected';
     continent: string;
@@ -101,7 +102,7 @@ export default function AdminOrgs() {
     // Apply search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
-      processed = processed.filter(org => 
+      processed = processed.filter(org =>
         org.org_name.toLowerCase().includes(query) ||
         org.country_code.toLowerCase().includes(query) ||
         org.type_of_work?.toLowerCase().includes(query) ||
@@ -141,7 +142,7 @@ export default function AdminOrgs() {
     // Apply sorting
     processed.sort((a, b) => {
       let comparison = 0;
-      
+
       switch (sortOptions.field) {
         case 'name':
           comparison = a.org_name.localeCompare(b.org_name);
@@ -152,11 +153,11 @@ export default function AdminOrgs() {
           comparison = scoreA - scoreB;
           break;
         case 'status':
-          const statusOrder: Record<'pending' | 'approved' | 'rejected' | 'under_review', number> = { 
-            pending: 0, 
-            approved: 1, 
-            rejected: 2, 
-            under_review: 3 
+          const statusOrder: Record<'pending' | 'approved' | 'rejected' | 'under_review', number> = {
+            pending: 0,
+            approved: 1,
+            rejected: 2,
+            under_review: 3
           };
           comparison = statusOrder[a.approval_status] - statusOrder[b.approval_status];
           break;
@@ -176,7 +177,7 @@ export default function AdminOrgs() {
         default:
           comparison = 0;
       }
-      
+
       return sortOptions.direction === 'asc' ? comparison : -comparison;
     });
 
@@ -194,7 +195,7 @@ export default function AdminOrgs() {
       'AE': 'Middle East', 'SA': 'Middle East', 'IL': 'Middle East', 'TR': 'Middle East',
       'AU': 'Oceania', 'NZ': 'Oceania'
     };
-    
+
     return continentMap[countryCode] || 'Unknown';
   };
 
@@ -210,7 +211,7 @@ export default function AdminOrgs() {
   // Auth check
   useEffect(() => {
     const checkUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
+      const { data, error } = await supabase.auth.getUser(); // More secure than getSession
       if (error || !data?.user) {
         router.push('/login');
       }
@@ -285,15 +286,15 @@ export default function AdminOrgs() {
   const handleFilterChange = (newFilter: 'all' | 'pending' | 'approved' | 'rejected') => {
     // Save current scroll position
     const currentScrollY = window.scrollY;
-    
+
     // Apply filter change
     setFilter(newFilter);
-    
+
     // For switching TO "All" when scrolled down, force scroll reset
     if (newFilter === 'all' && currentScrollY > 100) {
       // Temporarily hide scrollbar to prevent browser scroll anchoring
       document.body.style.overflow = 'hidden';
-      
+
       // Use multiple animation frames to ensure DOM is fully updated
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
@@ -303,7 +304,7 @@ export default function AdminOrgs() {
               top: currentScrollY,
               behavior: 'instant'
             });
-            
+
             // Restore scrollbar
             document.body.style.overflow = '';
           });
@@ -325,7 +326,7 @@ export default function AdminOrgs() {
         // Clear saved position after restoring
         setSavedScrollPosition(0);
       }, 10);
-      
+
       return () => clearTimeout(timeoutId);
     }
   }, [filter, filteredOrgs.length]); // Depend on filteredOrgs.length to ensure DOM is ready
@@ -376,13 +377,13 @@ export default function AdminOrgs() {
     console.log('=== STATUS UPDATE DEBUG ===');
     console.log('handleStatusUpdate called with:', { orgId, status });
     console.log('Current org status:', orgs.find(o => o.id === orgId)?.approval_status);
-    
+
     try {
       // Call the updateStatus function from useOrganizations hook
       console.log('Calling updateStatus...');
       await updateStatus(orgId, status);
       console.log('updateStatus completed successfully');
-      
+
       // Close any open editing/expanded states for this org
       if (editingOrg === orgId) {
         console.log('Closing editing state for org:', orgId);
@@ -392,7 +393,7 @@ export default function AdminOrgs() {
         console.log('Closing expanded state for org:', orgId);
         setExpandedOrg(null);
       }
-      
+
       console.log('=== STATUS UPDATE SUCCESS ===');
     } catch (error) {
       console.error('=== STATUS UPDATE FAILED ===', error);
@@ -403,7 +404,7 @@ export default function AdminOrgs() {
   const handleSearchChange = (value: string) => {
     setIsSearching(true);
     setSearchQuery(value);
-    
+
     // Simulate search delay with realistic timing
     setTimeout(() => {
       setIsSearching(false);
@@ -420,7 +421,7 @@ export default function AdminOrgs() {
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
       {/* Stained glass background overlay */}
-      <div 
+      <div
         className="fixed inset-0 opacity-30 pointer-events-none"
         style={{
           background: `
@@ -432,7 +433,7 @@ export default function AdminOrgs() {
           `
         }}
       />
-      
+
       {/* Content with glass panels */}
       <div className="relative z-10">
         {/* Enhanced Admin Header */}
@@ -492,7 +493,7 @@ export default function AdminOrgs() {
               <div
                 key={org.id}
                 className="will-change-auto relative"
-                style={{ 
+                style={{
                   // Status dropdowns need to escape this container
                   zIndex: expandedOrg === org.id ? 1001 : Math.max(1, 50 - index),
                   // Critical: Don't create stacking context that traps status dropdowns
@@ -521,7 +522,7 @@ export default function AdminOrgs() {
                     onScoreUpdate={updateScoringField}
                     onScoringSave={handleScoringSave}
                   />
-                  
+
                   {/* Separate Scoring Section */}
                   <div style={{ zIndex: 1000 }}> {/* Lower z-index for scoring section */}
                     <ScoringSection
@@ -548,22 +549,22 @@ export default function AdminOrgs() {
               className="text-center py-16"
             >
               <div className="text-6xl mb-4">
-                {searchQuery ? '🔍' : filter === 'all' ? '📋' : 
-                 filter === 'pending' ? '⏳' : 
-                 filter === 'approved' ? '✅' : '❌'}
+                {searchQuery ? '🔍' : filter === 'all' ? '📋' :
+                  filter === 'pending' ? '⏳' :
+                    filter === 'approved' ? '✅' : '❌'}
               </div>
               <h3 className="text-xl font-bold text-gray-300 mb-2">
-                {searchQuery ? `No results for "${searchQuery}"` : 
-                 `No ${filter === 'all' ? '' : filter} organizations found`}
+                {searchQuery ? `No results for "${searchQuery}"` :
+                  `No ${filter === 'all' ? '' : filter} organizations found`}
               </h3>
               <p className="text-gray-400 mb-6">
                 {searchQuery ? 'Try adjusting your search terms or filters.' :
-                 filter === 'all' 
-                  ? 'Get started by adding your first organization.'
-                  : `There are no ${filter} organizations to display.`
+                  filter === 'all'
+                    ? 'Get started by adding your first organization.'
+                    : `There are no ${filter} organizations to display.`
                 }
               </p>
-              
+
               {/* Quick Actions for Empty State */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 {searchQuery && (

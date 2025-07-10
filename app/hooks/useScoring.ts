@@ -1,11 +1,12 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/app/utils/supabase/client';
 // Import the interface from scoring.ts instead of defining it here
 import { OrgScoring, SCORING_CRITERIA } from '../utils/scoring';
 import { ClimateIcons } from '../components/Icons';
 
 export function useScoring() {
+  const supabase = createClient();
   const [orgScores, setOrgScores] = useState<Record<string, OrgScoring>>({});
   const [savingScores, setSavingScores] = useState<string | null>(null);
   const [loadingScores, setLoadingScores] = useState<Record<string, boolean>>({});
