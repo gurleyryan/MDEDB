@@ -4,6 +4,7 @@
 [![Powered by Supabase](https://img.shields.io/badge/Powered%20by-Supabase-green?logo=supabase)](https://supabase.com/)
 [![Styled with Tailwind](https://img.shields.io/badge/Styled%20with-Tailwind%20CSS-blue?logo=tailwindcss)](https://tailwindcss.com/)
 [![Status: In Development](https://img.shields.io/badge/status-in--development-yellow)](#)
+[![AGPL v3 License](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
 
 ## Table of Contents
 
@@ -406,7 +407,7 @@ We welcome contributions! Please see our contributing guidelines:
 
 ## License
 
-This project is currently unlicensed. Please contact the maintainers for usage permissions.
+This project is licensed under the [GNU Affero General Public License v3.0 (AGPL-3.0)](LICENSE).
 
 ---
 
