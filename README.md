@@ -3,6 +3,7 @@
 [![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js-black?logo=next.js)](https://nextjs.org/)
 [![Powered by Supabase](https://img.shields.io/badge/Powered%20by-Supabase-green?logo=supabase)](https://supabase.com/)
 [![Styled with Tailwind](https://img.shields.io/badge/Styled%20with-Tailwind%20CSS-blue?logo=tailwindcss)](https://tailwindcss.com/)
+[![Status: In Development](https://img.shields.io/badge/status-in--development-yellow)](#)
 
 ## Table of Contents
 
@@ -336,6 +337,33 @@ Organizations are visually themed based on their geographic location:
 - **Metadata Caching** - Intelligent caching of website metadata
 - **Debounced Search** - Optimized search performance with debouncing
 - **CSS-only Animations** - Hardware-accelerated animations without JavaScript frameworks
+
+---
+
+## Deployment
+
+### Deploying to Vercel
+
+1. Push your code to GitHub.
+2. Go to [Vercel](https://vercel.com/) and import your repository.
+3. Set the following environment variables in the Vercel dashboard:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_KEY`
+4. Click "Deploy".
+
+> **Note:**  
+> Make sure your Supabase database and authentication are fully configured before deploying.
+
+---
+
+### Troubleshooting
+
+#### CSS Linting Warnings
+
+You may see warnings like `Can't validate with unknown variable '--font-ibm-plex'` from the CSS linter.  
+These are safe to ignore as long as your custom properties are defined in your CSS (e.g., in `:root`).  
+The app uses proper fallback font stacks for all custom font variables.
 
 ---
 
