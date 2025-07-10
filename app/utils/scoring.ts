@@ -183,7 +183,7 @@ export const calculateAlignmentScore = (scores: OrgScoring): number | null => {
 };
 
 // Validate individual score value
-export const isValidScore = (score: any): score is number => {
+export const isValidScore = (score: unknown): score is number => {
   return typeof score === 'number' && 
          score >= SCORING_CONSTANTS.MIN_SCORE && 
          score <= SCORING_CONSTANTS.MAX_SCORE;

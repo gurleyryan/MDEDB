@@ -1,9 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/app/utils/supabase/client';
-import { getScoringProgress } from '../utils/scoring';
+import { motion } from 'framer-motion';
 
 // Hooks
 // Make sure the file exists at app/hooks/useOrganizations.ts or adjust the import path if needed.
@@ -32,7 +31,6 @@ export default function AdminOrgs() {
     updateStatus,
     addOrganization,
     updateOrganization,
-    getFilteredOrgs,
     getOrgCounts
   } = useOrganizations();
 
@@ -48,7 +46,6 @@ export default function AdminOrgs() {
     websiteMetadata,
     loadingMetadata,
     error: metadataError,
-    retryAttempts
   } = useAutoWebsiteMetadata(orgs);
 
   // Enhanced local state for organizational tools
@@ -127,12 +124,18 @@ export default function AdminOrgs() {
         switch (filterOptions.scoreRange) {
           case 'strong':
             return score !== null && score >= 21;
-          case 'promising':
-            return score !== null && score >= 13 && score <= 20;
-          case 'low':
-            return score !== null && score <= 12;
-          case 'unscored':
+          case 'promising': {
+            const min = 13;
+            const max = 20;
+            return score !== null && score >= min && score <= max;
+          }
+          case 'low': {
+            const max = 12;
+            return score !== null && score <= max;
+          }
+          case 'unscored': {
             return score === null || score === undefined;
+          }
           default:
             return true;
         }
@@ -147,12 +150,13 @@ export default function AdminOrgs() {
         case 'name':
           comparison = a.org_name.localeCompare(b.org_name);
           break;
-        case 'score':
+        case 'score': {
           const scoreA = a.alignment_score || 0;
           const scoreB = b.alignment_score || 0;
           comparison = scoreA - scoreB;
           break;
-        case 'status':
+        }
+        case 'status': {
           const statusOrder: Record<'pending' | 'approved' | 'rejected' | 'under_review', number> = {
             pending: 0,
             approved: 1,
@@ -161,19 +165,22 @@ export default function AdminOrgs() {
           };
           comparison = statusOrder[a.approval_status] - statusOrder[b.approval_status];
           break;
+        }
         case 'country':
           comparison = a.country_code.localeCompare(b.country_code);
           break;
-        case 'recent':
+        case 'recent': {
           const dateA = new Date(a.created_at || 0).getTime();
           const dateB = new Date(b.created_at || 0).getTime();
           comparison = dateA - dateB;
           break;
-        case 'website':
+        }
+        case 'website': {
           const hasWebsiteA = !!a.website;
           const hasWebsiteB = !!b.website;
           comparison = hasWebsiteA === hasWebsiteB ? 0 : hasWebsiteA ? 1 : -1;
           break;
+        }
         default:
           comparison = 0;
       }
@@ -258,7 +265,7 @@ export default function AdminOrgs() {
   };
 
   // Handle organization save (editing)
-  const handleOrganizationSave = async (orgId: string, data: any): Promise<boolean> => {
+  const handleOrganizationSave = async (orgId: string, data: Record<string, unknown>): Promise<boolean> => {
     const success = await updateOrganization(orgId, data);
     if (success) {
       setEditingOrg(null);
@@ -267,7 +274,7 @@ export default function AdminOrgs() {
   };
 
   // Handle adding new organization
-  const handleAddOrganization = async (orgData: any): Promise<boolean> => {
+  const handleAddOrganization = async (orgData: Record<string, unknown>): Promise<boolean> => {
     return await addOrganization(orgData);
   };
 
@@ -409,12 +416,6 @@ export default function AdminOrgs() {
     setTimeout(() => {
       setIsSearching(false);
     }, 300);
-  };
-
-  // In your filter change handler, make sure there's no scrollIntoView or focus calls
-  const handleFilterChangeNoScroll = (newFilter: 'all' | 'pending' | 'approved' | 'rejected') => {
-    setFilter(newFilter);
-    // Don't add any focus or scroll logic here
   };
 
   // Update the AdminHeader to use the new handler

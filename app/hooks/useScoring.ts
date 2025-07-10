@@ -87,7 +87,7 @@ export function useScoring() {
         setError(null);
         return true;
       }
-    } catch (err) {
+    } catch {
       setError('Failed to save scoring data');
       return false;
     } finally {
@@ -189,7 +189,7 @@ export function useScoring() {
         setError(null);
         return true;
       }
-    } catch (err) {
+    } catch {
       setError('Failed to delete scoring data');
       return false;
     } finally {

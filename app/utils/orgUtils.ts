@@ -183,8 +183,17 @@ export const getRegionName = (countryCode: string): string => {
 };
 
 // Utility to sort organizations by various criteria
+type Org = {
+  org_name: string;
+  alignment_score?: number | null;
+  approval_status?: string;
+  country_code?: string;
+  created_at?: string | number | Date;
+  [key: string]: unknown;
+};
+
 export const sortOrganizations = (
-  orgs: any[], 
+  orgs: Org[], 
   sortBy: 'name' | 'score' | 'status' | 'country' | 'recent',
   direction: 'asc' | 'desc' = 'asc'
 ) => {
@@ -195,18 +204,20 @@ export const sortOrganizations = (
       case 'name':
         comparison = a.org_name.localeCompare(b.org_name);
         break;
-      case 'score':
+      case 'score': {
         const scoreA = a.alignment_score ?? -1;
         const scoreB = b.alignment_score ?? -1;
         comparison = scoreA - scoreB;
         break;
-      case 'status':
+      }
+      case 'status': {
         const statusOrder = { approved: 3, pending: 2, rejected: 1 };
         comparison = (statusOrder[a.approval_status as keyof typeof statusOrder] || 0) - 
                     (statusOrder[b.approval_status as keyof typeof statusOrder] || 0);
         break;
+      }
       case 'country':
-        comparison = a.country_code.localeCompare(b.country_code);
+        comparison = (a.country_code ?? '').localeCompare(b.country_code ?? '');
         break;
       case 'recent':
         comparison = new Date(a.created_at || 0).getTime() - new Date(b.created_at || 0).getTime();

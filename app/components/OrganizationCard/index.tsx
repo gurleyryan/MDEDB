@@ -13,9 +13,7 @@ import {
   createValidUrl,
   processEmails,
   getGoogleFaviconUrl,
-  isPlaceholderUrl,
-  getScoreRecommendation
-} from '../../utils/orgUtils';
+  isPlaceholderUrl} from '../../utils/orgUtils';
 import { validateField, formatUrl, formatCountryCode } from '../../utils/validation';
 import { ClimateIcons } from '../Icons';
 
@@ -41,7 +39,6 @@ interface OrganizationCardProps {
 export function OrganizationCard({
   org,
   metadata,
-  scores,
   isExpanded,
   isEditing,
   updatingId,
@@ -128,27 +125,6 @@ export function OrganizationCard({
   const websiteInfo = org.website ? createValidUrl(org.website) : null;
 
   // Calculate total score
-  const totalScore = scores ? (() => {
-    const numericScores = [
-      scores.impact_track_record,
-      scores.local_legitimacy,
-      scores.transparency,
-      scores.scalability,
-      scores.digital_presence,
-      scores.alignment,
-      scores.urgency_relevance,
-      scores.clear_actionable_cta,
-      scores.show_ready_cta,
-      scores.scalable_impact,
-      scores.accessibility,
-      scores.global_regional_fit,
-      scores.volunteer_pipeline
-    ].filter(score => score !== undefined && score !== null) as number[];
-
-    return numericScores.length > 0 ? numericScores.reduce((sum, score) => sum + score, 0) : null;
-  })() : null;
-
-  const recommendation = getScoreRecommendation(totalScore);
 
   // Add loading state awareness
   const isMetadataLoading = !metadata && org.website; // Loading if no metadata but has website
@@ -207,9 +183,9 @@ export function OrganizationCard({
               {/* Glass box that sizes to content */}
               <div className="mission-statement-glass px-4 py-3 max-w-full">
                 <blockquote className="mission-statement-text text-sm leading-relaxed text-pretty text-center">
-                  <span className="mission-quote-mark text-lg leading-none">"</span>
+                  <span className="mission-quote-mark text-lg leading-none">&quot;</span>
                   <span className="mx-1">{org.mission_statement}</span>
-                  <span className="mission-quote-mark text-lg leading-none">"</span>
+                  <span className="mission-quote-mark text-lg leading-none">&quot;</span>
                 </blockquote>
               </div>
             </div>

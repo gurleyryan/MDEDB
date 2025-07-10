@@ -12,7 +12,7 @@ export interface WebsiteMetadata {
 const METADATA_CACHE_KEY = 'mdedb_metadata_cache';
 const CACHE_EXPIRY_HOURS = 24;
 
-const saveToLocalCache = (url: string, metadata: any) => {
+const saveToLocalCache = (url: string, metadata: unknown) => {
   try {
     const cache = JSON.parse(localStorage.getItem(METADATA_CACHE_KEY) || '{}');
     cache[url] = {
@@ -70,7 +70,7 @@ export function useWebsiteMetadata() {
       try {
         validUrl = url.startsWith('http') ? url : `https://${url}`;
         new URL(validUrl);
-      } catch (urlError) {
+      } catch {
         console.error('Invalid URL:', url);
         return {
           title: url,

@@ -1,8 +1,6 @@
 'use client';
-import { useState } from 'react';
 import { CustomDropdown } from '../CustomDropdown';
-import { OrgScoring, SCORING_CRITERIA, getScoreRecommendation, calculateAlignmentScore } from '../../utils/scoring';
-import { getAlignmentScoreColor } from '../../utils/orgUtils';
+import { OrgScoring, SCORING_CRITERIA, calculateAlignmentScore } from '../../utils/scoring';
 import { getScoringOptions } from '../../utils/selectOptions';
 import { ClimateIcons } from '../Icons';
 
@@ -25,12 +23,10 @@ export function ScoringSection({
   savingScores,
   onScoreUpdate,
   onScoringSave,
-  onToggleExpanded
 }: ScoringSectionProps) {
   
   // Calculate total score
   const totalScore = scores ? calculateAlignmentScore(scores) : null;
-  const recommendation = getScoreRecommendation(totalScore);
 
   // Calculate scoring progress
   const scoredCriteria = SCORING_CRITERIA.filter(criterion => {
@@ -348,7 +344,7 @@ export function ScoringSection({
             </div>
 
             {/* 13th Criterion - In its own position */}
-            {SCORING_CRITERIA.slice(12, 13).map((criterion, index) => {
+            {SCORING_CRITERIA.slice(12, 13).map((criterion) => {
               const actualIndex = 12;
               const currentScore = scores?.[criterion.key as keyof OrgScoring] as number | undefined;
               

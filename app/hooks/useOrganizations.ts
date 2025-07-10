@@ -25,7 +25,7 @@ export function useOrganizations() {
         setOrgs(data || []);
         setError(null);
       }
-    } catch (err) {
+    } catch {
       setError('Failed to fetch organizations');
     } finally {
       setLoading(false);
@@ -52,7 +52,7 @@ export function useOrganizations() {
         );
         setError(null);
       }
-    } catch (err) {
+    } catch {
       setError('Failed to update organization status');
     } finally {
       setUpdatingId(null);
@@ -83,7 +83,7 @@ export function useOrganizations() {
         setError(null);
         return true;
       }
-    } catch (err) {
+    } catch {
       setError('Failed to add organization');
       return false;
     } finally {
@@ -113,7 +113,7 @@ export function useOrganizations() {
         setError(null);
         return true;
       }
-    } catch (err) {
+    } catch {
       setError('Failed to update organization');
       return false;
     } finally {
@@ -139,7 +139,7 @@ export function useOrganizations() {
         setError(null);
         return true;
       }
-    } catch (err) {
+    } catch {
       setError('Failed to delete organization');
       return false;
     } finally {

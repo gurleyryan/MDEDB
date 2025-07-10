@@ -1,5 +1,4 @@
 'use client';
-import { useState } from 'react';
 import { CustomDropdown } from '../CustomDropdown';
 import { ClimateIcons } from '../Icons';
 import { 
@@ -8,12 +7,6 @@ import {
   getSortFieldOptions 
 } from '../../utils/selectOptions';
 
-interface OrgCounts {
-  all: number;
-  pending: number;
-  approved: number;
-  rejected: number;
-}
 
 interface FilterOptions {
   status: 'all' | 'pending' | 'approved' | 'rejected';
@@ -312,7 +305,7 @@ export function AdminHeader({
                   value={sortOptions.field}
                   onChange={(value) => onSortChange({
                     ...sortOptions,
-                    field: value as any
+                    field: value as SortOptions['field']
                   })}
                   placeholder="Sort by..."
                   colorCoded={true}

@@ -1,9 +1,6 @@
 // Email validation regex
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// URL validation regex (basic)
-const URL_REGEX = /^https?:\/\/.+\..+/;
-
 // Country code validation (ISO 3166-1 alpha-2)
 const COUNTRY_CODE_REGEX = /^[A-Z]{2}$/;
 
@@ -285,74 +282,74 @@ export const validateApprovalStatus = (status: string): FieldValidationResult =>
 };
 
 // Complete organization validation
-export const validateOrganization = (org: any): ValidationResult => {
+export const validateOrganization = (org: Record<string, unknown>): ValidationResult => {
   const errors: string[] = [];
   const warnings: string[] = [];
-  
+
   // Required fields
-  const nameValidation = validateOrgName(org.org_name);
+  const nameValidation = validateOrgName(org.org_name as string);
   if (!nameValidation.isValid) errors.push(nameValidation.error!);
   if (nameValidation.warning) warnings.push(nameValidation.warning);
-  
-  const countryValidation = validateCountryCode(org.country_code);
+
+  const countryValidation = validateCountryCode(org.country_code as string);
   if (!countryValidation.isValid) errors.push(countryValidation.error!);
   if (countryValidation.warning) warnings.push(countryValidation.warning);
-  
+
   // Optional fields
   if (org.email) {
-    const emailValidation = validateEmail(org.email);
+    const emailValidation = validateEmail(org.email as string);
     if (!emailValidation.isValid) errors.push(emailValidation.error!);
     if (emailValidation.warning) warnings.push(emailValidation.warning);
   }
-  
+
   if (org.website) {
-    const websiteValidation = validateWebsite(org.website);
+    const websiteValidation = validateWebsite(org.website as string);
     if (!websiteValidation.isValid) errors.push(websiteValidation.error!);
     if (websiteValidation.warning) warnings.push(websiteValidation.warning);
   }
-  
+
   if (org.type_of_work) {
-    const typeValidation = validateTypeOfWork(org.type_of_work);
+    const typeValidation = validateTypeOfWork(org.type_of_work as string);
     if (!typeValidation.isValid) errors.push(typeValidation.error!);
     if (typeValidation.warning) warnings.push(typeValidation.warning);
   }
-  
+
   if (org.mission_statement) {
-    const missionValidation = validateMissionStatement(org.mission_statement);
+    const missionValidation = validateMissionStatement(org.mission_statement as string);
     if (!missionValidation.isValid) errors.push(missionValidation.error!);
     if (missionValidation.warning) warnings.push(missionValidation.warning);
   }
-  
+
   if (org.notable_success) {
-    const successValidation = validateNotableSuccess(org.notable_success);
+    const successValidation = validateNotableSuccess(org.notable_success as string);
     if (!successValidation.isValid) errors.push(successValidation.error!);
     if (successValidation.warning) warnings.push(successValidation.warning);
   }
-  
+
   if (org.cta_notes) {
-    const ctaValidation = validateCtaNotes(org.cta_notes);
+    const ctaValidation = validateCtaNotes(org.cta_notes as string);
     if (!ctaValidation.isValid) errors.push(ctaValidation.error!);
     if (ctaValidation.warning) warnings.push(ctaValidation.warning);
   }
-  
+
   if (org.years_active) {
-    const yearsValidation = validateYearsActive(org.years_active);
+    const yearsValidation = validateYearsActive(org.years_active as string);
     if (!yearsValidation.isValid) errors.push(yearsValidation.error!);
     if (yearsValidation.warning) warnings.push(yearsValidation.warning);
   }
-  
+
   if (org.capacity) {
-    const capacityValidation = validateCapacity(org.capacity);
+    const capacityValidation = validateCapacity(org.capacity as string);
     if (!capacityValidation.isValid) errors.push(capacityValidation.error!);
     if (capacityValidation.warning) warnings.push(capacityValidation.warning);
   }
-  
+
   if (org.approval_status) {
-    const statusValidation = validateApprovalStatus(org.approval_status);
+    const statusValidation = validateApprovalStatus(org.approval_status as string);
     if (!statusValidation.isValid) errors.push(statusValidation.error!);
     if (statusValidation.warning) warnings.push(statusValidation.warning);
   }
-  
+
   return {
     isValid: errors.length === 0,
     errors,
@@ -399,11 +396,11 @@ export const cleanInput = (input: string): string => {
 export const formatUrl = (url: string): string => {
   const cleaned = cleanInput(url);
   if (!cleaned) return cleaned;
-  
+
   if (!cleaned.startsWith('http://') && !cleaned.startsWith('https://')) {
     return `https://${cleaned}`;
   }
-  
+
   return cleaned;
 };
 
@@ -422,13 +419,13 @@ export const formatEmails = (emails: string): string => {
 };
 
 // Check if form is ready for submission
-export const isFormReady = (org: any): boolean => {
+export const isFormReady = (org: Record<string, unknown>): boolean => {
   const validation = validateOrganization(org);
-  return validation.isValid && org.org_name && org.country_code;
+  return validation.isValid && !!org.org_name && !!org.country_code;
 };
 
 // Get form completion percentage
-export const getFormCompleteness = (org: any): number => {
+export const getFormCompleteness = (org: Record<string, unknown>): number => {
   const fields = [
     'org_name',
     'country_code',
@@ -441,26 +438,26 @@ export const getFormCompleteness = (org: any): number => {
     'years_active',
     'capacity'
   ];
-  
+
   const completedFields = fields.filter(field => {
     const value = org[field];
     return value && value.toString().trim().length > 0;
   }).length;
-  
+
   return Math.round((completedFields / fields.length) * 100);
 };
 
 // Validate file uploads (for future use)
 export const validateFileUpload = (file: File, maxSizeMB: number = 5): FieldValidationResult => {
   const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-  
+
   if (!allowedTypes.includes(file.type)) {
     return {
       isValid: false,
       error: 'File must be an image (JPEG, PNG, GIF, or WebP)'
     };
   }
-  
+
   const maxSizeBytes = maxSizeMB * 1024 * 1024;
   if (file.size > maxSizeBytes) {
     return {
@@ -468,6 +465,6 @@ export const validateFileUpload = (file: File, maxSizeMB: number = 5): FieldVali
       error: `File size must be less than ${maxSizeMB}MB`
     };
   }
-  
+
   return { isValid: true };
 };

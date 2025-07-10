@@ -152,22 +152,8 @@ export function AddOrganizationModal({
   };
 
   // Handle click outside modal
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget && !isSubmitting) {
-      onClose();
-    }
-  };
 
   // Check if form has unsaved changes
-  const hasUnsavedChanges = Object.values(formData).some(value => {
-    if (typeof value === 'string') {
-      return value.trim().length > 0;
-    }
-    if (Array.isArray(value)) {
-      return value.some(v => typeof v === 'string' && v.trim().length > 0);
-    }
-    return false;
-  });
 
   if (!isOpen) return null;
 
