@@ -219,9 +219,6 @@ export function CustomDropdown({
     </div>
   );
 
-  // Only portal if portal prop is true and isStatusDropdown
-  const shouldPortal = portal && isStatusDropdown;
-
   return (
     <div
       ref={dropdownRef}

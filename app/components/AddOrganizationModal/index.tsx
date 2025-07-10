@@ -1,11 +1,9 @@
 'use client';
 import { useState } from 'react';
-import { CustomDropdown } from '../CustomDropdown';
 import { Org } from '@/models/org';
 import { validateField, formatUrl, formatCountryCode, isFormReady } from '../../utils/validation';
 import { createPortal } from 'react-dom';
 import { ClimateIcons } from '../Icons';
-import { getStatusOptions } from '../../utils/selectOptions';
 
 interface AddOrganizationModalProps {
   isOpen: boolean;
