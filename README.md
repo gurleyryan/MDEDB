@@ -129,7 +129,7 @@ project-root/
 ├── .env.local              # Environment variables
 ├── .gitignore
 ├── eslint.config.mjs
-├── LICENSE.md
+├── LICENSE
 ├── middleware.ts           # Supabase root middleware
 ├── next.config.ts
 ├── package-lock.json
@@ -138,20 +138,23 @@ project-root/
 ├── README.md
 ├── tailwind.config.js
 └── tsconfig.json
-
 ```
 
 ### **App Router Structure Details**
 
+**Directory Overview:**
+- `app/` – Main Next.js application code (pages, components, hooks, utilities)
+- `app/utils/` – Utility functions and Supabase client config
+- `models/` – TypeScript interfaces and types
+- `public/` – Static assets (images, favicon, etc.)
+- `.env.local` – Environment variables (not committed)
+- `middleware.ts` – Next.js middleware for Supabase
+
 #### **Pages & Routes**
-- **`/`** - Homepage (public organization directory)
 - **`/admin`** - Admin dashboard for organization management
 - **`/login`** - Authentication page for admin access
 
 #### **API Routes**
-- **`/api/auth/*`** - Authentication endpoints
-- **`/api/organizations/*`** - Organization CRUD operations
-- **`/api/scoring/*`** - Scoring system endpoints
 - **`/api/metadata/*`** - Website metadata extraction
 
 #### **Component Architecture**
@@ -216,7 +219,6 @@ project-root/
    ```
 
 6. **Access the application:**
-   - Public view: `http://localhost:3000`
    - Admin dashboard: `http://localhost:3000/admin`
    - Login page: `http://localhost:3000/login`
 
@@ -229,11 +231,6 @@ project-root/
 ---
 
 ## Usage
-
-### **Public Interface**
-- Browse approved climate organizations
-- View organization details and scoring summaries
-- Search and filter by criteria
 
 ### **Admin Interface**
 - Manage organization submissions
@@ -368,7 +365,6 @@ Organizations are visually themed based on their geographic location:
 3. Set the following environment variables in the Vercel dashboard:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `SUPABASE_SERVICE_KEY`
 4. Click "Deploy".
 
 > **Note:**  
@@ -425,7 +421,7 @@ We welcome contributions! Please see our contributing guidelines:
 
 ## License
 
-This project is licensed under the [GNU Affero General Public License v3.0 (AGPL-3.0)](LICENSE.md).
+This project is licensed under the [GNU Affero General Public License v3.0 (AGPL-3.0)](LICENSE).
 
 ---
 
