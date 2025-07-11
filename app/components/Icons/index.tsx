@@ -34,7 +34,7 @@ export const ClimateIcons = {
   country: <GlobeIcon className="w-4 h-4" weight="duotone" />,
   recent: <CalendarIcon className="w-4 h-4" weight="duotone" />,
   sortAsc: <SortAscendingIcon className="w-4 h-4" weight="duotone" />,
-  sortDesc: <SortDescendingIcon className="w-4 h-4" weight="light" />,
+  sortDesc: <SortDescendingIcon className="w-4 h-4" weight="duotone" />,
 
   // Climate/Environment Icons (Phosphor)
   mission: <MapPinIcon className="w-4 h-4" weight="duotone" />,
@@ -44,8 +44,8 @@ export const ClimateIcons = {
   // Score Range Icons (Phosphor)
   strong: <TrendUpIcon className="w-4 h-4" weight="duotone" />,
   promising: <ChartBarIcon className="w-4 h-4" weight="duotone" />,
-  low: <ChartBarIcon className="w-4 h-4" weight="light" />,
-  unscored: <ChartBarIcon className="w-4 h-4" weight="thin" />,
+  low: <ChartBarIcon className="w-4 h-4" weight="duotone" />,
+  unscored: <ChartBarIcon className="w-4 h-4" weight="duotone" />,
 
   // Add more country icons as needed...
   mexico: <GlobeIcon className="w-4 h-4" weight="duotone" />,
