@@ -78,58 +78,59 @@ export function ScoringSection({
             </div>
 
             {/* Score Display with Save Button */}
-            <div className="flex items-center gap-3">
-              {totalScore !== null && (
-                <div className="flex items-center gap-2">
-                  <div className={`px-3 py-1.5 rounded-lg text-sm font-bold backdrop-blur-sm border ${
-                    totalScore >= 21 ? 'bg-green-500/20 text-green-200 border-green-500/30' :
-                    totalScore >= 13 ? 'bg-orange-500/20 text-orange-200 border-orange-500/30' : 
-                    'bg-red-500/20 text-red-200 border-red-500/30'
+            <div className="flex gap-3 flex-wrap items-center justify-between sm:justify-end sm:w-auto">
+              {/* Recommendation Badge */}
+              {totalScore !== null && totalScore > 0 && (
+                <div className={`flex items-center gap-1 px-1 py-1 rounded-lg text-xs font-medium flex-shrink-0
+                  ${totalScore >= 21 ? 'bg-green-500/10 text-green-300' :
+                    totalScore >= 13 ? 'bg-orange-500/10 text-orange-300' :
+                    'bg-red-500/10 text-red-300'
                   }`}>
-                    {totalScore}/26 ({Math.round((totalScore / 26) * 100)}%)
-                  </div>
-                  
-                  {/* Recommendation Badge */}
-                  {totalScore > 0 && (
-                    <div className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium ${
-                      totalScore >= 21 ? 'bg-green-500/10 text-green-300' :
-                      totalScore >= 13 ? 'bg-orange-500/10 text-orange-300' : 
-                      'bg-red-500/10 text-red-300'
-                    }`}>
-                      {totalScore >= 21 ? ClimateIcons.strong : 
-                       totalScore >= 13 ? ClimateIcons.promising : 
-                       ClimateIcons.low}
-                      <span className="hidden sm:inline ml-1">
-                        {totalScore >= 21 ? 'Strong' : 
-                         totalScore >= 13 ? 'Promising' : 
-                         'Low Priority'}
-                      </span>
-                    </div>
-                  )}
+                  {totalScore >= 21 ? ClimateIcons.strong :
+                    totalScore >= 13 ? ClimateIcons.promising :
+                    ClimateIcons.low}
+                  <span className="hidden sm:inline ml-1">
+                    {totalScore >= 21 ? 'Strong' :
+                      totalScore >= 13 ? 'Promising' :
+                      'Low Priority'}
+                  </span>
                 </div>
               )}
-              
-              {/* Save Button */}
-              <button
-                onClick={handleSave}
-                disabled={savingScores === orgId}
-                className="btn-glass btn-glass-purple px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 hover:translate-y-[-1px]"
-              >
-                {savingScores === orgId ? (
-                  <>
-                    <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                    <span className="hidden sm:inline">Saving...</span>
-                  </>
-                ) : (
-                  <>
-                    {ClimateIcons.save}
-                    <span className="hidden sm:inline">Save</span>
-                  </>
+
+              {/* Right: Total Score + Save Button */}
+              <div className="flex flex-col-reverse sm:flex-row items-center gap-2 flex-1 min-w-0 justify-end">
+                {totalScore !== null && (
+                  <div className={`px-1 py-1 rounded-lg text-sm font-bold backdrop-blur-sm border 
+                    ${totalScore >= 21 ? 'bg-green-500/20 text-green-200 border-green-500/30' :
+                      totalScore >= 13 ? 'bg-orange-500/20 text-orange-200 border-orange-500/30' :
+                      'bg-red-500/20 text-red-200 border-red-500/30'
+                    }`}>
+                    {totalScore}/26
+                  </div>
                 )}
-              </button>
+
+                {/* Save Button */}
+                <button
+                  onClick={handleSave}
+                  disabled={savingScores === orgId}
+                  className="btn-glass btn-glass-purple px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 hover:translate-y-[-1px]"
+                >
+                  {savingScores === orgId ? (
+                    <>
+                      <svg className="animate-spin h-3 w-3" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      <span className="hidden sm:inline">Saving...</span>
+                    </>
+                  ) : (
+                    <>
+                      {ClimateIcons.save}
+                      <span className="hidden sm:inline">Save</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 

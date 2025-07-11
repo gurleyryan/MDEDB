@@ -118,7 +118,7 @@ export function AdminHeader({
             </h1>
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <button
               onClick={onAddNew}
               className="btn-glass btn-glass-green px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:shadow-glow-green transition-all duration-200"
