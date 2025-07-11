@@ -27,17 +27,6 @@ const formatDate = (dateString?: string) => {
   });
 };
 
-const formatDateTime = (dateString?: string) => {
-  if (!dateString) return 'Unknown';
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { 
-    month: 'short', 
-    day: 'numeric', 
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-};
 
 interface OrganizationCardProps {
   org: OrgWithScore;
@@ -61,19 +50,14 @@ interface OrganizationCardProps {
 export function OrganizationCard({
   org,
   metadata,
-  scores, // Add this
   isExpanded,
   isEditing,
   updatingId,
-  savingScores, // Add this
   onExpand,
   onEdit,
   onSave,
   onCancel,
-  onStatusUpdate,
-  onScoreUpdate, // Add this
-  onScoringSave // Add this
-}: OrganizationCardProps) {
+  onStatusUpdate}: OrganizationCardProps) {
   const [editForm, setEditForm] = useState<Partial<Org>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
 
