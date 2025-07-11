@@ -13,17 +13,18 @@ import {
   createValidUrl,
   processEmails,
   getGoogleFaviconUrl,
-  isPlaceholderUrl} from '../../utils/orgUtils';
+  isPlaceholderUrl
+} from '../../utils/orgUtils';
 import { validateField, formatUrl, formatCountryCode } from '../../utils/validation';
 import { ClimateIcons } from '../Icons';
 
 const formatDate = (dateString?: string) => {
   if (!dateString) return 'Unknown';
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', { 
-    month: 'short', 
-    day: 'numeric', 
-    year: 'numeric' 
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
   });
 };
 
@@ -57,7 +58,7 @@ export function OrganizationCard({
   onEdit,
   onSave,
   onCancel,
-  onStatusUpdate}: OrganizationCardProps) {
+  onStatusUpdate }: OrganizationCardProps) {
   const [editForm, setEditForm] = useState<Partial<Org>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -369,9 +370,9 @@ export function OrganizationCard({
           // Display Mode
           <>
             {/* Header with responsive two-column layout */}
-            <div className="flex justify-between items-start mb-3 gap-4">
+            <div className="flex justify-between items-start mb-3 gap-4 flex-wrap">
               {/* Left Column: Favicon + Org Info */}
-              <div className="flex items-start gap-3 flex-1 min-w-0">
+              <div className="flex items-start gap-3 flex-1 min-w-0 max-w-[50%]">
                 {/* Favicon */}
                 {org.website && (
                   <div className="w-8 h-8 rounded-lg flex-shrink-0 bg-white/10 p-1">
@@ -403,38 +404,44 @@ export function OrganizationCard({
                 <div className="flex-1 min-w-0 overflow-hidden">
                   {/* Org name with better responsive handling */}
                   <div className="mb-1">
-                    <h3 className="org-name-heading text-heading text-white break-words leading-tight">
+                    <h3 className="org-name-heading text-heading text-white break-words leading-tight min-w-0">
                       {org.org_name}
                     </h3>
                   </div>
 
                   {/* Country code and type of work */}
-                  <div className="flex items-center gap-1 text-sm flex-wrap">
-                    <span className="text-gray-300 flex-shrink-0">{org.country_code}</span>
+                  <div className="text-gray-300 text-sm break-words min-w-0">
+                    {org.country_code}
                     {org.type_of_work && (
                       <>
-                        <span className="text-gray-500 flex-shrink-0">•</span>
-                        <span className="text-gray-300 break-words min-w-0">{org.type_of_work}</span>
+                        <span className="text-gray-500"> • </span>
+                        <span>{org.type_of_work}</span>
                       </>
                     )}
                   </div>
                 </div>
               </div>
 
-              {/* Right Column: Fixed layout - Badges and Years stay right, Website and Email move down */}
-              <div className="flex flex-col items-end gap-1 flex-shrink-0 min-w-0 max-w-[45%] sm:max-w-none">
-                {/* Row 1: Badges - ALWAYS stay at top right */}
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <span className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
-                    {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
-                  </span>
+              {/* Right Column: Responsive, never overlapping */}
+              <div className="flex flex-col items-end gap-1 min-w-0 max-w-[50%] flex-shrink ">
+                {/* Row 1: Badges */}
+                {(() => {
+                  const hasWebsite = !!org.website;
+                  const hasEmail = emails.length > 0;
+                  const hasYears = !!org.years_active;
+                  return !(hasWebsite && hasEmail && !hasYears);
+                })() && (
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
+                        {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
+                      </span>
+                      <span className={`px-2 py-1 rounded text-xs font-bold capitalize whitespace-nowrap ${getStatusColor(org.approval_status)}`}>
+                        {org.approval_status}
+                      </span>
+                    </div>
+                  )}
 
-                  <span className={`px-2 py-1 rounded text-xs font-bold capitalize whitespace-nowrap ${getStatusColor(org.approval_status)}`}>
-                    {org.approval_status}
-                  </span>
-                </div>
-
-                {/* Row 2: Years Active - ALWAYS stay at second row right */}
+                {/* Row 2: Years Active */}
                 {org.years_active && (
                   <div className="flex items-center gap-1 min-w-0 flex-shrink-0">
                     <span className="text-yellow-400 flex-shrink-0">
@@ -449,94 +456,220 @@ export function OrganizationCard({
                   </div>
                 )}
 
-                {/* Row 3: Website - Moves down from top when needed */}
-                {org.website && (
-                  <div className="flex items-center gap-1 min-w-0 website-row">
-                    <span className="text-blue-400 flex-shrink-0">
-                      {ClimateIcons.website}
-                    </span>
-                    {websiteInfo?.isValid ? (
-                      <a
-                        href={websiteInfo.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0"
-                        title={org.website}
-                      >
-                        {websiteInfo.hostname}
-                      </a>
-                    ) : (
-                      <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>
-                        Invalid URL
-                      </span>
-                    )}
-                  </div>
-                )}
+                {/* Website and Email: Responsive, never overlapping */}
+                {(() => {
+                  const hasWebsite = !!org.website;
+                  const hasEmail = emails.length > 0;
+                  const hasYears = !!org.years_active;
 
-                {/* Row 4: Emails - Moves down from second row when needed */}
-                {emails.length > 0 && (
-                  <div className="flex items-center gap-1 min-w-0 email-row">
-                    <span className="text-green-400 flex-shrink-0">
-                      {ClimateIcons.email}
-                    </span>
-                    <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 min-w-0">
-                      {emails.length <= 2 ? (
-                        // 1-2 emails: Show all with mobile-optimized truncation
-                        emails.map((email, index) => (
-                          <span key={index} className="flex items-center min-w-0">
-                            <a
-                              href={`mailto:${email}`}
-                              className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors truncate min-w-0 max-w-full sm:max-w-[120px] md:max-w-[200px]"
-                              title={email}
-                            >
-                              {email}
-                            </a>
-                            {index < emails.length - 1 && (
-                              <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
-                            )}
-                          </span>
-                        ))
-                      ) : emails.length === 3 ? (
-                        // 3 emails: Adaptive display
-                        <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 min-w-0">
-                          {emails.every(email => email.length <= 12) ? (
-                            // All short emails, try to show all
+                  // Only website
+                  if (hasWebsite && !hasEmail && !hasYears) {
+                    return (
+                      <div className="flex items-center gap-1 min-w-0 w-full">
+                        <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
+                        {websiteInfo?.isValid ? (
+                          <a
+                            href={websiteInfo.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0"
+                            title={org.website}
+                          >
+                            {websiteInfo.hostname}
+                          </a>
+                        ) : (
+                          <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
+                        )}
+                      </div>
+                    );
+                  }
+
+                  // Only email
+                  if (!hasWebsite && hasEmail && !hasYears) {
+                    return (
+                      <div className="flex items-center gap-1 min-w-0">
+                        <span className="text-green-400 flex-shrink-0">{ClimateIcons.email}</span>
+                        <div className="flex flex-nowrap items-center gap-x-1 gap-y-0.5 min-w-0">
+                          {emails.length <= 3 ? (
                             emails.map((email, index) => (
                               <span key={index} className="flex items-center min-w-0">
                                 <a
                                   href={`mailto:${email}`}
-                                  className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors truncate min-w-0 max-w-[80px] sm:max-w-[100px] md:max-w-[150px]"
+                                  className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors truncate min-w-0 max-w-full sm:max-w-[120px] md:max-w-[200px]"
                                   title={email}
-                                >
-                                  {email}
-                                </a>
+                                >{email}</a>
                                 {index < emails.length - 1 && (
                                   <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
                                 )}
                               </span>
                             ))
                           ) : (
-                            // Show count for compact display
-                            <span
-                              className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
-                              title={`All emails: ${emails.join(', ')}`}
-                            >
-                              {emails.length} emails
-                            </span>
+                            <span className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
+                              title={`All emails: ${emails.join(', ')}`}>{emails.length} emails</span>
                           )}
                         </div>
-                      ) : (
-                        // 4+ emails: Always show count
-                        <span
-                          className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
-                          title={`All emails: ${emails.join(', ')}`}
-                        >
-                          {emails.length} emails
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )}
+                      </div>
+                    );
+                  }
+
+                  // Only years active (already rendered above)
+                  if (!hasWebsite && !hasEmail && hasYears) {
+                    return null;
+                  }
+
+                  // Website + Email (no years): badges above, website below on mobile; side by side on desktop
+                  if (hasWebsite && hasEmail && !hasYears) {
+                    return (
+                      <>
+                        <div className="flex flex-col sm:flex-row-reverse items-end gap-2 min-w-0 w-full">
+                          {/* Badges group */}
+                          <span className="flex gap-2">
+                            <span className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
+                              {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
+                            </span>
+                            <span className={`px-2 py-1 rounded text-xs font-bold capitalize whitespace-nowrap ${getStatusColor(org.approval_status)}`}>
+                              {org.approval_status}
+                            </span>
+                          </span>
+                          {/* Website (icon + hostname together) */}
+                          <span className="flex items-center gap-1 min-w-0 truncate">
+                            <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
+                            {websiteInfo?.isValid ? (
+                              <a
+                                href={websiteInfo.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0 max-w-[120px] sm:max-w-[160px] md:max-w-[200px]"
+                                title={org.website}
+                              >
+                                {websiteInfo.hostname}
+                              </a>
+                            ) : (
+                              <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
+                            )}
+                          </span>
+                        </div>
+                        {/* Email under badges+website */}
+                        <div className="flex items-center gap-1 min-w-0 mt-1 w-full">
+                          <span className="text-green-400 flex-shrink-0">{ClimateIcons.email}</span>
+                          <div className="flex flex-nowrap items-center gap-x-1 gap-y-0.5 min-w-0 w-full">
+                            {emails.length <= 4 ? (
+                              emails.map((email, index) => (
+                                <span key={index} className="flex items-center min-w-0 truncate">
+                                  <a
+                                    href={`mailto:${email}`}
+                                    className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors truncate min-w-0 max-w-full sm:max-w-[120px] md:max-w-[200px]"
+                                    title={email}
+                                  >{email}</a>
+                                  {index < emails.length - 1 && (
+                                    <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
+                                  )}
+                                </span>
+                              ))
+                            ) : (
+                              <span className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
+                                title={`All emails: ${emails.join(', ')}`}>{emails.length} emails</span>
+                            )}
+                          </div>
+                        </div>
+                      </>
+                    );
+                  }
+
+                  // Website + Years: website left of badges, years under badges (already rendered)
+                  if (hasWebsite && !hasEmail && hasYears) {
+                    return (
+                      <div className="flex items-center gap-1 min-w-0 website-row">
+                        <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
+                        {websiteInfo?.isValid ? (
+                          <a
+                            href={websiteInfo.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0"
+                            title={org.website}
+                          >{websiteInfo.hostname}</a>
+                        ) : (
+                          <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
+                        )}
+                      </div>
+                    );
+                  }
+
+                  // Email + Years: email left of years, years under badges (already rendered)
+                  if (!hasWebsite && hasEmail && hasYears) {
+                    return (
+                      <div className="flex items-center gap-1 min-w-0 email-row">
+                        <span className="text-green-400 flex-shrink-0">{ClimateIcons.email}</span>
+                        <div className="flex flex-nowrap items-center gap-x-1 gap-y-0.5 min-w-0">
+                          {emails.length <= 3 ? (
+                            emails.map((email, index) => (
+                              <span key={index} className="flex items-center min-w-0">
+                                <a
+                                  href={`mailto:${email}`}
+                                  className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors truncate min-w-0 max-w-full sm:max-w-[120px] md:max-w-[200px]"
+                                  title={email}
+                                >{email}</a>
+                                {index < emails.length - 1 && (
+                                  <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
+                                )}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
+                              title={`All emails: ${emails.join(', ')}`}>{emails.length} emails</span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  // All 3: website left of badges, years under badges, email left of years
+                  if (hasWebsite && hasEmail && hasYears) {
+                    return (
+                      <>
+                        <div className="flex items-center gap-1 min-w-0 website-row">
+                          <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
+                          {websiteInfo?.isValid ? (
+                            <a
+                              href={websiteInfo.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0"
+                              title={org.website}
+                            >{websiteInfo.hostname}</a>
+                          ) : (
+                            <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1 min-w-0 email-row">
+                          <span className="text-green-400 flex-shrink-0">{ClimateIcons.email}</span>
+                          <div className="flex flex-nowrap items-center gap-x-1 gap-y-0.5 min-w-0">
+                            {emails.length <= 3 ? (
+                              emails.map((email, index) => (
+                                <span key={index} className="flex items-center min-w-0">
+                                  <a
+                                    href={`mailto:${email}`}
+                                    className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors truncate min-w-0 max-w-full sm:max-w-[120px] md:max-w-[200px]"
+                                    title={email}
+                                  >{email}</a>
+                                  {index < emails.length - 1 && (
+                                    <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
+                                  )}
+                                </span>
+                              ))
+                            ) : (
+                              <span className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
+                                title={`All emails: ${emails.join(', ')}`}>{emails.length} emails</span>
+                            )}
+                          </div>
+                        </div>
+                      </>
+                    );
+                  }
+
+                  return null;
+                })()}
               </div>
             </div>
 
@@ -619,9 +752,9 @@ export function OrganizationCard({
                     </>
                   )}
                 </div>
-                
+
                 <div className="w-px h-3 bg-gray-600"></div>
-                
+
                 <div className="flex items-center gap-1">
                   <span className="text-gray-500">Updated:</span>
                   <span className="text-gray-300">{formatDate(org.updated_at)}</span>
@@ -698,9 +831,9 @@ export function OrganizationCard({
                   </>
                 )}
               </div>
-              
+
               <div className="w-px h-3 bg-gray-600"></div>
-              
+
               <div className="flex items-center gap-1">
                 <span className="text-gray-500">Updated:</span>
                 <span className="text-gray-300">{formatDate(org.updated_at)}</span>
