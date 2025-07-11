@@ -17,6 +17,28 @@ import {
 import { validateField, formatUrl, formatCountryCode } from '../../utils/validation';
 import { ClimateIcons } from '../Icons';
 
+const formatDate = (dateString?: string) => {
+  if (!dateString) return 'Unknown';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
+};
+
+const formatDateTime = (dateString?: string) => {
+  if (!dateString) return 'Unknown';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric', 
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+};
+
 interface OrganizationCardProps {
   org: OrgWithScore;
   metadata?: WebsiteMetadata;
@@ -39,14 +61,18 @@ interface OrganizationCardProps {
 export function OrganizationCard({
   org,
   metadata,
+  scores, // Add this
   isExpanded,
   isEditing,
   updatingId,
+  savingScores, // Add this
   onExpand,
   onEdit,
   onSave,
   onCancel,
-  onStatusUpdate
+  onStatusUpdate,
+  onScoreUpdate, // Add this
+  onScoringSave // Add this
 }: OrganizationCardProps) {
   const [editForm, setEditForm] = useState<Partial<Org>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -562,86 +588,147 @@ export function OrganizationCard({
           </>
         )}
 
-        {/* Status and Action Buttons - Fixed z-index for status dropdown */}
-        <div className="flex flex-col gap-3 mt-4 sm:flex-row sm:items-center sm:justify-between">
-          {/* Status Dropdown - Force highest z-index when open */}
-          <div
-            className="flex items-center gap-2 w-full sm:w-auto"
-            style={{
-              position: 'relative',
-            }}
-            onClick={(e) => e.stopPropagation()} // Prevent card click events
-          >
-            <span className="text-yellow-400 flex items-center flex-shrink-0">
-              {ClimateIcons.energy}
-            </span>
-            <div className="flex-1 sm:flex-initial">
-              <CustomDropdown
-                value={org.approval_status}
-                onChange={(newValue) => {
-                  console.log('Status changing from', org.approval_status, 'to', newValue);
+        {/* Status and Action Buttons */}
+        <div className="flex flex-col gap-3 mt-4">
+          {/* First Row: Status, Audit Trail (when space), and Buttons */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            {/* Status Dropdown */}
+            <div
+              className="flex items-center gap-2 w-full sm:w-auto"
+              style={{
+                position: 'relative',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <span className="text-yellow-400 flex items-center flex-shrink-0">
+                {ClimateIcons.energy}
+              </span>
+              <div className="flex-1 sm:flex-initial">
+                <CustomDropdown
+                  value={org.approval_status}
+                  onChange={(newValue) => {
+                    console.log('Status changing from', org.approval_status, 'to', newValue);
+                    if (newValue === 'pending' || newValue === 'approved' || newValue === 'rejected') {
+                      onStatusUpdate(org.id, newValue);
+                    } else {
+                      console.error('Invalid status value:', newValue);
+                    }
+                  }}
+                  options={getStatusOptions()}
+                  colorCoded={true}
+                  className="w-full min-w-[100px] text-xs status-dropdown"
+                />
+              </div>
+            </div>
 
-                  // Ensure we have a valid status value
-                  if (newValue === 'pending' || newValue === 'approved' || newValue === 'rejected') {
-                    onStatusUpdate(org.id, newValue);
-                  } else {
-                    console.error('Invalid status value:', newValue);
-                  }
-                }}
-                options={getStatusOptions()}
-                colorCoded={true}
-                className="w-full min-w-[100px] text-xs status-dropdown"
-              />
+            {/* Compact Audit Trail - Show inline on larger screens when expanded */}
+            {isExpanded && (
+              <div className="hidden lg:flex items-center gap-3 text-xs text-gray-400 flex-shrink-0">
+                <div className="flex items-center gap-1">
+                  {ClimateIcons.calendar}
+                  <span className="text-gray-500">Created:</span>
+                  <span className="text-gray-300">{formatDate(org.created_at)}</span>
+                  {org.created_by_name && (
+                    <>
+                      <span className="text-gray-500">by</span>
+                      <span className="text-gray-300">{org.created_by_name}</span>
+                    </>
+                  )}
+                </div>
+                
+                <div className="w-px h-3 bg-gray-600"></div>
+                
+                <div className="flex items-center gap-1">
+                  <span className="text-gray-500">Updated:</span>
+                  <span className="text-gray-300">{formatDate(org.updated_at)}</span>
+                  {org.updated_by_name && (
+                    <>
+                      <span className="text-gray-500">by</span>
+                      <span className="text-gray-300">{org.updated_by_name}</span>
+                    </>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+              {isEditing ? (
+                <>
+                  <button
+                    onClick={handleSave}
+                    disabled={updatingId === org.id || Object.keys(errors).length > 0}
+                    className="btn-glass btn-glass-green px-4 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
+                  >
+                    {ClimateIcons.save}
+                    <span className="transition-opacity duration-200">
+                      {updatingId === org.id ? 'Saving...' : 'Save'}
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={handleCancel}
+                    className="btn-glass text-gray-300 px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
+                  >
+                    {ClimateIcons.cancel}
+                    <span className="transition-opacity duration-200">Cancel</span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={startEdit}
+                    onMouseDown={(e) => e.preventDefault()}
+                    className="btn-glass btn-glass-blue px-4 py-2.5 rounded-lg text-sm font-medium hover:shadow-glow-blue flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
+                  >
+                    {ClimateIcons.edit}
+                    <span className="transition-opacity duration-200">Edit Info</span>
+                  </button>
+
+                  <button
+                    onClick={() => onExpand(org.id)}
+                    onMouseDown={(e) => e.preventDefault()}
+                    className="btn-glass btn-glass-purple px-4 py-2.5 rounded-lg text-sm font-medium hover:shadow-glow-purple flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
+                  >
+                    {ClimateIcons.scoring}
+                    <span className="transition-opacity duration-200">
+                      {isExpanded ? 'Hide Scoring' : 'Edit Scoring'}
+                    </span>
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
-          {/* Action Buttons - Keep existing code */}
-          <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-            {isEditing ? (
-              <>
-                <button
-                  onClick={handleSave}
-                  disabled={updatingId === org.id || Object.keys(errors).length > 0}
-                  className="btn-glass btn-glass-green px-4 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
-                >
-                  {ClimateIcons.save}
-                  <span className="transition-opacity duration-200">
-                    {updatingId === org.id ? 'Saving...' : 'Save'}
-                  </span>
-                </button>
-
-                <button
-                  onClick={handleCancel}
-                  className="btn-glass text-gray-300 px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
-                >
-                  {ClimateIcons.cancel}
-                  <span className="transition-opacity duration-200">Cancel</span>
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={startEdit}
-                  onMouseDown={(e) => e.preventDefault()} // Prevent focus
-                  className="btn-glass btn-glass-blue px-4 py-2.5 rounded-lg text-sm font-medium hover:shadow-glow-blue flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
-                >
-                  {ClimateIcons.edit}
-                  <span className="transition-opacity duration-200">Edit Info</span>
-                </button>
-
-                <button
-                  onClick={() => onExpand(org.id)}
-                  onMouseDown={(e) => e.preventDefault()} // Prevent focus
-                  className="btn-glass btn-glass-purple px-4 py-2.5 rounded-lg text-sm font-medium hover:shadow-glow-purple flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
-                >
-                  {ClimateIcons.scoring}
-                  <span className="transition-opacity duration-200">
-                    {isExpanded ? 'Hide Scoring' : 'Edit Scoring'}
-                  </span>
-                </button>
-              </>
-            )}
-          </div>
+          {/* Second Row: Expanded Audit Trail - Show below on smaller screens when expanded */}
+          {isExpanded && (
+            <div className="lg:hidden flex items-center justify-center gap-3 text-xs text-gray-400">
+              <div className="flex items-center gap-1">
+                {ClimateIcons.calendar}
+                <span className="text-gray-500">Created:</span>
+                <span className="text-gray-300">{formatDate(org.created_at)}</span>
+                {org.created_by_name && (
+                  <>
+                    <span className="text-gray-500">by</span>
+                    <span className="text-gray-300">{org.created_by_name}</span>
+                  </>
+                )}
+              </div>
+              
+              <div className="w-px h-3 bg-gray-600"></div>
+              
+              <div className="flex items-center gap-1">
+                <span className="text-gray-500">Updated:</span>
+                <span className="text-gray-300">{formatDate(org.updated_at)}</span>
+                {org.updated_by_name && (
+                  <>
+                    <span className="text-gray-500">by</span>
+                    <span className="text-gray-300">{org.updated_by_name}</span>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
