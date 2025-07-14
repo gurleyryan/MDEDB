@@ -56,8 +56,8 @@ A sophisticated platform to catalog, score, and assess grassroots climate organi
 ## Tech Stack
 
 ### **Frontend**
-- **Next.js 14** with App Router and Server Components
-- **React 18** with TypeScript for type safety
+- **Next.js** with App Router and Server Components
+- **React** with TypeScript for type safety
 - **Tailwind CSS** with custom glass morphism utilities
 - **CSS Animations** - Custom CSS transitions and animations (Framer Motion removed)
 - **Custom Hooks** - Specialized hooks for organizations, scoring, and metadata
