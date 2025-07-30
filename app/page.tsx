@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useOrganizations } from './hooks/useOrganizations';
 import { useAutoWebsiteMetadata } from './hooks/useWebsiteMetadata';
 import OrganizationCard from './components/OrganizationCard';
@@ -150,8 +150,6 @@ export default function HomePage() {
         onSortChange={setSortOptions}
         filterOptions={filterOptions}
         onFilterOptionsChange={setFilterOptions}
-        filteredCount={filteredOrgs.length}
-        totalOrgs={orgs.length}
         isSearching={isSearching}
       />
       <main className="max-w-screen-xl mx-auto px-4 sm:px-6 py-8">
@@ -170,7 +168,7 @@ export default function HomePage() {
                 savingScores=""
                 onExpand={() => {}}
                 onEdit={() => {}}
-                onSave={async (_orgId: string, _data: Partial<any>) => false}
+                onSave={async () => false}
                 onCancel={() => {}}
                 onStatusUpdate={() => {}}
                 isPublic={true}

@@ -16,7 +16,7 @@ export function useUser() {
 
   useEffect(() => {
     const getUserAndRole = async () => {
-      const { data, error } = await supabase.auth.getUser();
+      const { data } = await supabase.auth.getUser();
       if (data?.user) {
         setUser({
           id: data.user.id,
@@ -25,7 +25,7 @@ export function useUser() {
         });
 
         // Query the user_roles table for this user's role
-        const { data: roleData, error: roleError } = await supabase
+        const { data: roleData } = await supabase
           .from('user_roles')
           .select('role')
           .eq('user_id', data.user.id)

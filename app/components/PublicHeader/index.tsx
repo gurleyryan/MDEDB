@@ -34,8 +34,6 @@ interface PublicHeaderProps {
   onSortChange: (options: SortOptions) => void;
   filterOptions: FilterOptions;
   onFilterOptionsChange: (options: FilterOptions) => void;
-  filteredCount: number;
-  totalOrgs: number;
   isSearching?: boolean;
 }
 
@@ -47,8 +45,6 @@ export function PublicHeader({
   onSortChange,
   filterOptions,
   onFilterOptionsChange,
-  filteredCount,
-  totalOrgs,
   isSearching = false
 }: PublicHeaderProps) {
   const router = useRouter();
