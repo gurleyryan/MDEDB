@@ -3,19 +3,17 @@ import { CustomDropdown } from '../CustomDropdown';
 import { ClimateIcons } from '../Icons';
 import { 
   getContinentOptions, 
-  getScoreRangeOptions, 
   getSortFieldOptions 
 } from '../../utils/selectOptions';
 import { useRouter } from 'next/navigation';
+import { useUser } from '../../hooks/useUser';
 
 interface FilterOptions {
-  status: 'all' | 'pending' | 'approved' | 'rejected';
   continent: string;
-  scoreRange: string;
 }
 
 interface SortOptions {
-  field: 'name' | 'score' | 'status' | 'country' | 'recent' | 'website';
+  field: 'name' | 'country' | 'recent' | 'website';
   direction: 'asc' | 'desc';
 }
 
@@ -27,19 +25,7 @@ interface MetadataProgress {
   isActive?: boolean;
 }
 
-interface AdminHeaderProps {
-  filter: 'all' | 'pending' | 'approved' | 'rejected';
-  onFilterChange: (filter: 'all' | 'pending' | 'approved' | 'rejected') => void;
-  showRejected: boolean;
-  onToggleRejected: () => void;
-  onAddNew: () => void;
-  onLogout: () => void;
-  orgCounts: {
-    all: number;
-    pending: number;
-    approved: number;
-    rejected: number;
-  };
+interface PublicHeaderProps {
   isLoading?: boolean;
   metadataProgress?: MetadataProgress;
   searchQuery: string;
@@ -48,17 +34,10 @@ interface AdminHeaderProps {
   onSortChange: (options: SortOptions) => void;
   filterOptions: FilterOptions;
   onFilterOptionsChange: (options: FilterOptions) => void;
-  filteredCount: number;
-  totalOrgs: number;
   isSearching?: boolean;
 }
 
-export function AdminHeader({
-  filter,
-  onFilterChange,
-  onAddNew,
-  onLogout,
-  orgCounts,
+export function PublicHeader({
   metadataProgress,
   searchQuery,
   onSearchChange,
@@ -66,37 +45,26 @@ export function AdminHeader({
   onSortChange,
   filterOptions,
   onFilterOptionsChange,
-  filteredCount,
-  totalOrgs,
   isSearching = false
-}: AdminHeaderProps) {
+}: PublicHeaderProps) {
   const router = useRouter();
+  const { user, role, logout } = useUser(); // role: 'admin' | 'artist' | 'org' | undefined
 
   const clearAllFilters = () => {
     onSearchChange('');
     onFilterOptionsChange({
-      status: 'all',
       continent: 'all',
-      scoreRange: 'all',
     });
     onSortChange({ field: 'name', direction: 'asc' });
-    onFilterChange('all');
   };
 
-  const hasActiveFilters = searchQuery || 
-    filterOptions.continent !== 'all' || 
-    filterOptions.scoreRange !== 'all' ||
-    filter !== 'all';
+  const hasActiveFilters = !!searchQuery || filterOptions.continent !== 'all';
 
   // Helper function to get appropriate sort toggle label
   const getSortToggleLabel = (field: string, direction: 'asc' | 'desc') => {
     switch (field) {
       case 'name':
         return direction === 'asc' ? 'A-Z' : 'Z-A';
-      case 'score':
-        return direction === 'asc' ? 'Low-High' : 'High-Low';
-      case 'status':
-        return direction === 'asc' ? 'P-A-R' : 'R-A-P'; // Pending-Approved-Rejected
       case 'country':
         return direction === 'asc' ? 'A-Z' : 'Z-A';
       case 'recent':
@@ -119,31 +87,39 @@ export function AdminHeader({
               Climate Organization Dashboard
             </h1>
           </div>
-          
-          <div className="flex items-center gap-3 flex-wrap">
-            <button
-              onClick={onAddNew}
-              className="btn-glass btn-glass-green px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 hover:shadow-glow-green transition-all duration-200"
-            >
-              {ClimateIcons.plus}
-              <span>Add Organization</span>
-            </button>
-
-            <button
-              onClick={() => router.push('/')}
-              className="btn-glass text-gray-300 px-3 py-2 rounded-lg text-sm font-medium hover:text-white transition-colors flex items-center gap-2"
-            >
-              {ClimateIcons.climate}
-              <span>Public Page</span>
-            </button>
-
-            <button
-              onClick={onLogout}
-              className="btn-glass text-gray-300 px-3 py-2 rounded-lg text-sm font-medium hover:text-white transition-colors flex items-center gap-2"
-            >
-              {ClimateIcons.logout}
-              <span>Logout</span>
-            </button>
+          <div className="flex items-center gap-3">
+            {user ? (
+              <>
+                <button
+                  onClick={() => {
+                    if (role === 'artist') router.push('/artist');
+                    else if (role === 'admin') router.push('/admin');
+                    else if (role === 'org') router.push('/org');
+                  }}
+                  className="btn-glass px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2"
+                >
+                  {role === 'artist' ? 'Artist' : role === 'admin' ? 'Admin' : 'Org'} Dashboard
+                </button>
+                <button
+                  onClick={() => {
+                    logout();
+                    router.push('/');
+                  }}
+                  className="btn-glass text-gray-300 px-3 py-2 rounded-lg text-sm font-medium hover:text-white transition-colors flex items-center gap-2"
+                >
+                  {ClimateIcons.logout}
+                  <span>Logout</span>
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => router.push('/login')}
+                className="btn-glass px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2"
+              >
+                {ClimateIcons.login}
+                <span>Login</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -203,65 +179,6 @@ export function AdminHeader({
         <div className="flex flex-wrap items-center justify-between gap-4 text-sm">
           {/* Left: Status Filter Buttons */}
           <div className="flex items-center gap-3 flex-wrap">
-            {/* Status Filter Buttons */}
-            <button
-              onClick={() => onFilterChange('approved')}
-              onMouseDown={(e) => e.preventDefault()} // Prevent focus auto-scroll
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${
-                filter === 'approved' 
-                  ? 'bg-green-500/20 text-green-300 border border-green-500/30' 
-                  : 'hover:bg-green-500/10 hover:text-green-300'
-              }`}
-            >
-              {ClimateIcons.approved}
-              <span>Approved: <span className="font-medium">{orgCounts.approved}</span></span>
-            </button>
-            
-            <button
-              onClick={() => onFilterChange('pending')}
-              onMouseDown={(e) => e.preventDefault()} // Prevent focus auto-scroll
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${
-                filter === 'pending' 
-                  ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' 
-                  : 'hover:bg-yellow-500/10 hover:text-yellow-300'
-              }`}
-            >
-              {ClimateIcons.pending}
-              <span>Pending: <span className="font-medium">{orgCounts.pending}</span></span>
-            </button>
-            
-            <button
-              onClick={() => onFilterChange('rejected')}
-              onMouseDown={(e) => e.preventDefault()} // Prevent focus auto-scroll
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${
-                filter === 'rejected' 
-                  ? 'bg-red-500/20 text-red-300 border border-red-500/30' 
-                  : 'hover:bg-red-500/10 hover:text-red-300'
-              }`}
-            >
-              {ClimateIcons.rejected}
-              <span>Rejected: <span className="font-medium">{orgCounts.rejected}</span></span>
-            </button>
-
-            {/* All Organizations Button with Count */}
-            <button
-              onClick={() => onFilterChange('all')}
-              onMouseDown={(e) => e.preventDefault()} // Prevent focus auto-scroll
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${
-                filter === 'all' 
-                  ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' 
-                  : 'hover:bg-blue-500/10 hover:text-blue-300'
-              }`}
-            >
-              {ClimateIcons.total}
-              <span>
-                All: <span className="font-medium">{orgCounts.all}</span>
-                {filteredCount !== totalOrgs && (
-                  <span className="text-gray-400 ml-1">({filteredCount} shown)</span>
-                )}
-              </span>
-            </button>
-
             {/* Clear Filters Button */}
             {hasActiveFilters && (
               <button
@@ -292,28 +209,12 @@ export function AdminHeader({
               />
             </div>
 
-            {/* Score Range Filter */}
-            <div className="min-w-[160px]">
-              <CustomDropdown
-                options={getScoreRangeOptions()}
-                value={filterOptions.scoreRange}
-                onChange={(value) => onFilterOptionsChange({
-                  ...filterOptions,
-                  scoreRange: value
-                })}
-                placeholder="Filter by score..."
-                colorCoded={true}
-                className="w-full"
-                portal={false}
-              />
-            </div>
-
             {/* Sort Options with Direction Toggle */}
             <div className="flex gap-2">
               {/* Sort Field Dropdown */}
               <div className="min-w-[140px]">
                 <CustomDropdown
-                  options={getSortFieldOptions()}
+                  options={getSortFieldOptions().filter(opt => opt.value !== 'score' && opt.value !== 'status')}
                   value={sortOptions.field}
                   onChange={(value) => onSortChange({
                     ...sortOptions,
@@ -363,4 +264,4 @@ export function AdminHeader({
   );
 }
 
-export default AdminHeader;
+export default PublicHeader;
