@@ -3,7 +3,7 @@
 [![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js-black?logo=next.js)](https://nextjs.org/)
 [![Powered by Supabase](https://img.shields.io/badge/Powered%20by-Supabase-green?logo=supabase)](https://supabase.com/)
 [![Styled with Tailwind](https://img.shields.io/badge/Styled%20with-Tailwind%20CSS-blue?logo=tailwindcss)](https://tailwindcss.com/)
-[![Status: In Development](https://img.shields.io/badge/status-in--development-yellow)](#)
+[![Status: In Development](https://img.shields.io/badge/status-deployed-green)](#)
 [![AGPL v3 License](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
 
 ## Table of Contents
@@ -463,7 +463,7 @@ For questions, feedback, or collaboration opportunities:
 - [x] Custom dropdown components
 
 ### **Phase 4: Public Interface** 🚧
-- [ ] Public organization directory
+- [x] Public organization directory
 - [ ] Search and discovery
 - [ ] Organization profiles
 - [ ] Public API endpoints
