@@ -299,9 +299,9 @@ body {
 
 
 /* ============================================
-   ADMIN HEADER
+   HEADER
    ============================================ */
-.admin-header {
+.header {
   position: sticky;
   top: 0;
   z-index: 9999;
@@ -314,13 +314,13 @@ body {
   overflow: visible;
 }
 
-.admin-header>div {
+.header > div {
   position: relative;
   z-index: 10000;
   overflow: visible;
 }
 
-.admin-header .dropdown-glass {
+.header .dropdown-glass {
   position: absolute;
   z-index: 99999;
   top: 100%;
@@ -329,7 +329,7 @@ body {
   margin-top: 4px;
 }
 
-.admin-header [class*="relative"] {
+.header [class*="relative"] {
   overflow: visible;
 }
 

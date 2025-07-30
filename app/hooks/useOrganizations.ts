@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@/app/utils/supabase/client';
 import { Org } from '@/models/org';
 import { OrgWithScore } from '@/models/orgWithScore';
+import { useUser } from './useUser';
 
-export function useOrganizations() {
+export function useOrganizations({ forcePublic = false } = {}) {
+  const { role } = useUser();
   const supabase = createClient();
   const [orgs, setOrgs] = useState<OrgWithScore[]>([]);
   const [loading, setLoading] = useState(true);
@@ -14,10 +16,17 @@ export function useOrganizations() {
   const fetchOrgs = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('org_with_score') // Use the view that includes calculated alignment_score
+      let query;
+      if (forcePublic) {
+        query = supabase.from('org_public_view').select('*');
+      } else if (role === 'admin') {
+        query = supabase.from('org_with_score') // Use the view that includes calculated alignment_score
         .select('*')
         .order('org_name');
+      } else {
+        query = supabase.from('org_public_view').select('*');
+      }
+      const { data, error } = await query;
 
       if (error) {
         setError(error.message);
@@ -180,7 +189,7 @@ export function useOrganizations() {
   // Fetch organizations on mount
   useEffect(() => {
     fetchOrgs();
-  }, []);
+  }, [role]);
 
   // Clear error after a delay
   useEffect(() => {

@@ -1,7 +1,7 @@
 import {
   ClockIcon, CheckCircleIcon, XCircleIcon, PencilSimpleIcon, ChartBarIcon, FloppyDiskIcon, XIcon,
   GlobeIcon, LightningIcon, CloudIcon, MapPinIcon, TrendUpIcon, CalendarIcon,
-  SortAscendingIcon, SortDescendingIcon,FunnelIcon, MagnifyingGlassIcon, PlusIcon, SignOutIcon, HashIcon, ListChecksIcon, ChatCircleIcon, LightbulbIcon,
+  SortAscendingIcon, SortDescendingIcon,FunnelIcon, MagnifyingGlassIcon, PlusIcon, SignInIcon, SignOutIcon, HashIcon, ListChecksIcon, ChatCircleIcon, LightbulbIcon,
   EnvelopeIcon, UsersIcon, TrophyIcon, MegaphoneIcon,
 } from '@phosphor-icons/react';
 
@@ -16,6 +16,7 @@ export const ClimateIcons = {
   cancel: <XIcon className="w-4 h-4" weight="duotone" />,
   plus: <PlusIcon className="w-4 h-4" weight="duotone" />,
   search: <MagnifyingGlassIcon className="w-4 h-4" weight="duotone" />,
+  login: <SignInIcon className="w-4 h-4" weight="duotone" />,
   logout: <SignOutIcon className="w-4 h-4" weight="duotone" />,
   total: <HashIcon className="w-4 h-4" weight="duotone" />,
   guide: <ListChecksIcon className="w-4 h-4" weight="duotone" />,

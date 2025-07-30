@@ -1,103 +1,186 @@
-import Image from "next/image";
+'use client';
+import { useState, useEffect } from 'react';
+import { useOrganizations } from './hooks/useOrganizations';
+import { useAutoWebsiteMetadata } from './hooks/useWebsiteMetadata';
+import OrganizationCard from './components/OrganizationCard';
+import PublicHeader from './components/PublicHeader';
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+export default function HomePage() {
+  const { orgs, loading, error } = useOrganizations({ forcePublic: true });
+  const { websiteMetadata, loadingMetadata } = useAutoWebsiteMetadata(orgs);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  // State for search, sort, filter
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOptions, setSortOptions] = useState<{
+    field: 'name' | 'country' | 'recent' | 'website';
+    direction: 'asc' | 'desc';
+  }>({ field: 'name', direction: 'asc' });
+  const [filterOptions, setFilterOptions] = useState<{ continent: string }>({ continent: 'all' });
+  const [isSearching, setIsSearching] = useState(false);
+
+  // Progress for metadata loading
+  const orgsWithWebsites = orgs.filter(org => org.website);
+  const loadingCount = Object.values(loadingMetadata).filter(Boolean).length;
+  const loadedCount = orgsWithWebsites.filter(org => websiteMetadata[org.id]).length;
+  const totalCount = orgsWithWebsites.length;
+  const progressPercentage = totalCount > 0 ? Math.round((loadedCount / totalCount) * 100) : 100;
+
+  // Helper: get continent from country code
+  const getOrgContinent = (countryCode: string): string => {
+    const continentMap: Record<string, string> = {
+      'US': 'North America', 'CA': 'North America', 'MX': 'North America',
+      'BR': 'South America', 'AR': 'South America', 'CL': 'South America', 'CO': 'South America',
+      'GB': 'Europe', 'FR': 'Europe', 'DE': 'Europe', 'IT': 'Europe', 'ES': 'Europe', 'NL': 'Europe',
+      'JP': 'Asia', 'CN': 'Asia', 'IN': 'Asia', 'KR': 'Asia', 'TH': 'Asia', 'VN': 'Asia',
+      'NG': 'Africa', 'ZA': 'Africa', 'KE': 'Africa', 'GH': 'Africa', 'EG': 'Africa', 'MA': 'Africa',
+      'AE': 'Middle East', 'SA': 'Middle East', 'IL': 'Middle East', 'TR': 'Middle East',
+      'AU': 'Oceania', 'NZ': 'Oceania'
+    };
+    return continentMap[countryCode] || 'Unknown';
+  };
+
+  // Filtering, searching, sorting (only approved orgs)
+  const getProcessedOrgs = () => {
+    let processed = [...orgs];
+
+    // Search
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      processed = processed.filter(org =>
+        org.org_name.toLowerCase().includes(query) ||
+        org.country_code.toLowerCase().includes(query) ||
+        org.type_of_work?.toLowerCase().includes(query) ||
+        org.mission_statement?.toLowerCase().includes(query) ||
+        org.website?.toLowerCase().includes(query) ||
+        org.email?.toLowerCase().includes(query)
+      );
+    }
+
+    // Continent filter
+    if (filterOptions.continent !== 'all') {
+      processed = processed.filter(org => {
+        const continent = getOrgContinent(org.country_code);
+        return continent === filterOptions.continent;
+      });
+    }
+
+    // Sorting
+    processed.sort((a, b) => {
+      let comparison = 0;
+      switch (sortOptions.field) {
+        case 'name':
+          comparison = a.org_name.localeCompare(b.org_name);
+          break;
+        case 'country':
+          comparison = a.country_code.localeCompare(b.country_code);
+          break;
+        case 'recent': {
+          const dateA = new Date(a.created_at || 0).getTime();
+          const dateB = new Date(b.created_at || 0).getTime();
+          comparison = dateA - dateB;
+          break;
+        }
+        case 'website': {
+          const hasWebsiteA = !!a.website;
+          const hasWebsiteB = !!b.website;
+          comparison = hasWebsiteA === hasWebsiteB ? 0 : hasWebsiteA ? 1 : -1;
+          break;
+        }
+        default:
+          comparison = 0;
+      }
+      return sortOptions.direction === 'asc' ? comparison : -comparison;
+    });
+
+    return processed;
+  };
+
+  const filteredOrgs = getProcessedOrgs();
+
+  // Search handler with loading indicator
+  const handleSearchChange = (value: string) => {
+    setIsSearching(true);
+    setSearchQuery(value);
+    setTimeout(() => setIsSearching(false), 300);
+  };
+
+  // Loading and error states
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin h-12 w-12 border-4 border-blue-400 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-lg">Loading organizations...</p>
         </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <div className="text-red-400 text-6xl mb-4">⚠️</div>
+          <h2 className="text-2xl font-bold mb-2">Error Loading Organizations</h2>
+          <p className="text-gray-300 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-black text-white">
+      <PublicHeader
+        isLoading={loading}
+        metadataProgress={{
+          loaded: loadedCount,
+          total: totalCount,
+          loading: loadingCount,
+          percentage: progressPercentage
+        }}
+        searchQuery={searchQuery}
+        onSearchChange={handleSearchChange}
+        sortOptions={sortOptions}
+        onSortChange={setSortOptions}
+        filterOptions={filterOptions}
+        onFilterOptionsChange={setFilterOptions}
+        filteredCount={filteredOrgs.length}
+        totalOrgs={orgs.length}
+        isSearching={isSearching}
+      />
+      <main className="max-w-screen-xl mx-auto px-4 sm:px-6 py-8">
+        {filteredOrgs.length === 0 ? (
+          <div className="text-center py-16 text-gray-400">No organizations found.</div>
+        ) : (
+          <div className="space-y-6">
+            {filteredOrgs.map(org => (
+              <OrganizationCard
+                key={org.id}
+                org={org}
+                metadata={websiteMetadata[org.id]}
+                isExpanded={false}
+                isEditing={false}
+                updatingId={null}
+                savingScores=""
+                onExpand={() => {}}
+                onEdit={() => {}}
+                onSave={async (_orgId: string, _data: Partial<any>) => false}
+                onCancel={() => {}}
+                onStatusUpdate={() => {}}
+                isPublic={true}
+                onScoreUpdate={() => {}}
+                onScoringSave={async () => false}
+              />
+            ))}
+          </div>
+        )}
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }

@@ -420,7 +420,7 @@ export default function AdminOrgs() {
 
   // Update the AdminHeader to use the new handler
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+    <div className="min-h-screen bg-black text-white relative">
       {/* Stained glass background overlay */}
       <div
         className="fixed inset-0 opacity-30 pointer-events-none"
