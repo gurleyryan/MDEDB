@@ -1,9 +1,10 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useOrganizations } from './hooks/useOrganizations';
 import { useAutoWebsiteMetadata } from './hooks/useWebsiteMetadata';
 import OrganizationCard from './components/OrganizationCard';
 import PublicHeader from './components/PublicHeader';
+import { ClimateIcons } from './components/Icons';
 
 export default function HomePage() {
   const { orgs, loading, error } = useOrganizations({ forcePublic: true });
@@ -17,6 +18,7 @@ export default function HomePage() {
   }>({ field: 'name', direction: 'asc' });
   const [filterOptions, setFilterOptions] = useState<{ continent: string }>({ continent: 'all' });
   const [isSearching, setIsSearching] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   // Progress for metadata loading
   const orgsWithWebsites = orgs.filter(org => org.website);
@@ -104,6 +106,24 @@ export default function HomePage() {
     setTimeout(() => setIsSearching(false), 300);
   };
 
+  // Scroll detection for scroll-to-top button
+    useEffect(() => {
+      const handleScroll = () => {
+        setShowScrollTop(window.scrollY > 300);
+      };
+  
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+  // Scroll to top function
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
+
   // Loading and error states
   if (loading) {
     return (
@@ -166,19 +186,45 @@ export default function HomePage() {
                 isEditing={false}
                 updatingId={null}
                 savingScores=""
-                onExpand={() => {}}
-                onEdit={() => {}}
+                onExpand={() => { }}
+                onEdit={() => { }}
                 onSave={async () => false}
-                onCancel={() => {}}
-                onStatusUpdate={() => {}}
+                onCancel={() => { }}
+                onStatusUpdate={() => { }}
                 isPublic={true}
-                onScoreUpdate={() => {}}
+                onScoreUpdate={() => { }}
                 onScoringSave={async () => false}
               />
             ))}
           </div>
         )}
       </main>
+      {/* Scroll to Top Button - Smooth CSS-only Glass Orb */}
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full backdrop-blur-2xl shadow-2xl flex items-center justify-center transition-all duration-200 group scroll-to-top-btn"
+          title="Scroll to top"
+          aria-label="Scroll to top"
+          style={{
+            background: `
+                      radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.3), transparent 70%),
+                      radial-gradient(circle at 70% 70%, rgba(16, 185, 129, 0.2), transparent 70%),
+                      linear-gradient(135deg, rgba(15, 15, 15, 0.9), rgba(25, 25, 25, 0.8))
+                    `,
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: `
+                      0 20px 40px rgba(0, 0, 0, 0.4),
+                      0 0 0 1px rgba(255, 255, 255, 0.05),
+                      inset 0 1px 0 rgba(255, 255, 255, 0.1)
+                    `
+          }}
+        >
+          <div className="text-blue-300 group-hover:text-blue-200 transition-all duration-200 group-hover:translate-y-[-1px]">
+            {ClimateIcons.scrollToTop}
+          </div>
+        </button>
+      )}
     </div>
   );
 }
