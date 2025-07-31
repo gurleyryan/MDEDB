@@ -5,7 +5,7 @@
 [![Styled with Tailwind](https://img.shields.io/badge/Styled%20with-Tailwind%20CSS-blue?logo=tailwindcss)](https://tailwindcss.com/)
 [![Status: In Development](https://img.shields.io/badge/status-deployed-green)](#)
 [![AGPL v3 License](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
-[![AMPLIFY](https://img.shields.io/badge/AMPLIFY-Climate%20Action?logo=https://mdedb.vercel.app/logo.png&color=%2369bd45)](https://www.musicdeclares.net/us/campaigns/mde-us-amplify-program)
+[![AMPLIFY](https://img.shields.io/badge/AMPLIFY-Climate%20Action?logo=https%3A%2F%2Fmdedb.vercel.app%2Flogo.png&color=%2369bd45)](https://www.musicdeclares.net/us/campaigns/mde-us-amplify-program)
 
 ## Table of Contents
 
