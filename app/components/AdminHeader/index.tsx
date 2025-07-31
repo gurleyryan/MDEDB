@@ -1,12 +1,13 @@
 'use client';
 import { CustomDropdown } from '../CustomDropdown';
 import { ClimateIcons } from '../Icons';
-import { 
-  getContinentOptions, 
-  getScoreRangeOptions, 
-  getSortFieldOptions 
+import {
+  getContinentOptions,
+  getScoreRangeOptions,
+  getSortFieldOptions
 } from '../../utils/selectOptions';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface FilterOptions {
   status: 'all' | 'pending' | 'approved' | 'rejected';
@@ -83,8 +84,8 @@ export function AdminHeader({
     onFilterChange('all');
   };
 
-  const hasActiveFilters = searchQuery || 
-    filterOptions.continent !== 'all' || 
+  const hasActiveFilters = searchQuery ||
+    filterOptions.continent !== 'all' ||
     filterOptions.scoreRange !== 'all' ||
     filter !== 'all';
 
@@ -114,12 +115,17 @@ export function AdminHeader({
         {/* Header Title */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            {ClimateIcons.climate}
+            <Image
+              src="/logo.png"
+              alt="AMPLIFY: Climate Org Directory"
+              width={40}
+              height={40}
+            />
             <h1 className="text-2xl font-bold text-white">
-              Climate Organization Dashboard
+              AMPLIFY: Climate Org Directory
             </h1>
           </div>
-          
+
           <div className="flex items-center gap-3 flex-wrap">
             <button
               onClick={onAddNew}
@@ -161,7 +167,7 @@ export function AdminHeader({
               ClimateIcons.search
             )}
           </div>
-          
+
           <input
             type="text"
             placeholder="Search organizations..."
@@ -169,7 +175,7 @@ export function AdminHeader({
             onChange={(e) => onSearchChange(e.target.value)}
             className="w-full pl-10 pr-4 py-2 panel-glass border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all duration-200"
           />
-          
+
           {/* Search Loading Bar */}
           {isSearching && (
             <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-700 rounded-b-lg overflow-hidden">
@@ -180,16 +186,16 @@ export function AdminHeader({
           {/* Metadata Loading Bar */}
           {metadataProgress && metadataProgress.loading > 0 && (
             <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-700 rounded-b-lg overflow-hidden">
-              <div 
+              <div
                 className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 transition-all duration-500 ease-out rounded-b-lg"
-                style={{ 
+                style={{
                   width: `${metadataProgress.percentage}%`,
                   boxShadow: '0 0 8px rgba(16, 185, 129, 0.4)'
                 }}
               />
             </div>
           )}
-          
+
           {/* Metadata Progress Text */}
           {metadataProgress && metadataProgress.loading > 0 && (
             <div className="absolute -bottom-6 right-0 text-xs text-gray-400 flex items-center gap-1">
@@ -207,37 +213,34 @@ export function AdminHeader({
             <button
               onClick={() => onFilterChange('approved')}
               onMouseDown={(e) => e.preventDefault()} // Prevent focus auto-scroll
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${
-                filter === 'approved' 
-                  ? 'bg-green-500/20 text-green-300 border border-green-500/30' 
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${filter === 'approved'
+                  ? 'bg-green-500/20 text-green-300 border border-green-500/30'
                   : 'hover:bg-green-500/10 hover:text-green-300'
-              }`}
+                }`}
             >
               {ClimateIcons.approved}
               <span>Approved: <span className="font-medium">{orgCounts.approved}</span></span>
             </button>
-            
+
             <button
               onClick={() => onFilterChange('pending')}
               onMouseDown={(e) => e.preventDefault()} // Prevent focus auto-scroll
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${
-                filter === 'pending' 
-                  ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' 
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${filter === 'pending'
+                  ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
                   : 'hover:bg-yellow-500/10 hover:text-yellow-300'
-              }`}
+                }`}
             >
               {ClimateIcons.pending}
               <span>Pending: <span className="font-medium">{orgCounts.pending}</span></span>
             </button>
-            
+
             <button
               onClick={() => onFilterChange('rejected')}
               onMouseDown={(e) => e.preventDefault()} // Prevent focus auto-scroll
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${
-                filter === 'rejected' 
-                  ? 'bg-red-500/20 text-red-300 border border-red-500/30' 
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${filter === 'rejected'
+                  ? 'bg-red-500/20 text-red-300 border border-red-500/30'
                   : 'hover:bg-red-500/10 hover:text-red-300'
-              }`}
+                }`}
             >
               {ClimateIcons.rejected}
               <span>Rejected: <span className="font-medium">{orgCounts.rejected}</span></span>
@@ -247,11 +250,10 @@ export function AdminHeader({
             <button
               onClick={() => onFilterChange('all')}
               onMouseDown={(e) => e.preventDefault()} // Prevent focus auto-scroll
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${
-                filter === 'all' 
-                  ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' 
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${filter === 'all'
+                  ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
                   : 'hover:bg-blue-500/10 hover:text-blue-300'
-              }`}
+                }`}
             >
               {ClimateIcons.total}
               <span>
@@ -273,7 +275,7 @@ export function AdminHeader({
               </button>
             )}
           </div>
-          
+
           {/* Right: Filter and Sort Controls */}
           <div className="flex items-center gap-3 flex-wrap">
             {/* Continent Filter */}
@@ -325,18 +327,17 @@ export function AdminHeader({
                   portal={false}
                 />
               </div>
-              
+
               {/* Sort Direction Toggle */}
               <button
                 onClick={() => onSortChange({
                   ...sortOptions,
                   direction: sortOptions.direction === 'asc' ? 'desc' : 'asc'
                 })}
-                className={`btn-glass px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 min-w-[80px] justify-center ${
-                  sortOptions.direction === 'asc' 
-                    ? 'btn-glass-blue text-blue-300' 
+                className={`btn-glass px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 min-w-[80px] justify-center ${sortOptions.direction === 'asc'
+                    ? 'btn-glass-blue text-blue-300'
                     : 'btn-glass-purple text-purple-300'
-                }`}
+                  }`}
                 title={`Currently sorting ${sortOptions.direction === 'asc' ? 'ascending' : 'descending'}. Click to toggle.`}
               >
                 {sortOptions.direction === 'asc' ? (

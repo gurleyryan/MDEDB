@@ -7,6 +7,7 @@ import {
 } from '../../utils/selectOptions';
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../hooks/useUser';
+import Image from 'next/image';
 
 interface FilterOptions {
   continent: string;
@@ -82,9 +83,14 @@ export function PublicHeader({
         {/* Header Title */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            {ClimateIcons.climate}
+            <Image
+              src="/logo.png"
+              alt="AMPLIFY: Climate Org Directory"
+              width={40}
+              height={40}
+            />
             <h1 className="text-2xl font-bold text-white">
-              Climate Organization Dashboard
+              AMPLIFY: Climate Org Directory
             </h1>
           </div>
           <div className="flex items-center gap-3">

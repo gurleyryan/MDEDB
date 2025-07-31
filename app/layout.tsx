@@ -2,17 +2,11 @@ import type { Metadata } from "next";
 import { Outfit, IBM_Plex_Sans, Space_Mono } from "next/font/google";
 import "./globals.css";
 
-
-
-
 const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin"],
   display: 'swap',
 });
-
-
-
 
 const ibmPlex = IBM_Plex_Sans({
   variable: "--font-ibm-plex",
@@ -29,9 +23,9 @@ const spaceMono = Space_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Climate Org Directory & Scoring Dashboard",
+  title: "AMPLIFY: Climate Org Directory",
   description:
-    "A sophisticated platform to catalog, score, and assess grassroots climate organizations",
+    "AMPLIFY empowers artists with easy-to-use tools to move their fans to take meaningful climate actions through high-impact, vetted partners.",
 };
 
 export default function RootLayout({
@@ -41,6 +35,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Favicon */}
+        <link rel="icon" href="/favicon.ico" />
+        {/* App Title */}
+        <title>AMPLIFY: Climate Org Directory</title>
+        {/* Meta Description */}
+        <meta name="description" content="AMPLIFY empowers artists with easy-to-use tools to move their fans to take meaningful climate actions through high-impact, vetted partners." />
+        {/* Open Graph / Facebook */}
+        <meta property="og:title" content="AMPLIFY: Climate Org Directory" />
+        <meta property="og:description" content="AMPLIFY empowers artists with easy-to-use tools to move their fans to take meaningful climate actions through high-impact, vetted partners." />
+        <meta property="og:image" content="/logo.png" />
+        <meta property="og:type" content="website" />
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="AMPLIFY: Climate Org Directory" />
+        <meta name="twitter:description" content="AMPLIFY empowers artists with easy-to-use tools to move their fans to take meaningful climate actions through high-impact, vetted partners." />
+        <meta name="twitter:image" content="/logo.png" />
+        {/* Theme color */}
+        <meta name="theme-color" content="#f6ec6b" />
+      </head>
       <body
         className={`${outfit.variable} ${ibmPlex.variable} ${spaceMono.variable} font-ibm-plex antialiased`}
       >

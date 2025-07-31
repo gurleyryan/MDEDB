@@ -1,10 +1,11 @@
-# Climate Org Directory & Scoring Dashboard
+# Climate Org Directory
 
 [![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js-black?logo=next.js)](https://nextjs.org/)
 [![Powered by Supabase](https://img.shields.io/badge/Powered%20by-Supabase-green?logo=supabase)](https://supabase.com/)
 [![Styled with Tailwind](https://img.shields.io/badge/Styled%20with-Tailwind%20CSS-blue?logo=tailwindcss)](https://tailwindcss.com/)
 [![Status: In Development](https://img.shields.io/badge/status-deployed-green)](#)
 [![AGPL v3 License](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
+[![AMPLIFY](https://img.shields.io/badge/AMPLIFY-Climate%20Action-brightgreen?logo=leaflet&logoColor=white)](https://www.musicdeclares.net/us/campaigns/mde-us-amplify-program)
 
 ## Table of Contents
 
@@ -25,7 +26,10 @@
 
 ## Description
 
-A sophisticated platform to catalog, score, and assess grassroots climate organizations using a comprehensive 13-criteria rubric. Features an enterprise-grade admin dashboard with real-time validation, automated metadata fetching, and intelligent scoring recommendations. Built to support transparent, collective, and scalable climate action aligned with Music Declares Emergency.
+A sophisticated platform to catalog, score, and assess grassroots climate organizations using a comprehensive 13-criteria rubric. Features an enterprise-grade admin dashboard with real-time validation, automated metadata fetching, and intelligent scoring recommendations. Built to support transparent, collective, and scalable climate action aligned with Music Declares Emergency's AMPLIFY program.
+
+> <img src="public/logo.png" alt="AMPLIFY" height="28" style="vertical-align:middle; margin-right:8px;" />
+> <a href="https://www.musicdeclares.net/us/campaigns/mde-us-amplify-program" style="font-weight:bold; font-size:1.1em; vertical-align:middle;">AMPLIFY</a> empowers artists with easy-to-use tools to move their fans to take meaningful climate actions through high-impact, vetted partners.
 
 ---
 
