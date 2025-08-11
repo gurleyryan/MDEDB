@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Outfit, IBM_Plex_Sans, Space_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import "./globals.css";
 
 const outfit = Outfit({
@@ -59,6 +61,8 @@ export default function RootLayout({
         className={`${outfit.variable} ${ibmPlex.variable} ${spaceMono.variable} font-ibm-plex antialiased`}
       >
         {children}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
