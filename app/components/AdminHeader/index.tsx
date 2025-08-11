@@ -153,8 +153,8 @@ export function AdminHeader({
           </div>
         </div>
 
-        {/* Search Bar with Loading Indicators */}
-        <div className="relative mb-6">
+  {/* Search Bar with Loading Indicators */}
+  <div className="relative mb-3 md:mb-6">
           <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10">
             {isSearching ? (
               <div className="animate-spin">
@@ -276,8 +276,8 @@ export function AdminHeader({
             )}
           </div>
 
-          {/* Right: Filter and Sort Controls */}
-          <div className="flex items-center gap-3 flex-wrap">
+          {/* Right: Filter and Sort Controls (flattened so each item wraps independently) */}
+          <div className="flex items-center gap-3 flex-wrap w-full sm:w-auto justify-end sm:justify-start ml-auto">
             {/* Continent Filter */}
             <div className="min-w-[160px]">
               <CustomDropdown
@@ -310,53 +310,50 @@ export function AdminHeader({
               />
             </div>
 
-            {/* Sort Options with Direction Toggle */}
-            <div className="flex gap-2">
-              {/* Sort Field Dropdown */}
-              <div className="min-w-[140px]">
-                <CustomDropdown
-                  options={getSortFieldOptions()}
-                  value={sortOptions.field}
-                  onChange={(value) => onSortChange({
-                    ...sortOptions,
-                    field: value as SortOptions['field']
-                  })}
-                  placeholder="Sort by..."
-                  colorCoded={true}
-                  className="w-full"
-                  portal={false}
-                />
-              </div>
-
-              {/* Sort Direction Toggle */}
-              <button
-                onClick={() => onSortChange({
+            {/* Sort Field Dropdown */}
+            <div className="min-w-[140px]">
+              <CustomDropdown
+                options={getSortFieldOptions()}
+                value={sortOptions.field}
+                onChange={(value) => onSortChange({
                   ...sortOptions,
-                  direction: sortOptions.direction === 'asc' ? 'desc' : 'asc'
+                  field: value as SortOptions['field']
                 })}
-                className={`btn-glass px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 min-w-[80px] justify-center ${sortOptions.direction === 'asc'
-                    ? 'btn-glass-blue text-blue-300'
-                    : 'btn-glass-purple text-purple-300'
-                  }`}
-                title={`Currently sorting ${sortOptions.direction === 'asc' ? 'ascending' : 'descending'}. Click to toggle.`}
-              >
-                {sortOptions.direction === 'asc' ? (
-                  <>
-                    {ClimateIcons.sortAsc}
-                    <span className="hidden sm:inline text-xs">
-                      {getSortToggleLabel(sortOptions.field, 'asc')}
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    {ClimateIcons.sortDesc}
-                    <span className="hidden sm:inline text-xs">
-                      {getSortToggleLabel(sortOptions.field, 'desc')}
-                    </span>
-                  </>
-                )}
-              </button>
+                placeholder="Sort by..."
+                colorCoded={true}
+                className="w-full"
+                portal={false}
+              />
             </div>
+
+            {/* Sort Direction Toggle */}
+            <button
+              onClick={() => onSortChange({
+                ...sortOptions,
+                direction: sortOptions.direction === 'asc' ? 'desc' : 'asc'
+              })}
+              className={`btn-glass px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 min-w-[80px] justify-center ${sortOptions.direction === 'asc'
+                  ? 'btn-glass-blue text-blue-300'
+                  : 'btn-glass-purple text-purple-300'
+                }`}
+              title={`Currently sorting ${sortOptions.direction === 'asc' ? 'ascending' : 'descending'}. Click to toggle.`}
+            >
+              {sortOptions.direction === 'asc' ? (
+                <>
+                  {ClimateIcons.sortAsc}
+                  <span className="hidden sm:inline text-xs">
+                    {getSortToggleLabel(sortOptions.field, 'asc')}
+                  </span>
+                </>
+              ) : (
+                <>
+                  {ClimateIcons.sortDesc}
+                  <span className="hidden sm:inline text-xs">
+                    {getSortToggleLabel(sortOptions.field, 'desc')}
+                  </span>
+                </>
+              )}
+            </button>
           </div>
         </div>
       </div>
