@@ -130,7 +130,7 @@ export function PublicHeader({
         </div>
 
   {/* Search Bar with Loading Indicators */}
-  <div className="relative mb-3">
+  <div className="relative mb-3 sm:mb-6">
           <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10">
             {isSearching ? (
               <div className="animate-spin">

@@ -6,9 +6,12 @@
    ============================================ */
 :root {
   --background: #000000;
-  --foreground: #f5f5f5;
-  --mde-yellow: #f6ec6b;
+  --foreground: #ffffff;
+  --mde-yellow: #f7ed6a;
   --mde-green: #69bd45;
+  --mde-blue: #99d9e0;
+  --mde-pink: #f49cd3;
+  --mde-red: #f26d6d;
 
   /* Glass Effect Variables */
   --glass-bg: rgba(15, 15, 15, 0.8);
