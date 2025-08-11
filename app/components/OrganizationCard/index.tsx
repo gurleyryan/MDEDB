@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { CustomDropdown } from '../CustomDropdown';
 import { getStatusOptions } from '../../utils/selectOptions';
 import { Org } from '@/models/org';
@@ -17,6 +17,77 @@ import {
 } from '../../utils/orgUtils';
 import { validateField, formatUrl, formatCountryCode } from '../../utils/validation';
 import { ClimateIcons } from '../Icons';
+
+// Convert plain-text URLs to clickable links (keeps everything client-side and safe)
+const linkifyText = (text: string): ReactNode => {
+  if (!text) return null;
+  // Matches http(s)://... or www.... up to common trailing punctuation
+  const urlRegex = /((https?:\/\/|www\.)[^\s<>()]+[^\s.,;:()<>[\]{}"'])/gi;
+
+  // Build a list of nodes keeping newlines
+  const nodes: ReactNode[] = [];
+  let lastIndex = 0;
+  text.replace(urlRegex, (match, _grp, proto, offset) => {
+    // Push preceding text (preserve newlines)
+    if (offset > lastIndex) {
+      const chunk = text.slice(lastIndex, offset);
+      // Split on newline to insert <br />
+      const parts = chunk.split('\n');
+      parts.forEach((p, i) => {
+        if (p) nodes.push(p);
+        if (i < parts.length - 1) nodes.push(<br key={`br-pre-${lastIndex}-${offset}-${i}`} />);
+      });
+    }
+
+    const href = proto && proto.startsWith('http') ? match : `https://${match}`;
+    nodes.push(
+      <a
+        key={`lnk-${offset}`}
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-400 hover:text-blue-300 hover:underline break-words"
+        title={match}
+      >
+        {match}
+      </a>
+    );
+    lastIndex = offset + match.length;
+    return match;
+  });
+
+  // Trailing text after last link
+  if (lastIndex < text.length) {
+    const tail = text.slice(lastIndex);
+    const parts = tail.split('\n');
+    parts.forEach((p, i) => {
+      if (p) nodes.push(p);
+      if (i < parts.length - 1) nodes.push(<br key={`br-tail-${lastIndex}-${i}`} />);
+    });
+  }
+
+  return nodes.length ? nodes : text;
+};
+
+// Extract the first URL from a block of text (supports http(s) and www.)
+const extractFirstUrl = (text?: string): string | null => {
+  if (!text) return null;
+  const first = text.match(/(https?:\/\/[^\s<>()]+|www\.[^\s<>()]+)/i);
+  if (!first) return null;
+  const raw = first[0];
+  return raw.startsWith('http') ? raw : `https://${raw}`;
+};
+
+// Light rules-based labeler for CTA button based on the surrounding text
+const deriveCtaLabel = (text?: string): string => {
+  if (!text) return 'Call To Action';
+  // Prefer the most specific phrases first
+  if (/(register\s+to\s+vote)/i.test(text)) return 'Register to Vote';
+  if (/\bregister(ing)?\b/i.test(text)) return 'Register';
+  if (/(sign\s*up|signup|sign-up)/i.test(text)) return 'Sign Up';
+  if (/\bjoin\b/i.test(text)) return 'Join';
+  return 'Call To Action';
+};
 
 const formatDate = (dateString?: string) => {
   if (!dateString) return 'Unknown';
@@ -191,14 +262,14 @@ export function OrganizationCard({
             />
           ) : null}
 
-          {/* Mission Statement Overlay - simplified with auto-width glass box */}
-          {org.mission_statement && (
+    {/* Mission Statement Overlay - simplified with auto-width glass box */}
+    {org.mission_statement && (
             <div className="absolute bottom-4 left-4 right-4 flex justify-center">
               {/* Glass box that sizes to content */}
               <div className="mission-statement-glass px-4 py-3 max-w-full">
                 <blockquote className="mission-statement-text text-sm leading-relaxed text-pretty text-center">
                   <span className="mission-quote-mark text-lg leading-none">&quot;</span>
-                  <span className="mx-1">{org.mission_statement}</span>
+      <span className="mx-1">{linkifyText(org.mission_statement)}</span>
                   <span className="mission-quote-mark text-lg leading-none">&quot;</span>
                 </blockquote>
               </div>
@@ -737,16 +808,37 @@ export function OrganizationCard({
                   <span className="text-emerald-200 font-medium">
                     {ClimateIcons.trophy}
                   </span>
-                  <span className="text-gray-300 ml-2">{org.notable_success}</span>
+                  <span className="text-gray-300 ml-2 break-words">{linkifyText(org.notable_success)}</span>
                 </div>
               )}
 
               {org.cta_notes && (
                 <div className="p-2 bg-blue-500/10 border-l-2 border-blue-500 rounded-r text-sm">
-                  <span className="text-blue-200 font-medium">
-                    {ClimateIcons.announcement}
-                  </span>
-                  <span className="text-gray-300 ml-2">{org.cta_notes}</span>
+                  <div className="flex items-start gap-2">
+                    <span className="text-blue-200 font-medium flex-shrink-0 mt-0.5">
+                      {ClimateIcons.announcement}
+                    </span>
+                    <div className="flex-1 min-w-0 text-gray-300 break-words">
+                      {linkifyText(org.cta_notes)}
+                    </div>
+                    {(() => {
+                      const url = extractFirstUrl(org.cta_notes);
+                      if (!url) return null;
+                      const label = deriveCtaLabel(org.cta_notes);
+                      return (
+                        <a
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-glass btn-glass-blue whitespace-nowrap px-3 py-1.5 rounded-md text-xs font-medium hover:shadow-glow-blue flex items-center gap-1 flex-shrink-0"
+                          title={label}
+                        >
+                          {ClimateIcons.website}
+                          <span>{label}</span>
+                        </a>
+                      );
+                    })()}
+                  </div>
                 </div>
               )}
             </div>
