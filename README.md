@@ -3,7 +3,7 @@
 [![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js-black?logo=next.js)](https://nextjs.org/)
 [![Powered by Supabase](https://img.shields.io/badge/Powered%20by-Supabase-green?logo=supabase)](https://supabase.com/)
 [![Styled with Tailwind](https://img.shields.io/badge/Styled%20with-Tailwind%20CSS-blue?logo=tailwindcss)](https://tailwindcss.com/)
-[![Status: In Development](https://img.shields.io/badge/status-deployed-green)](#)
+[![Status: In Development](https://img.shields.io/badge/status-deployed-green)](https://mdedb.vercel.app/)
 [![AGPL v3 License](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
 [![AMPLIFY](https://img.shields.io/badge/AMPLIFY-Climate%20Action?logo=https%3A%2F%2Fmdedb.vercel.app%2Flogo.png&color=%2369bd45)](https://www.musicdeclares.net/us/campaigns/mde-us-amplify-program)
 
@@ -84,7 +84,7 @@ A sophisticated platform to catalog, score, and assess grassroots climate organi
 
 The application follows a **clean architecture** pattern with clear separation of concerns:
 
-```
+```bash
 project-root/
 ├── app/                    # Next.js App Router
 │   ├── admin/              # Admin dashboard page
@@ -332,13 +332,13 @@ Organizations are evaluated across 13 key criteria, each scored 0-2:
 
 ## Design System
 
-#### **Glass Morphism Components**
+### **Glass Morphism Components**
 - **btn-glass** - Glass button variants with hover effects
 - **panel-glass** - Frosted glass panels with backdrop blur
 - **dropdown-glass** - Beautiful glass dropdown menus
 - **stained-glass** - Subtle color overlays for regional theming
 
-#### **Regional Theming**
+### **Regional Theming**
 Organizations are visually themed based on their geographic location:
 - **North America** - Blue gradient themes
 - **Europe** - Purple and blue themes  
@@ -348,7 +348,7 @@ Organizations are visually themed based on their geographic location:
 - **Oceania** - Cyan and blue themes
 - **Middle East** - Yellow and orange themes
 
-#### **Validation System**
+### **Validation System**
 - **Real-time Validation** - Instant feedback as users type
 - **Visual Error States** - Red borders and error messages
 - **Warning States** - Yellow borders for formatting suggestions
@@ -440,42 +440,3 @@ For questions, feedback, or collaboration opportunities:
 
 - **GitHub**: [@gurleyryan](https://github.com/gurleyryan)
 - **Email**: [gurleyryan@gmail.com](mailto:gurleyryan@gmail.com)
-
----
-
-## Roadmap
-
-### **Phase 1: Core Admin Features** ✅
-- [x] Organization CRUD operations
-- [x] 13-criteria scoring system
-- [x] Admin authentication & security
-- [x] Real-time validation system
-
-### **Phase 2: Enhanced UX** ✅
-- [x] Glass morphism design system
-- [x] Regional theming
-- [x] Metadata enrichment
-- [x] Advanced filtering & search
-- [x] Responsive design
-- [x] CSS-based animations
-
-### **Phase 3: Admin Experience** ✅
-- [x] Inline editing capabilities
-- [x] Streamlined scoring interface
-- [x] Progress tracking
-- [x] Comprehensive validation
-- [x] Custom dropdown components
-
-### **Phase 4: Public Interface** 🚧
-- [x] Public organization directory
-- [ ] Search and discovery
-- [ ] Organization profiles
-- [ ] Public API endpoints
-
-### **Phase 5: Advanced Features** 📋
-- [ ] Multi-admin collaboration
-- [ ] Audit trails and history
-- [ ] Export capabilities (CSV, JSON)
-- [ ] Integration APIs
-- [ ] Bulk operations
-- [ ] Analytics dashboard
