@@ -153,15 +153,15 @@ export function OrganizationCard({
       cta_notes: org.cta_notes || '',
       years_active: org.years_active || '',
       capacity: org.capacity || '',
-  // new optional fields
-  logo: org.logo || '',
-  banner: org.banner || '',
-  instagram: org.instagram || '',
-  twitter: org.twitter || '',
-  facebook: org.facebook || '',
-  tiktok: org.tiktok || '',
-  linkedin: org.linkedin || '',
-  youtube: org.youtube || ''
+      // new optional fields
+      logo: org.logo || '',
+      banner: org.banner || '',
+      instagram: org.instagram || '',
+      twitter: org.twitter || '',
+      facebook: org.facebook || '',
+      tiktok: org.tiktok || '',
+      linkedin: org.linkedin || '',
+      youtube: org.youtube || ''
     });
     setErrors({});
     onEdit(org); // Restore this call to set editing state
@@ -202,7 +202,7 @@ export function OrganizationCard({
       return;
     }
 
-  const success = await onSave(org.id, editForm);
+    const success = await onSave(org.id, editForm);
     if (success) {
       setEditForm({});
       setErrors({});
@@ -306,14 +306,14 @@ export function OrganizationCard({
             />
           ) : null}
 
-    {/* Mission Statement Overlay - simplified with auto-width glass box */}
-    {org.mission_statement && (
+          {/* Mission Statement Overlay - simplified with auto-width glass box */}
+          {org.mission_statement && (
             <div className="absolute bottom-4 left-4 right-4 flex justify-center">
               {/* Glass box that sizes to content */}
               <div className="mission-statement-glass px-4 py-3 max-w-full">
                 <blockquote className="mission-statement-text text-sm leading-relaxed text-pretty text-center">
                   <span className="mission-quote-mark text-lg leading-none">&quot;</span>
-      <span className="mx-1">{linkifyText(org.mission_statement)}</span>
+                  <span className="mx-1">{linkifyText(org.mission_statement)}</span>
                   <span className="mission-quote-mark text-lg leading-none">&quot;</span>
                 </blockquote>
               </div>
@@ -683,22 +683,23 @@ export function OrganizationCard({
                 )}
 
                 {/* Left side organization info - Enhanced responsive layout */}
-                <div className="flex-1 min-w-0 overflow-hidden">
+                <div className="flex-1 min-w-0">
                   {/* Org name with better responsive handling */}
                   <div className="mb-1">
-                    <h3 className="org-name-heading text-heading text-white break-words leading-tight min-w-0">
+                    <h3 className="org-name-heading text-heading text-white break-normal leading-tight min-w-0">
                       {org.org_name}
                     </h3>
                   </div>
 
-                  {/* Country code and type of work */}
-                  <div className="text-gray-300 text-sm break-words min-w-0">
-                    {org.country_code}
+                  {/* Country code and type of work (Type hidden on mobile; shown separately below) */}
+                  <div className="text-gray-300 text-sm min-w-0 flex items-center gap-1">
+                    <span className="text-gray-400 flex-shrink-0">{ClimateIcons.mission}</span>
+                    <span>{org.country_code}</span>
                     {org.type_of_work && (
-                      <>
+                      <span className="hidden sm:inline">
                         <span className="text-gray-500"> • </span>
                         <span>{org.type_of_work}</span>
-                      </>
+                      </span>
                     )}
                   </div>
 
@@ -706,8 +707,8 @@ export function OrganizationCard({
               </div>
 
               {/* Right Cluster: Socials (middle) + Right Column, bottom-aligned and no gap */}
-              <div className="flex items-end gap-0 min-w-0 max-w-[50%] flex-shrink">
-                {/* Middle Column: Social icons (narrow), sits just left of the right-hand column */}
+              <div className="flex flex-col sm:flex-row items-end gap-0 min-w-0 max-w-full flex-shrink">
+                {/* Middle Column: Social icons (narrow), sits just left of the right-hand column; wraps under on mobile */}
                 {(isPublic || emails.length === 0) && (() => {
                   const socials: Array<{ key: keyof Org; icon: ReactNode; label: string }> = [
                     { key: 'instagram', icon: ClimateIcons.instagram, label: 'Instagram' },
@@ -738,7 +739,7 @@ export function OrganizationCard({
                   }).filter(Boolean);
                   if ((items as ReactNode[]).length === 0) return null;
                   return (
-                    <div className="flex items-center gap-2 flex-shrink-0 min-w-fit justify-end mr-2">
+                    <div className="flex flex-row flex-wrap items-end justify-end gap-2 min-w-fit w-full sm:w-auto mr-0 sm:mr-2">
                       {items as ReactNode[]}
                     </div>
                   );
@@ -746,237 +747,144 @@ export function OrganizationCard({
 
                 {/* Right Column: Responsive, never overlapping */}
                 <div className="flex flex-col items-end gap-1 min-w-0 flex-shrink ">
-                {isPublic ? (
-                  <>
-                    {/* Years Active */}
-                    {org.years_active && (
-                      <div className="flex items-center gap-1 min-w-0 flex-shrink-0 mb-1">
-                        <span className="text-yellow-400 flex-shrink-0">{ClimateIcons.calendar}</span>
-                        <span
-                          className="text-gray-300 leading-tight text-xs sm:text-sm truncate min-w-0 max-w-[100px] sm:max-w-[120px] md:max-w-[150px]"
-                          title={org.years_active}
-                        >
-                          {org.years_active}
-                        </span>
-                      </div>
-                    )}
-                    {/* Website */}
-                    {org.website && websiteInfo?.isValid && (
-                      <div className="flex items-center gap-1 min-w-0">
-                        <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
-                        <a
-                          href={websiteInfo.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0"
-                          title={org.website}
-                        >
-                          {websiteInfo.hostname}
-                        </a>
-                      </div>
-                    )}
-                    {/* If website exists but is invalid */}
-                    {org.website && !websiteInfo?.isValid && (
-                      <div className="flex items-center gap-1 min-w-0">
-                        <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
-                        <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    {/* Row 1: Badges */}
-                    {(() => {
-                      const hasWebsite = !!org.website;
-                      const hasEmail = emails.length > 0;
-                      const hasYears = !!org.years_active;
-                      if (!(hasWebsite && hasEmail && !hasYears) && !isPublic) {
-                        return (
-                          <div className="flex items-center gap-2 flex-shrink-0">
-                            <span className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
-                              {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
-                            </span>
-                            <span className={`px-2 py-1 rounded text-xs font-bold capitalize whitespace-nowrap ${getStatusColor(org.approval_status)}`}>
-                              {org.approval_status}
-                            </span>
-                          </div>
-                        );
-                      }
-                      return null;
-                    })()}
-
-                    {/* Row 2: Years Active */}
-                    {org.years_active && (
-                      <div className="flex items-center gap-1 min-w-0 flex-shrink-0">
-                        <span className="text-yellow-400 flex-shrink-0">
-                          {ClimateIcons.calendar}
-                        </span>
-                        <span
-                          className="text-gray-300 leading-tight text-xs sm:text-sm truncate min-w-0 max-w-[100px] sm:max-w-[120px] md:max-w-[150px]"
-                          title={org.years_active}
-                        >
-                          {org.years_active}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Website and Email: Responsive, never overlapping */}
-                    {(() => {
-                      const hasWebsite = !!org.website;
-                      const hasEmail = emails.length > 0;
-                      const hasYears = !!org.years_active;
-
-                      // Only website
-                      if (hasWebsite && !hasEmail && !hasYears) {
-                        return (
-                          <div className="flex items-center gap-1 min-w-0 w-full">
-                            <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
-                            {websiteInfo?.isValid ? (
-                              <a
-                                href={websiteInfo.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0"
-                                title={org.website}
-                              >
-                                {websiteInfo.hostname}
-                              </a>
-                            ) : (
-                              <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
-                            )}
-                          </div>
-                        );
-                      }
-
-                      // Only email
-
-                      if (!hasWebsite && hasEmail && !hasYears && !isPublic) {
-                        const socials: Array<{ key: keyof Org; icon: ReactNode; label: string }> = [
-                          { key: 'instagram', icon: ClimateIcons.instagram, label: 'Instagram' },
-                          { key: 'twitter', icon: ClimateIcons.twitter, label: 'X (Twitter)' },
-                          { key: 'facebook', icon: ClimateIcons.facebook, label: 'Facebook' },
-                          { key: 'tiktok', icon: ClimateIcons.tiktok, label: 'TikTok' },
-                          { key: 'linkedin', icon: ClimateIcons.linkedin, label: 'LinkedIn' },
-                          { key: 'youtube', icon: ClimateIcons.youtube, label: 'YouTube' },
-                        ];
-                        const socialItems = socials.map((s, idx) => {
-                          const val = org[s.key] as string | undefined;
-                          if (!val) return null;
-                          const info = createValidUrl(val);
-                          const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
+                  {isPublic ? (
+                    <>
+                      {/* Years Active */}
+                      {org.years_active && (
+                        <div className="flex items-center gap-1 min-w-0 flex-shrink-0 mb-1">
+                          <span className="text-yellow-400 flex-shrink-0">{ClimateIcons.calendar}</span>
+                          <span
+                            className="text-gray-300 leading-tight text-xs sm:text-sm truncate min-w-0 max-w-[100px] sm:max-w-[120px] md:max-w-[150px]"
+                            title={org.years_active}
+                          >
+                            {org.years_active}
+                          </span>
+                        </div>
+                      )}
+                      {/* Website */}
+                      {org.website && websiteInfo?.isValid && (
+                        <div className="flex items-center gap-1 min-w-0">
+                          <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
+                          <a
+                            href={websiteInfo.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0"
+                            title={org.website}
+                          >
+                            {websiteInfo.hostname}
+                          </a>
+                        </div>
+                      )}
+                      {/* If website exists but is invalid */}
+                      {org.website && !websiteInfo?.isValid && (
+                        <div className="flex items-center gap-1 min-w-0">
+                          <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
+                          <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      {/* Row 1: Badges */}
+                      {(() => {
+                        const hasWebsite = !!org.website;
+                        const hasEmail = emails.length > 0;
+                        const hasYears = !!org.years_active;
+                        if (!(hasWebsite && hasEmail && !hasYears) && !isPublic) {
                           return (
-                            <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title={s.label}>
-                              <span className="sr-only">{s.label}</span>
-                              {s.icon}
-                            </a>
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <span className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
+                                {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
+                              </span>
+                              <span className={`px-2 py-1 rounded text-xs font-bold capitalize whitespace-nowrap ${getStatusColor(org.approval_status)}`}>
+                                {org.approval_status}
+                              </span>
+                            </div>
                           );
-                        }).filter(Boolean);
-                        return (
-                          <div className="flex items-center justify-end gap-2 min-w-0 w-full">
-                            {socialItems.length > 0 && (
-                              <div className="flex items-center gap-2 flex-shrink-0">
-                                {socialItems as ReactNode[]}
-                              </div>
-                            )}
-                            <div className="flex items-center gap-1 min-w-0">
-                              <span className="text-green-400 flex-shrink-0">{ClimateIcons.email}</span>
-                              <div className="flex flex-nowrap items-center gap-x-1 gap-y-0.5 min-w-0">
-                                {emails.length <= 3 ? (
-                                  emails.map((email, index) => (
-                                    <span key={index} className="flex items-center min-w-0">
-                                      <a
-                                        href={`mailto:${email}`}
-                                        className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors truncate min-w-0 max-w-full sm:max-w-[120px] md:max-w-[200px]"
-                                        title={email}
-                                      >{email}</a>
-                                      {index < emails.length - 1 && (
-                                        <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
-                                      )}
-                                    </span>
-                                  ))
-                                ) : (
-                                  <span className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
-                                    title={`All emails: ${emails.join(', ')}`}>{emails.length} emails</span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      }
-
-                      // Only years active (already rendered above)
-                      if (!hasWebsite && !hasEmail && hasYears) {
+                        }
                         return null;
-                      }
+                      })()}
 
-                      // Website + Email (no years): badges above, website below on mobile; side by side on desktop
-                      if (hasWebsite && hasEmail && !hasYears && !isPublic) {
-                        return (
-                          <>
-                            <div className="flex flex-col sm:flex-row-reverse items-end gap-2 min-w-0 w-full">
-                              {/* Badges group */}
-                              <span className="flex gap-2">
-                                <span className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
-                                  {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
-                                </span>
-                                <span className={`px-2 py-1 rounded text-xs font-bold capitalize whitespace-nowrap ${getStatusColor(org.approval_status)}`}>
-                                  {org.approval_status}
-                                </span>
-                              </span>
-                              {/* Website (icon + hostname together) */}
-                              <span className="flex items-center gap-1 min-w-0 truncate">
-                                <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
-                                {websiteInfo?.isValid ? (
-                                  <a
-                                    href={websiteInfo.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0 max-w-[120px] sm:max-w-[160px] md:max-w-[200px]"
-                                    title={org.website}
-                                  >
-                                    {websiteInfo.hostname}
-                                  </a>
-                                ) : (
-                                  <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
-                                )}
-                              </span>
+                      {/* Row 2: Years Active */}
+                      {org.years_active && (
+                        <div className="flex items-center gap-1 min-w-0 flex-shrink-0">
+                          <span className="text-yellow-400 flex-shrink-0">
+                            {ClimateIcons.calendar}
+                          </span>
+                          <span
+                            className="text-gray-300 leading-tight text-xs sm:text-sm truncate min-w-0 max-w-[100px] sm:max-w-[120px] md:max-w-[150px]"
+                            title={org.years_active}
+                          >
+                            {org.years_active}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Website and Email: Responsive, never overlapping */}
+                      {(() => {
+                        const hasWebsite = !!org.website;
+                        const hasEmail = emails.length > 0;
+                        const hasYears = !!org.years_active;
+
+                        // Only website
+                        if (hasWebsite && !hasEmail && !hasYears) {
+                          return (
+                            <div className="flex items-center gap-1 min-w-0 w-full">
+                              <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
+                              {websiteInfo?.isValid ? (
+                                <a
+                                  href={websiteInfo.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0"
+                                  title={org.website}
+                                >
+                                  {websiteInfo.hostname}
+                                </a>
+                              ) : (
+                                <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
+                              )}
                             </div>
-                            {/* Email under badges+website with socials to the left */}
-                            <div className="flex items-center justify-end gap-2 min-w-0 mt-1 w-full">
-                              {(() => {
-                                const socials: Array<{ key: keyof Org; icon: ReactNode; label: string }> = [
-                                  { key: 'instagram', icon: ClimateIcons.instagram, label: 'Instagram' },
-                                  { key: 'twitter', icon: ClimateIcons.twitter, label: 'X (Twitter)' },
-                                  { key: 'facebook', icon: ClimateIcons.facebook, label: 'Facebook' },
-                                  { key: 'tiktok', icon: ClimateIcons.tiktok, label: 'TikTok' },
-                                  { key: 'linkedin', icon: ClimateIcons.linkedin, label: 'LinkedIn' },
-                                  { key: 'youtube', icon: ClimateIcons.youtube, label: 'YouTube' },
-                                ];
-                                const items = socials.map((s, idx) => {
-                                  const val = org[s.key] as string | undefined;
-                                  if (!val) return null;
-                                  const info = createValidUrl(val);
-                                  const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
-                                  return (
-                                    <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title={s.label}>
-                                      <span className="sr-only">{s.label}</span>
-                                      {s.icon}
-                                    </a>
-                                  );
-                                }).filter(Boolean);
-                                if ((items as ReactNode[]).length === 0) return null;
-                                return (
-                                  <div className="flex items-center gap-2 flex-shrink-0">
-                                    {items as ReactNode[]}
-                                  </div>
-                                );
-                              })()}
-                              <div className="flex items-center gap-1 min-w-0 w-full">
+                          );
+                        }
+
+                        // Only email
+
+                        if (!hasWebsite && hasEmail && !hasYears && !isPublic) {
+                          const socials: Array<{ key: keyof Org; icon: ReactNode; label: string }> = [
+                            { key: 'instagram', icon: ClimateIcons.instagram, label: 'Instagram' },
+                            { key: 'twitter', icon: ClimateIcons.twitter, label: 'X (Twitter)' },
+                            { key: 'facebook', icon: ClimateIcons.facebook, label: 'Facebook' },
+                            { key: 'tiktok', icon: ClimateIcons.tiktok, label: 'TikTok' },
+                            { key: 'linkedin', icon: ClimateIcons.linkedin, label: 'LinkedIn' },
+                            { key: 'youtube', icon: ClimateIcons.youtube, label: 'YouTube' },
+                          ];
+                          const socialItems = socials.map((s, idx) => {
+                            const val = org[s.key] as string | undefined;
+                            if (!val) return null;
+                            const info = createValidUrl(val);
+                            const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
+                            return (
+                              <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title={s.label}>
+                                <span className="sr-only">{s.label}</span>
+                                {s.icon}
+                              </a>
+                            );
+                          }).filter(Boolean);
+                          return (
+                            <div className="flex items-center justify-end gap-2 min-w-0 w-full">
+                              {socialItems.length > 0 && (
+                                <div className="flex items-center gap-2 flex-shrink-0">
+                                  {socialItems as ReactNode[]}
+                                </div>
+                              )}
+                              <div className="flex items-center gap-1 min-w-0">
                                 <span className="text-green-400 flex-shrink-0">{ClimateIcons.email}</span>
-                                <div className="flex flex-nowrap items-center gap-x-1 gap-y-0.5 min-w-0 w-full">
-                                  {emails.length <= 4 ? (
+                                <div className="flex flex-nowrap items-center gap-x-1 gap-y-0.5 min-w-0">
+                                  {emails.length <= 3 ? (
                                     emails.map((email, index) => (
-                                      <span key={index} className="flex items-center min-w-0 truncate">
+                                      <span key={index} className="flex items-center min-w-0">
                                         <a
                                           href={`mailto:${email}`}
                                           className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors truncate min-w-0 max-w-full sm:max-w-[120px] md:max-w-[200px]"
@@ -994,109 +902,106 @@ export function OrganizationCard({
                                 </div>
                               </div>
                             </div>
-                          </>
-                        );
-                      }
-
-                      // Website + Years: website left of badges, years under badges (already rendered)
-                      if (hasWebsite && !hasEmail && hasYears) {
-                        return (
-                          <div className="flex items-center gap-1 min-w-0 website-row">
-                            <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
-                            {websiteInfo?.isValid ? (
-                              <a
-                                href={websiteInfo.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0"
-                                title={org.website}
-                              >{websiteInfo.hostname}</a>
-                            ) : (
-                              <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
-                            )}
-                          </div>
-                        );
-                      }
-
-                      // Email + Years: email left of years, years under badges (already rendered)
-                      if (!hasWebsite && hasEmail && hasYears && !isPublic) {
-                        const socials: Array<{ key: keyof Org; icon: ReactNode; label: string }> = [
-                          { key: 'instagram', icon: ClimateIcons.instagram, label: 'Instagram' },
-                          { key: 'twitter', icon: ClimateIcons.twitter, label: 'X (Twitter)' },
-                          { key: 'facebook', icon: ClimateIcons.facebook, label: 'Facebook' },
-                          { key: 'tiktok', icon: ClimateIcons.tiktok, label: 'TikTok' },
-                          { key: 'linkedin', icon: ClimateIcons.linkedin, label: 'LinkedIn' },
-                          { key: 'youtube', icon: ClimateIcons.youtube, label: 'YouTube' },
-                        ];
-                        const socialItems = socials.map((s, idx) => {
-                          const val = org[s.key] as string | undefined;
-                          if (!val) return null;
-                          const info = createValidUrl(val);
-                          const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
-                          return (
-                            <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title={s.label}>
-                              <span className="sr-only">{s.label}</span>
-                              {s.icon}
-                            </a>
                           );
-                        }).filter(Boolean);
-                        return (
-                          <div className="flex items-center justify-end gap-2 min-w-0 email-row w-full">
-                            {socialItems.length > 0 && (
-                              <div className="flex items-center gap-2 flex-shrink-0">
-                                {socialItems as ReactNode[]}
-                              </div>
-                            )}
-                            <div className="flex items-center gap-1 min-w-0">
-                              <span className="text-green-400 flex-shrink-0">{ClimateIcons.email}</span>
-                              <div className="flex flex-nowrap items-center gap-x-1 gap-y-0.5 min-w-0">
-                                {emails.length <= 3 ? (
-                                  emails.map((email, index) => (
-                                    <span key={index} className="flex items-center min-w-0">
-                                      <a
-                                        href={`mailto:${email}`}
-                                        className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors truncate min-w-0 max-w-full sm:max-w-[120px] md:max-w-[200px]"
-                                        title={email}
-                                      >{email}</a>
-                                      {index < emails.length - 1 && (
-                                        <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
-                                      )}
-                                    </span>
-                                  ))
-                                ) : (
-                                  <span className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
-                                    title={`All emails: ${emails.join(', ')}`}>{emails.length} emails</span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      }
+                        }
 
-                      // All 3: website left of badges, years under badges, email left of years
-                      if (hasWebsite && hasEmail && hasYears && !isPublic) {
-                        const socials: Array<{ key: keyof Org; icon: ReactNode; label: string }> = [
-                          { key: 'instagram', icon: ClimateIcons.instagram, label: 'Instagram' },
-                          { key: 'twitter', icon: ClimateIcons.twitter, label: 'X (Twitter)' },
-                          { key: 'facebook', icon: ClimateIcons.facebook, label: 'Facebook' },
-                          { key: 'tiktok', icon: ClimateIcons.tiktok, label: 'TikTok' },
-                          { key: 'linkedin', icon: ClimateIcons.linkedin, label: 'LinkedIn' },
-                          { key: 'youtube', icon: ClimateIcons.youtube, label: 'YouTube' },
-                        ];
-                        const socialItems = socials.map((s, idx) => {
-                          const val = org[s.key] as string | undefined;
-                          if (!val) return null;
-                          const info = createValidUrl(val);
-                          const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
+                        // Only years active (already rendered above)
+                        if (!hasWebsite && !hasEmail && hasYears) {
+                          return null;
+                        }
+
+                        // Website + Email (no years): badges above, website below on mobile; side by side on desktop
+                        if (hasWebsite && hasEmail && !hasYears && !isPublic) {
                           return (
-                            <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title={s.label}>
-                              <span className="sr-only">{s.label}</span>
-                              {s.icon}
-                            </a>
+                            <>
+                              <div className="flex flex-col sm:flex-row-reverse items-end gap-2 min-w-0 w-full">
+                                {/* Badges group */}
+                                <span className="flex gap-2">
+                                  <span className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
+                                    {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
+                                  </span>
+                                  <span className={`px-2 py-1 rounded text-xs font-bold capitalize whitespace-nowrap ${getStatusColor(org.approval_status)}`}>
+                                    {org.approval_status}
+                                  </span>
+                                </span>
+                                {/* Website (icon + hostname together) */}
+                                <span className="flex items-center gap-1 min-w-0 truncate">
+                                  <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
+                                  {websiteInfo?.isValid ? (
+                                    <a
+                                      href={websiteInfo.url}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0 max-w-[120px] sm:max-w-[160px] md:max-w-[200px]"
+                                      title={org.website}
+                                    >
+                                      {websiteInfo.hostname}
+                                    </a>
+                                  ) : (
+                                    <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
+                                  )}
+                                </span>
+                              </div>
+                              {/* Email under badges+website with socials to the left */}
+                              <div className="flex items-center justify-end gap-2 min-w-0 mt-1 w-full">
+                                {(() => {
+                                  const socials: Array<{ key: keyof Org; icon: ReactNode; label: string }> = [
+                                    { key: 'instagram', icon: ClimateIcons.instagram, label: 'Instagram' },
+                                    { key: 'twitter', icon: ClimateIcons.twitter, label: 'X (Twitter)' },
+                                    { key: 'facebook', icon: ClimateIcons.facebook, label: 'Facebook' },
+                                    { key: 'tiktok', icon: ClimateIcons.tiktok, label: 'TikTok' },
+                                    { key: 'linkedin', icon: ClimateIcons.linkedin, label: 'LinkedIn' },
+                                    { key: 'youtube', icon: ClimateIcons.youtube, label: 'YouTube' },
+                                  ];
+                                  const items = socials.map((s, idx) => {
+                                    const val = org[s.key] as string | undefined;
+                                    if (!val) return null;
+                                    const info = createValidUrl(val);
+                                    const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
+                                    return (
+                                      <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title={s.label}>
+                                        <span className="sr-only">{s.label}</span>
+                                        {s.icon}
+                                      </a>
+                                    );
+                                  }).filter(Boolean);
+                                  if ((items as ReactNode[]).length === 0) return null;
+                                  return (
+                                    <div className="flex items-center gap-2 flex-shrink-0">
+                                      {items as ReactNode[]}
+                                    </div>
+                                  );
+                                })()}
+                                <div className="flex items-center gap-1 min-w-0 w-full">
+                                  <span className="text-green-400 flex-shrink-0">{ClimateIcons.email}</span>
+                                  <div className="flex flex-nowrap items-center gap-x-1 gap-y-0.5 min-w-0 w-full">
+                                    {emails.length <= 4 ? (
+                                      emails.map((email, index) => (
+                                        <span key={index} className="flex items-center min-w-0 truncate">
+                                          <a
+                                            href={`mailto:${email}`}
+                                            className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors truncate min-w-0 max-w-full sm:max-w-[120px] md:max-w-[200px]"
+                                            title={email}
+                                          >{email}</a>
+                                          {index < emails.length - 1 && (
+                                            <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
+                                          )}
+                                        </span>
+                                      ))
+                                    ) : (
+                                      <span className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
+                                        title={`All emails: ${emails.join(', ')}`}>{emails.length} emails</span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </>
                           );
-                        }).filter(Boolean);
-                        return (
-                          <>
+                        }
+
+                        // Website + Years: website left of badges, years under badges (already rendered)
+                        if (hasWebsite && !hasEmail && hasYears) {
+                          return (
                             <div className="flex items-center gap-1 min-w-0 website-row">
                               <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
                               {websiteInfo?.isValid ? (
@@ -1111,6 +1016,32 @@ export function OrganizationCard({
                                 <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
                               )}
                             </div>
+                          );
+                        }
+
+                        // Email + Years: email left of years, years under badges (already rendered)
+                        if (!hasWebsite && hasEmail && hasYears && !isPublic) {
+                          const socials: Array<{ key: keyof Org; icon: ReactNode; label: string }> = [
+                            { key: 'instagram', icon: ClimateIcons.instagram, label: 'Instagram' },
+                            { key: 'twitter', icon: ClimateIcons.twitter, label: 'X (Twitter)' },
+                            { key: 'facebook', icon: ClimateIcons.facebook, label: 'Facebook' },
+                            { key: 'tiktok', icon: ClimateIcons.tiktok, label: 'TikTok' },
+                            { key: 'linkedin', icon: ClimateIcons.linkedin, label: 'LinkedIn' },
+                            { key: 'youtube', icon: ClimateIcons.youtube, label: 'YouTube' },
+                          ];
+                          const socialItems = socials.map((s, idx) => {
+                            const val = org[s.key] as string | undefined;
+                            if (!val) return null;
+                            const info = createValidUrl(val);
+                            const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
+                            return (
+                              <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title={s.label}>
+                                <span className="sr-only">{s.label}</span>
+                                {s.icon}
+                              </a>
+                            );
+                          }).filter(Boolean);
+                          return (
                             <div className="flex items-center justify-end gap-2 min-w-0 email-row w-full">
                               {socialItems.length > 0 && (
                                 <div className="flex items-center gap-2 flex-shrink-0">
@@ -1140,14 +1071,84 @@ export function OrganizationCard({
                                 </div>
                               </div>
                             </div>
-                          </>
-                        );
-                      }
+                          );
+                        }
 
-                      return null;
-                    })()}
-                  </>
-                )}
+                        // All 3: website left of badges, years under badges, email left of years
+                        if (hasWebsite && hasEmail && hasYears && !isPublic) {
+                          const socials: Array<{ key: keyof Org; icon: ReactNode; label: string }> = [
+                            { key: 'instagram', icon: ClimateIcons.instagram, label: 'Instagram' },
+                            { key: 'twitter', icon: ClimateIcons.twitter, label: 'X (Twitter)' },
+                            { key: 'facebook', icon: ClimateIcons.facebook, label: 'Facebook' },
+                            { key: 'tiktok', icon: ClimateIcons.tiktok, label: 'TikTok' },
+                            { key: 'linkedin', icon: ClimateIcons.linkedin, label: 'LinkedIn' },
+                            { key: 'youtube', icon: ClimateIcons.youtube, label: 'YouTube' },
+                          ];
+                          const socialItems = socials.map((s, idx) => {
+                            const val = org[s.key] as string | undefined;
+                            if (!val) return null;
+                            const info = createValidUrl(val);
+                            const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
+                            return (
+                              <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title={s.label}>
+                                <span className="sr-only">{s.label}</span>
+                                {s.icon}
+                              </a>
+                            );
+                          }).filter(Boolean);
+                          return (
+                            <>
+                              <div className="flex items-center gap-1 min-w-0 website-row">
+                                <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
+                                {websiteInfo?.isValid ? (
+                                  <a
+                                    href={websiteInfo.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0"
+                                    title={org.website}
+                                  >{websiteInfo.hostname}</a>
+                                ) : (
+                                  <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
+                                )}
+                              </div>
+                              <div className="flex items-center justify-end gap-2 min-w-0 email-row w-full">
+                                {socialItems.length > 0 && (
+                                  <div className="flex items-center gap-2 flex-shrink-0">
+                                    {socialItems as ReactNode[]}
+                                  </div>
+                                )}
+                                <div className="flex items-center gap-1 min-w-0">
+                                  <span className="text-green-400 flex-shrink-0">{ClimateIcons.email}</span>
+                                  <div className="flex flex-nowrap items-center gap-x-1 gap-y-0.5 min-w-0">
+                                    {emails.length <= 3 ? (
+                                      emails.map((email, index) => (
+                                        <span key={index} className="flex items-center min-w-0">
+                                          <a
+                                            href={`mailto:${email}`}
+                                            className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors truncate min-w-0 max-w-full sm:max-w-[120px] md:max-w-[200px]"
+                                            title={email}
+                                          >{email}</a>
+                                          {index < emails.length - 1 && (
+                                            <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
+                                          )}
+                                        </span>
+                                      ))
+                                    ) : (
+                                      <span className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
+                                        title={`All emails: ${emails.join(', ')}`}>{emails.length} emails</span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </>
+                          );
+                        }
+
+                        return null;
+                      })()}
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -1163,12 +1164,23 @@ export function OrganizationCard({
                 </div>
               )}
 
+              {/* Type of Work on small screens: placed under top info, above Notable Success */}
+              {org.type_of_work && (
+                <div className="sm:hidden flex items-center gap-2 text-sm">
+                  <span className="text-gray-300">{org.type_of_work}</span>
+                </div>
+              )}
+
               {org.notable_success && (
                 <div className="p-2 bg-emerald-500/10 border-l-2 border-emerald-500 rounded-r text-sm">
-                  <span className="text-emerald-200 font-medium">
-                    {ClimateIcons.trophy}
-                  </span>
-                  <span className="text-gray-300 ml-2 break-words">{linkifyText(org.notable_success)}</span>
+                  <div className="flex items-start gap-2">
+                    <span className="text-emerald-200 font-medium flex-shrink-0 mt-0.5">
+                      {ClimateIcons.trophy}
+                    </span>
+                    <div className="flex-1 min-w-0 text-gray-300 break-words">
+                      {linkifyText(org.notable_success)}
+                    </div>
+                  </div>
                 </div>
               )}
 

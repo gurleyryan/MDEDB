@@ -91,6 +91,21 @@ body {
   font-family: var(--font-outfit, 'Outfit', Arial, sans-serif);
 }
 
+/* Prevent awkward single-letter wraps on org titles and avoid splitting words */
+.org-name-heading {
+  text-wrap: balance;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: manual;
+}
+
+/* Slightly responsive clamp to reduce size a bit on very small screens */
+@media (max-width: 420px) {
+  .org-name-heading {
+    font-size: clamp(1rem, 6vw, 1.3rem);
+  }
+}
+
 .text-subheading {
   font-family: var(--font-outfit, 'Outfit', Arial, sans-serif);
   font-size: 1.125rem;
