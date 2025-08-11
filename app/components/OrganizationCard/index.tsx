@@ -1,5 +1,5 @@
 'use client';
-import { useState, type ReactNode } from 'react';
+import { useState, type ReactNode, useRef } from 'react';
 import { CustomDropdown } from '../CustomDropdown';
 import { getStatusOptions } from '../../utils/selectOptions';
 import { Org } from '@/models/org';
@@ -16,6 +16,7 @@ import {
   isPlaceholderUrl
 } from '../../utils/orgUtils';
 import { validateField, formatUrl, formatCountryCode } from '../../utils/validation';
+import { uploadOrgAsset } from '../../utils/storage';
 import { ClimateIcons } from '../Icons';
 
 // Convert plain-text URLs to clickable links (keeps everything client-side and safe)
@@ -135,6 +136,9 @@ export function OrganizationCard({
 }: OrganizationCardProps) {
   const [editForm, setEditForm] = useState<Partial<Org>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const logoInputRef = useRef<HTMLInputElement | null>(null);
+  const bannerInputRef = useRef<HTMLInputElement | null>(null);
+  const [uploading, setUploading] = useState<{ logo?: boolean; banner?: boolean }>({});
 
   // Initialize edit form when editing starts
   const startEdit = () => {
@@ -148,7 +152,16 @@ export function OrganizationCard({
       notable_success: org.notable_success || '',
       cta_notes: org.cta_notes || '',
       years_active: org.years_active || '',
-      capacity: org.capacity || ''
+      capacity: org.capacity || '',
+  // new optional fields
+  logo: org.logo || '',
+  banner: org.banner || '',
+  instagram: org.instagram || '',
+  twitter: org.twitter || '',
+  facebook: org.facebook || '',
+  tiktok: org.tiktok || '',
+  linkedin: org.linkedin || '',
+  youtube: org.youtube || ''
     });
     setErrors({});
     onEdit(org); // Restore this call to set editing state
@@ -189,11 +202,31 @@ export function OrganizationCard({
       return;
     }
 
-    const success = await onSave(org.id, editForm);
+  const success = await onSave(org.id, editForm);
     if (success) {
       setEditForm({});
       setErrors({});
     }
+  };
+
+  // Upload helpers
+  const handleUpload = async (file: File, kind: 'logo' | 'banner') => {
+    try {
+      setUploading(prev => ({ ...prev, [kind]: true }));
+      const url = await uploadOrgAsset(file, org.id, kind);
+      setEditForm(prev => ({ ...prev, [kind]: url }));
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : 'Upload failed';
+      setErrors(prev => ({ ...prev, [kind]: message }));
+    } finally {
+      setUploading(prev => ({ ...prev, [kind]: false }));
+    }
+  };
+
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>, kind: 'logo' | 'banner') => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    handleUpload(file, kind);
   };
 
   // Handle cancel
@@ -228,10 +261,21 @@ export function OrganizationCard({
       tabIndex={-1} // Prevent card from receiving focus
       onFocus={(e) => e.preventDefault()} // Prevent focus events
     >
-      {/* Banner Image with proper rounding */}
-      {org.website && (
+      {/* Banner Image with proper rounding (custom overrides scraped) */}
+      {(org.banner || org.website) && (
         <div className="relative h-48 overflow-hidden rounded-t-2xl">
-          {isMetadataLoading ? (
+          {org.banner ? (
+            <img
+              src={org.banner}
+              alt={`${org.org_name} banner`}
+              className="w-full h-full object-cover opacity-60"
+              onError={(e) => {
+                // Hide the banner if custom fails
+                const container = e.currentTarget.parentElement;
+                if (container) container.style.display = 'none';
+              }}
+            />
+          ) : isMetadataLoading ? (
             // Skeleton loader for banner
             <div className="w-full h-full bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 animate-pulse">
               <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/40 to-transparent" />
@@ -302,6 +346,81 @@ export function OrganizationCard({
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Logo upload + preview */}
+              <div>
+                <label className="block text-xs text-gray-400 mb-1">Logo</label>
+                <div className="flex items-center gap-3">
+                  {/* Hidden native input; triggered by button */}
+                  <input
+                    ref={logoInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => onFileChange(e, 'logo')}
+                    className="sr-only"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => logoInputRef.current?.click()}
+                    className="btn-glass btn-glass-blue px-3 py-1.5 rounded-md text-xs font-medium hover:shadow-glow-blue flex items-center gap-2"
+                  >
+                    {ClimateIcons.plus}
+                    <span>{editForm.logo ? 'Change Logo' : 'Choose Logo'}</span>
+                  </button>
+                  {uploading.logo && <span className="text-gray-400 text-xs">Uploading…</span>}
+                </div>
+                <input
+                  type="url"
+                  value={editForm.logo || ''}
+                  onChange={(e) => handleFieldChange('logo', e.target.value)}
+                  onBlur={(e) => e.target.value && handleFieldChange('logo', formatUrl(e.target.value))}
+                  className="mt-2 w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-blue-500"
+                  placeholder="Or paste a logo URL"
+                />
+                {editForm.logo && (
+                  <div className="mt-2 w-16 h-16 bg-white/10 rounded flex items-center justify-center overflow-hidden">
+                    <img src={editForm.logo} alt="logo preview" className="max-w-full max-h-full object-contain" />
+                  </div>
+                )}
+                {errors.logo && <p className="text-red-400 text-xs mt-1">{errors.logo}</p>}
+              </div>
+
+              {/* Banner upload + preview */}
+              <div>
+                <label className="block text-xs text-gray-400 mb-1">Banner</label>
+                <div className="flex items-center gap-3">
+                  {/* Hidden native input; triggered by button */}
+                  <input
+                    ref={bannerInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => onFileChange(e, 'banner')}
+                    className="sr-only"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => bannerInputRef.current?.click()}
+                    className="btn-glass btn-glass-purple px-3 py-1.5 rounded-md text-xs font-medium hover:shadow-glow-purple flex items-center gap-2"
+                  >
+                    {ClimateIcons.plus}
+                    <span>{editForm.banner ? 'Change Banner' : 'Choose Banner'}</span>
+                  </button>
+                  {uploading.banner && <span className="text-gray-400 text-xs">Uploading…</span>}
+                </div>
+                <input
+                  type="url"
+                  value={editForm.banner || ''}
+                  onChange={(e) => handleFieldChange('banner', e.target.value)}
+                  onBlur={(e) => e.target.value && handleFieldChange('banner', formatUrl(e.target.value))}
+                  className="mt-2 w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-blue-500"
+                  placeholder="Or paste a banner URL"
+                />
+                {editForm.banner && (
+                  <div className="mt-2 w-full h-20 bg-white/10 rounded overflow-hidden">
+                    <img src={editForm.banner} alt="banner preview" className="w-full h-full object-cover" />
+                  </div>
+                )}
+                {errors.banner && <p className="text-red-400 text-xs mt-1">{errors.banner}</p>}
+              </div>
               <div>
                 <label className="block text-xs text-gray-400 mb-1">Website</label>
                 <input
@@ -324,12 +443,12 @@ export function OrganizationCard({
 
               <div>
                 <label className="block text-xs text-gray-400 mb-1">Email</label>
-                <textarea
+                <input
+                  type="text"
                   value={editForm.email || ''}
                   onChange={(e) => handleFieldChange('email', e.target.value)}
-                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none h-20 resize-none ${errors.email ? 'border-red-500' : 'border-gray-600 focus:border-blue-500'
-                    }`}
-                  placeholder="Multiple emails separated by commas or line breaks"
+                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none ${errors.email ? 'border-red-500' : 'border-gray-600 focus:border-blue-500'}`}
+                  placeholder="Multiple emails separated by commas"
                 />
                 {errors.email && (
                   <p className="text-red-400 text-xs mt-1">{errors.email}</p>
@@ -369,6 +488,76 @@ export function OrganizationCard({
                 {errors.type_of_work && (
                   <p className="text-red-400 text-xs mt-1">{errors.type_of_work}</p>
                 )}
+              </div>
+
+              {/* Social links */}
+              <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs text-gray-400 mb-1">Instagram</label>
+                  <input
+                    type="url"
+                    value={editForm.instagram || ''}
+                    onChange={(e) => handleFieldChange('instagram', e.target.value)}
+                    onBlur={(e) => e.target.value && handleFieldChange('instagram', formatUrl(e.target.value))}
+                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-blue-500"
+                    placeholder="https://instagram.com/yourorg"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-400 mb-1">X (Twitter)</label>
+                  <input
+                    type="url"
+                    value={editForm.twitter || ''}
+                    onChange={(e) => handleFieldChange('twitter', e.target.value)}
+                    onBlur={(e) => e.target.value && handleFieldChange('twitter', formatUrl(e.target.value))}
+                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-blue-500"
+                    placeholder="https://x.com/yourorg"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-400 mb-1">Facebook</label>
+                  <input
+                    type="url"
+                    value={editForm.facebook || ''}
+                    onChange={(e) => handleFieldChange('facebook', e.target.value)}
+                    onBlur={(e) => e.target.value && handleFieldChange('facebook', formatUrl(e.target.value))}
+                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-blue-500"
+                    placeholder="https://facebook.com/yourorg"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-400 mb-1">TikTok</label>
+                  <input
+                    type="url"
+                    value={editForm.tiktok || ''}
+                    onChange={(e) => handleFieldChange('tiktok', e.target.value)}
+                    onBlur={(e) => e.target.value && handleFieldChange('tiktok', formatUrl(e.target.value))}
+                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-blue-500"
+                    placeholder="https://tiktok.com/@yourorg"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-400 mb-1">LinkedIn</label>
+                  <input
+                    type="url"
+                    value={editForm.linkedin || ''}
+                    onChange={(e) => handleFieldChange('linkedin', e.target.value)}
+                    onBlur={(e) => e.target.value && handleFieldChange('linkedin', formatUrl(e.target.value))}
+                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-blue-500"
+                    placeholder="https://linkedin.com/company/yourorg"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-400 mb-1">YouTube</label>
+                  <input
+                    type="url"
+                    value={editForm.youtube || ''}
+                    onChange={(e) => handleFieldChange('youtube', e.target.value)}
+                    onBlur={(e) => e.target.value && handleFieldChange('youtube', formatUrl(e.target.value))}
+                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-blue-500"
+                    placeholder="https://youtube.com/@yourorg"
+                  />
+                </div>
               </div>
 
               <div>
@@ -448,9 +637,22 @@ export function OrganizationCard({
               {/* Left Column: Favicon + Org Info */}
               <div className="flex items-start gap-3 flex-1 min-w-0 max-w-[50%]">
                 {/* Favicon */}
-                {org.website && (
+                {(org.logo || org.website) && (
                   <div className="w-8 h-8 rounded-lg flex-shrink-0 bg-white/10 p-1">
-                    {isMetadataLoading ? (
+                    {org.logo ? (
+                      <img
+                        src={org.logo}
+                        alt=""
+                        className="w-full h-full rounded object-cover"
+                        onError={(e) => {
+                          if (org.website) {
+                            e.currentTarget.src = getGoogleFaviconUrl(org.website);
+                          } else {
+                            e.currentTarget.style.display = 'none';
+                          }
+                        }}
+                      />
+                    ) : isMetadataLoading ? (
                       <div className="w-full h-full bg-gray-600 rounded animate-pulse"></div>
                     ) : metadata?.favicon && !isPlaceholderUrl(metadata.favicon) ? (
                       <img
@@ -458,18 +660,24 @@ export function OrganizationCard({
                         alt=""
                         className="w-full h-full rounded"
                         onError={(e) => {
-                          e.currentTarget.src = getGoogleFaviconUrl(org.website!);
+                          if (org.website) {
+                            e.currentTarget.src = getGoogleFaviconUrl(org.website!);
+                          } else {
+                            e.currentTarget.style.display = 'none';
+                          }
                         }}
                       />
                     ) : (
-                      <img
-                        src={getGoogleFaviconUrl(org.website)}
-                        alt=""
-                        className="w-full h-full rounded"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                        }}
-                      />
+                      org.website ? (
+                        <img
+                          src={getGoogleFaviconUrl(org.website)}
+                          alt=""
+                          className="w-full h-full rounded"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                      ) : null
                     )}
                   </div>
                 )}
@@ -493,11 +701,51 @@ export function OrganizationCard({
                       </>
                     )}
                   </div>
+
                 </div>
               </div>
 
-              {/* Right Column: Responsive, never overlapping */}
-              <div className="flex flex-col items-end gap-1 min-w-0 max-w-[50%] flex-shrink ">
+              {/* Right Cluster: Socials (middle) + Right Column, bottom-aligned and no gap */}
+              <div className="flex items-end gap-0 min-w-0 max-w-[50%] flex-shrink">
+                {/* Middle Column: Social icons (narrow), sits just left of the right-hand column */}
+                {(isPublic || emails.length === 0) && (() => {
+                  const socials: Array<{ key: keyof Org; icon: ReactNode; label: string }> = [
+                    { key: 'instagram', icon: ClimateIcons.instagram, label: 'Instagram' },
+                    { key: 'twitter', icon: ClimateIcons.twitter, label: 'X (Twitter)' },
+                    { key: 'facebook', icon: ClimateIcons.facebook, label: 'Facebook' },
+                    { key: 'tiktok', icon: ClimateIcons.tiktok, label: 'TikTok' },
+                    { key: 'linkedin', icon: ClimateIcons.linkedin, label: 'LinkedIn' },
+                    { key: 'youtube', icon: ClimateIcons.youtube, label: 'YouTube' },
+                  ];
+                  const items = socials.map((s, idx) => {
+                    const val = org[s.key] as string | undefined;
+                    if (!val) return null;
+                    const info = createValidUrl(val);
+                    const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
+                    return (
+                      <a
+                        key={`${s.key}-${idx}`}
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-400 hover:text-white transition-colors"
+                        title={s.label}
+                      >
+                        <span className="sr-only">{s.label}</span>
+                        {s.icon}
+                      </a>
+                    );
+                  }).filter(Boolean);
+                  if ((items as ReactNode[]).length === 0) return null;
+                  return (
+                    <div className="flex items-center gap-2 flex-shrink-0 min-w-fit justify-end mr-2">
+                      {items as ReactNode[]}
+                    </div>
+                  );
+                })()}
+
+                {/* Right Column: Responsive, never overlapping */}
+                <div className="flex flex-col items-end gap-1 min-w-0 flex-shrink ">
                 {isPublic ? (
                   <>
                     {/* Years Active */}
@@ -603,27 +851,54 @@ export function OrganizationCard({
                       // Only email
 
                       if (!hasWebsite && hasEmail && !hasYears && !isPublic) {
+                        const socials: Array<{ key: keyof Org; icon: ReactNode; label: string }> = [
+                          { key: 'instagram', icon: ClimateIcons.instagram, label: 'Instagram' },
+                          { key: 'twitter', icon: ClimateIcons.twitter, label: 'X (Twitter)' },
+                          { key: 'facebook', icon: ClimateIcons.facebook, label: 'Facebook' },
+                          { key: 'tiktok', icon: ClimateIcons.tiktok, label: 'TikTok' },
+                          { key: 'linkedin', icon: ClimateIcons.linkedin, label: 'LinkedIn' },
+                          { key: 'youtube', icon: ClimateIcons.youtube, label: 'YouTube' },
+                        ];
+                        const socialItems = socials.map((s, idx) => {
+                          const val = org[s.key] as string | undefined;
+                          if (!val) return null;
+                          const info = createValidUrl(val);
+                          const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
+                          return (
+                            <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title={s.label}>
+                              <span className="sr-only">{s.label}</span>
+                              {s.icon}
+                            </a>
+                          );
+                        }).filter(Boolean);
                         return (
-                          <div className="flex items-center gap-1 min-w-0">
-                            <span className="text-green-400 flex-shrink-0">{ClimateIcons.email}</span>
-                            <div className="flex flex-nowrap items-center gap-x-1 gap-y-0.5 min-w-0">
-                              {emails.length <= 3 ? (
-                                emails.map((email, index) => (
-                                  <span key={index} className="flex items-center min-w-0">
-                                    <a
-                                      href={`mailto:${email}`}
-                                      className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors truncate min-w-0 max-w-full sm:max-w-[120px] md:max-w-[200px]"
-                                      title={email}
-                                    >{email}</a>
-                                    {index < emails.length - 1 && (
-                                      <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
-                                    )}
-                                  </span>
-                                ))
-                              ) : (
-                                <span className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
-                                  title={`All emails: ${emails.join(', ')}`}>{emails.length} emails</span>
-                              )}
+                          <div className="flex items-center justify-end gap-2 min-w-0 w-full">
+                            {socialItems.length > 0 && (
+                              <div className="flex items-center gap-2 flex-shrink-0">
+                                {socialItems as ReactNode[]}
+                              </div>
+                            )}
+                            <div className="flex items-center gap-1 min-w-0">
+                              <span className="text-green-400 flex-shrink-0">{ClimateIcons.email}</span>
+                              <div className="flex flex-nowrap items-center gap-x-1 gap-y-0.5 min-w-0">
+                                {emails.length <= 3 ? (
+                                  emails.map((email, index) => (
+                                    <span key={index} className="flex items-center min-w-0">
+                                      <a
+                                        href={`mailto:${email}`}
+                                        className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors truncate min-w-0 max-w-full sm:max-w-[120px] md:max-w-[200px]"
+                                        title={email}
+                                      >{email}</a>
+                                      {index < emails.length - 1 && (
+                                        <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
+                                      )}
+                                    </span>
+                                  ))
+                                ) : (
+                                  <span className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
+                                    title={`All emails: ${emails.join(', ')}`}>{emails.length} emails</span>
+                                )}
+                              </div>
                             </div>
                           </div>
                         );
@@ -666,27 +941,57 @@ export function OrganizationCard({
                                 )}
                               </span>
                             </div>
-                            {/* Email under badges+website */}
-                            <div className="flex items-center gap-1 min-w-0 mt-1 w-full">
-                              <span className="text-green-400 flex-shrink-0">{ClimateIcons.email}</span>
-                              <div className="flex flex-nowrap items-center gap-x-1 gap-y-0.5 min-w-0 w-full">
-                                {emails.length <= 4 ? (
-                                  emails.map((email, index) => (
-                                    <span key={index} className="flex items-center min-w-0 truncate">
-                                      <a
-                                        href={`mailto:${email}`}
-                                        className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors truncate min-w-0 max-w-full sm:max-w-[120px] md:max-w-[200px]"
-                                        title={email}
-                                      >{email}</a>
-                                      {index < emails.length - 1 && (
-                                        <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
-                                      )}
-                                    </span>
-                                  ))
-                                ) : (
-                                  <span className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
-                                    title={`All emails: ${emails.join(', ')}`}>{emails.length} emails</span>
-                                )}
+                            {/* Email under badges+website with socials to the left */}
+                            <div className="flex items-center justify-end gap-2 min-w-0 mt-1 w-full">
+                              {(() => {
+                                const socials: Array<{ key: keyof Org; icon: ReactNode; label: string }> = [
+                                  { key: 'instagram', icon: ClimateIcons.instagram, label: 'Instagram' },
+                                  { key: 'twitter', icon: ClimateIcons.twitter, label: 'X (Twitter)' },
+                                  { key: 'facebook', icon: ClimateIcons.facebook, label: 'Facebook' },
+                                  { key: 'tiktok', icon: ClimateIcons.tiktok, label: 'TikTok' },
+                                  { key: 'linkedin', icon: ClimateIcons.linkedin, label: 'LinkedIn' },
+                                  { key: 'youtube', icon: ClimateIcons.youtube, label: 'YouTube' },
+                                ];
+                                const items = socials.map((s, idx) => {
+                                  const val = org[s.key] as string | undefined;
+                                  if (!val) return null;
+                                  const info = createValidUrl(val);
+                                  const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
+                                  return (
+                                    <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title={s.label}>
+                                      <span className="sr-only">{s.label}</span>
+                                      {s.icon}
+                                    </a>
+                                  );
+                                }).filter(Boolean);
+                                if ((items as ReactNode[]).length === 0) return null;
+                                return (
+                                  <div className="flex items-center gap-2 flex-shrink-0">
+                                    {items as ReactNode[]}
+                                  </div>
+                                );
+                              })()}
+                              <div className="flex items-center gap-1 min-w-0 w-full">
+                                <span className="text-green-400 flex-shrink-0">{ClimateIcons.email}</span>
+                                <div className="flex flex-nowrap items-center gap-x-1 gap-y-0.5 min-w-0 w-full">
+                                  {emails.length <= 4 ? (
+                                    emails.map((email, index) => (
+                                      <span key={index} className="flex items-center min-w-0 truncate">
+                                        <a
+                                          href={`mailto:${email}`}
+                                          className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors truncate min-w-0 max-w-full sm:max-w-[120px] md:max-w-[200px]"
+                                          title={email}
+                                        >{email}</a>
+                                        {index < emails.length - 1 && (
+                                          <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
+                                        )}
+                                      </span>
+                                    ))
+                                  ) : (
+                                    <span className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
+                                      title={`All emails: ${emails.join(', ')}`}>{emails.length} emails</span>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           </>
@@ -715,51 +1020,34 @@ export function OrganizationCard({
 
                       // Email + Years: email left of years, years under badges (already rendered)
                       if (!hasWebsite && hasEmail && hasYears && !isPublic) {
+                        const socials: Array<{ key: keyof Org; icon: ReactNode; label: string }> = [
+                          { key: 'instagram', icon: ClimateIcons.instagram, label: 'Instagram' },
+                          { key: 'twitter', icon: ClimateIcons.twitter, label: 'X (Twitter)' },
+                          { key: 'facebook', icon: ClimateIcons.facebook, label: 'Facebook' },
+                          { key: 'tiktok', icon: ClimateIcons.tiktok, label: 'TikTok' },
+                          { key: 'linkedin', icon: ClimateIcons.linkedin, label: 'LinkedIn' },
+                          { key: 'youtube', icon: ClimateIcons.youtube, label: 'YouTube' },
+                        ];
+                        const socialItems = socials.map((s, idx) => {
+                          const val = org[s.key] as string | undefined;
+                          if (!val) return null;
+                          const info = createValidUrl(val);
+                          const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
+                          return (
+                            <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title={s.label}>
+                              <span className="sr-only">{s.label}</span>
+                              {s.icon}
+                            </a>
+                          );
+                        }).filter(Boolean);
                         return (
-                          <div className="flex items-center gap-1 min-w-0 email-row">
-                            <span className="text-green-400 flex-shrink-0">{ClimateIcons.email}</span>
-                            <div className="flex flex-nowrap items-center gap-x-1 gap-y-0.5 min-w-0">
-                              {emails.length <= 3 ? (
-                                emails.map((email, index) => (
-                                  <span key={index} className="flex items-center min-w-0">
-                                    <a
-                                      href={`mailto:${email}`}
-                                      className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors truncate min-w-0 max-w-full sm:max-w-[120px] md:max-w-[200px]"
-                                      title={email}
-                                    >{email}</a>
-                                    {index < emails.length - 1 && (
-                                      <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
-                                    )}
-                                  </span>
-                                ))
-                              ) : (
-                                <span className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
-                                  title={`All emails: ${emails.join(', ')}`}>{emails.length} emails</span>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      }
-
-                      // All 3: website left of badges, years under badges, email left of years
-                      if (hasWebsite && hasEmail && hasYears && !isPublic) {
-                        return (
-                          <>
-                            <div className="flex items-center gap-1 min-w-0 website-row">
-                              <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
-                              {websiteInfo?.isValid ? (
-                                <a
-                                  href={websiteInfo.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0"
-                                  title={org.website}
-                                >{websiteInfo.hostname}</a>
-                              ) : (
-                                <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-1 min-w-0 email-row">
+                          <div className="flex items-center justify-end gap-2 min-w-0 email-row w-full">
+                            {socialItems.length > 0 && (
+                              <div className="flex items-center gap-2 flex-shrink-0">
+                                {socialItems as ReactNode[]}
+                              </div>
+                            )}
+                            <div className="flex items-center gap-1 min-w-0">
                               <span className="text-green-400 flex-shrink-0">{ClimateIcons.email}</span>
                               <div className="flex flex-nowrap items-center gap-x-1 gap-y-0.5 min-w-0">
                                 {emails.length <= 3 ? (
@@ -781,6 +1069,77 @@ export function OrganizationCard({
                                 )}
                               </div>
                             </div>
+                          </div>
+                        );
+                      }
+
+                      // All 3: website left of badges, years under badges, email left of years
+                      if (hasWebsite && hasEmail && hasYears && !isPublic) {
+                        const socials: Array<{ key: keyof Org; icon: ReactNode; label: string }> = [
+                          { key: 'instagram', icon: ClimateIcons.instagram, label: 'Instagram' },
+                          { key: 'twitter', icon: ClimateIcons.twitter, label: 'X (Twitter)' },
+                          { key: 'facebook', icon: ClimateIcons.facebook, label: 'Facebook' },
+                          { key: 'tiktok', icon: ClimateIcons.tiktok, label: 'TikTok' },
+                          { key: 'linkedin', icon: ClimateIcons.linkedin, label: 'LinkedIn' },
+                          { key: 'youtube', icon: ClimateIcons.youtube, label: 'YouTube' },
+                        ];
+                        const socialItems = socials.map((s, idx) => {
+                          const val = org[s.key] as string | undefined;
+                          if (!val) return null;
+                          const info = createValidUrl(val);
+                          const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
+                          return (
+                            <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title={s.label}>
+                              <span className="sr-only">{s.label}</span>
+                              {s.icon}
+                            </a>
+                          );
+                        }).filter(Boolean);
+                        return (
+                          <>
+                            <div className="flex items-center gap-1 min-w-0 website-row">
+                              <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
+                              {websiteInfo?.isValid ? (
+                                <a
+                                  href={websiteInfo.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0"
+                                  title={org.website}
+                                >{websiteInfo.hostname}</a>
+                              ) : (
+                                <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
+                              )}
+                            </div>
+                            <div className="flex items-center justify-end gap-2 min-w-0 email-row w-full">
+                              {socialItems.length > 0 && (
+                                <div className="flex items-center gap-2 flex-shrink-0">
+                                  {socialItems as ReactNode[]}
+                                </div>
+                              )}
+                              <div className="flex items-center gap-1 min-w-0">
+                                <span className="text-green-400 flex-shrink-0">{ClimateIcons.email}</span>
+                                <div className="flex flex-nowrap items-center gap-x-1 gap-y-0.5 min-w-0">
+                                  {emails.length <= 3 ? (
+                                    emails.map((email, index) => (
+                                      <span key={index} className="flex items-center min-w-0">
+                                        <a
+                                          href={`mailto:${email}`}
+                                          className="text-sm text-green-400 hover:text-green-300 hover:underline transition-colors truncate min-w-0 max-w-full sm:max-w-[120px] md:max-w-[200px]"
+                                          title={email}
+                                        >{email}</a>
+                                        {index < emails.length - 1 && (
+                                          <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
+                                        )}
+                                      </span>
+                                    ))
+                                  ) : (
+                                    <span className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
+                                      title={`All emails: ${emails.join(', ')}`}>{emails.length} emails</span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
                           </>
                         );
                       }
@@ -789,6 +1148,7 @@ export function OrganizationCard({
                     })()}
                   </>
                 )}
+                </div>
               </div>
             </div>
 

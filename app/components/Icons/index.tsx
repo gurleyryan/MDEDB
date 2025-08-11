@@ -1,8 +1,9 @@
 import {
   ClockIcon, CheckCircleIcon, XCircleIcon, PencilSimpleIcon, ChartBarIcon, FloppyDiskIcon, XIcon,
   GlobeIcon, LightningIcon, CloudIcon, MapPinIcon, TrendUpIcon, CalendarIcon,
-  SortAscendingIcon, SortDescendingIcon,FunnelIcon, MagnifyingGlassIcon, PlusIcon, SignInIcon, SignOutIcon, HashIcon, ListChecksIcon, ChatCircleIcon, LightbulbIcon,
+  SortAscendingIcon, SortDescendingIcon, FunnelIcon, MagnifyingGlassIcon, PlusIcon, SignInIcon, SignOutIcon, HashIcon, ListChecksIcon, ChatCircleIcon, LightbulbIcon,
   EnvelopeIcon, UsersIcon, TrophyIcon, MegaphoneIcon,
+  InstagramLogoIcon, XLogoIcon, FacebookLogoIcon, TiktokLogoIcon, LinkedinLogoIcon, YoutubeLogoIcon,
 } from '@phosphor-icons/react';
 
 export const ClimateIcons = {
@@ -28,6 +29,14 @@ export const ClimateIcons = {
   trophy: <TrophyIcon className="w-4 h-4" weight="duotone" />,
   announcement: <MegaphoneIcon className="w-4 h-4" weight="duotone" />,
   capacity: <UsersIcon className="w-4 h-4" weight="duotone" />,
+
+  // Social Icons (Phosphor)
+  instagram: <InstagramLogoIcon className="w-4 h-4" weight="duotone" />,
+  twitter: <XLogoIcon className="w-4 h-4" weight="duotone" />,
+  facebook: <FacebookLogoIcon className="w-4 h-4" weight="duotone" />,
+  tiktok: <TiktokLogoIcon className="w-4 h-4" weight="duotone" />,
+  linkedin: <LinkedinLogoIcon className="w-4 h-4" weight="duotone" />,
+  youtube: <YoutubeLogoIcon className="w-4 h-4" weight="duotone" />,
 
   // Sort/Filter Icons (Phosphor)
   name: <SortAscendingIcon className="w-4 h-4" weight="duotone" />,

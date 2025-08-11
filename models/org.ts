@@ -13,6 +13,15 @@ export interface Org {
   capacity?: string;
   cta_notes?: string;
   logo?: string;
+  // Optional custom banner to override scraped metadata image
+  banner?: string;
+  // Optional social links
+  instagram?: string;
+  twitter?: string; // Shown as X in UI
+  facebook?: string;
+  tiktok?: string;
+  linkedin?: string;
+  youtube?: string;
   tags?: string[];
   approval_status: 'pending' | 'approved' | 'rejected' | 'under_review';
   created_at?: string;
