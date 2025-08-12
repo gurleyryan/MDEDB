@@ -152,7 +152,7 @@ export function CustomDropdown({
           onClick={(e) => handleOptionClick(e, option)}
           onMouseEnter={() => setHoveredIndex(index)}
           onMouseLeave={() => setHoveredIndex(null)}
-          className={`w-full text-left px-3 py-3 text-sm font-body transition-all duration-75 flex items-center gap-3 border-b border-gray-700/50 last:border-b-0 focus:outline-none relative overflow-hidden ${option.value === value ? 'border-l-4 border-l-blue-500' : ''
+          className={`w-full text-left px-3 py-3 text-sm font-mde transition-all duration-75 flex items-center gap-3 border-b border-gray-700/50 last:border-b-0 focus:outline-none relative overflow-hidden ${option.value === value ? 'border-l-4 border-l-blue-500' : ''
             }`}
           style={{
             height: '48px',
@@ -234,7 +234,7 @@ export function CustomDropdown({
         ref={buttonRef}
         type="button"
         onClick={handleButtonClick}
-        className={`btn-glass cursor-pointer w-full px-3 py-2 text-white text-sm font-body focus:outline-none transition-all duration-200 flex items-center justify-between ${isOpen ? 'ring-1 ring-blue-500/50' : ''}`}
+        className={`btn-glass cursor-pointer w-full px-3 py-2 text-white text-sm font-mde focus:outline-none transition-all duration-200 flex items-center justify-between ${isOpen ? 'ring-1 ring-blue-500/50' : ''}`}
         style={{
           position: 'relative',
           zIndex: isOpen ? 100_000 : 'auto',

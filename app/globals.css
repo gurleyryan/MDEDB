@@ -8,10 +8,18 @@
   --background: #000000;
   --foreground: #ffffff;
   --mde-yellow: #f7ed6a;
-  --mde-green: #69bd45;
+  --mde-green: #9ac45a;
   --mde-blue: #99d9e0;
   --mde-pink: #f49cd3;
   --mde-red: #f26d6d;
+  /* RGB triplets for constructing alpha utilities */
+  --mde-yellow-rgb: 247 237 106;
+  --mde-green-rgb: 154 196 90;
+  --mde-blue-rgb: 153 217 224;
+  --mde-pink-rgb: 244 156 211;
+  --mde-red-rgb: 242 109 109;
+  /* Primary MDE font variable (Karla via Next.js) */
+  --mde-font: 'Karla', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 
   /* Glass Effect Variables */
   --glass-bg: rgba(15, 15, 15, 0.8);
@@ -47,7 +55,7 @@ body {
     radial-gradient(circle at 75% 75%, rgba(16, 185, 129, 0.04) 0%, transparent 50%),
     linear-gradient(135deg, #000000, #0a0a0a, #000000);
   color: var(--foreground);
-  font-family: var(--font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
+  font-family: var(--mde-font, 'Karla', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif);
   font-feature-settings: "rlig" 1, "calt" 1;
   min-height: 100vh;
 }
@@ -56,19 +64,24 @@ body {
    TYPOGRAPHY SYSTEM
    ============================================ */
 .font-heading {
-  font-family: var(--font-outfit, 'Outfit', Arial, sans-serif);
+  font-family: var(--mde-font, --font-outfit, 'Outfit', Arial, sans-serif);
   font-weight: 600;
   letter-spacing: -0.025em;
 }
 
 .font-body {
-  font-family: var(--font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
+  font-family: var(--mde-font, --font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
   font-weight: 400;
   line-height: 1.6;
 }
 
+/* MDE primary font utility */
+.font-mde {
+  font-family: var(--mde-font, 'Karla', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif);
+}
+
 .font-mono {
-  font-family: var(--font-space-mono, 'Space Mono', monospace);
+  font-family: var(--mde-font, --font-space-mono, 'Space Mono', monospace);
 }
 
 .text-hero {
@@ -76,7 +89,7 @@ body {
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.02em;
-  font-family: var(--font-outfit, 'Outfit', Arial, sans-serif);
+  font-family: var(--mde-font, --font-outfit, 'Outfit', Arial, sans-serif);
 }
 
 .text-title {
@@ -84,14 +97,14 @@ body {
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.015em;
-  font-family: var(--font-outfit, 'Outfit', Arial, sans-serif);
+  font-family: var(--mde-font, --font-outfit, 'Outfit', Arial, sans-serif);
 }
 
 .text-heading {
   font-size: clamp(1.125rem, 2vw, 1.5rem);
   font-weight: 600;
   line-height: 1.3;
-  font-family: var(--font-outfit, 'Outfit', Arial, sans-serif);
+  font-family: var(--mde-font, --font-outfit, 'Outfit', Arial, sans-serif);
 }
 
 /* Prevent awkward single-letter wraps on org titles and avoid splitting words */
@@ -110,7 +123,7 @@ body {
 }
 
 .text-subheading {
-  font-family: var(--font-outfit, 'Outfit', Arial, sans-serif);
+  font-family: var(--mde-font, --font-outfit, 'Outfit', Arial, sans-serif);
   font-size: 1.125rem;
   font-weight: 500;
 }
@@ -118,29 +131,29 @@ body {
 .text-body-large {
   font-size: 1.125rem;
   line-height: 1.7;
-  font-family: var(--font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
+  font-family: var(--mde-font, --font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
 }
 
 .text-body {
   font-size: 1rem;
   line-height: 1.6;
-  font-family: var(--font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
+  font-family: var(--mde-font, --font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
 }
 
 .text-caption {
   font-size: 0.875rem;
   line-height: 1.5;
-  font-family: var(--font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
+  font-family: var(--mde-font, --font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
 }
 
 .text-micro {
   font-size: 0.75rem;
   line-height: 1.4;
-  font-family: var(--font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
+  font-family: var(--mde-font, --font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
 }
 
 .text-code {
-  font-family: var(--font-space-mono, 'Space Mono', monospace);
+  font-family: var(--mde-font, --font-space-mono, 'Space Mono', monospace);
   font-size: 0.875rem;
 }
 
@@ -169,218 +182,225 @@ body {
 /* ============================================
    GLASS COMPONENTS
    ============================================ */
-.btn-glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-  border-radius: 0.75rem;
-  transition: all 0.1s ease-out;
-  position: relative;
-  overflow: hidden;
-}
+@layer components {
+  .btn-glass {
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 0.75rem;
+    transition: all 0.1s ease-out;
+    position: relative;
+    overflow: hidden;
+  }
 
-.btn-glass::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-}
+  .btn-glass::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-image: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  }
 
-.btn-glass:hover {
-  transform: translateY(-1px);
-  box-shadow:
-    0 10px 25px rgba(0, 0, 0, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.1);
-}
+  .btn-glass:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 10px 25px rgba(0, 0, 0, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
+  }
 
-.btn-glass:active {
-  transform: translateY(0);
-  transition: all 0.05s ease-out;
-}
+  .btn-glass:active {
+    transform: translateY(0);
+    transition: all 0.05s ease-out;
+  }
 
-/* Button Variants */
-.btn-glass-blue {
-  background: linear-gradient(135deg, var(--glass-blue), rgba(59, 130, 246, 0.05));
-  border-color: var(--glass-blue-border);
-  color: #93c5fd;
-}
+  /* Button Variants */
+  .btn-glass-blue {
+    background-image: linear-gradient(135deg, var(--glass-blue), rgba(59, 130, 246, 0.05));
+    border-color: var(--mde-blue-border);
+    color: rgb(var(--mde-blue-rgb));
+  }
 
-.btn-glass-blue:hover {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(59, 130, 246, 0.1));
-  border-color: rgba(59, 130, 246, 0.5);
-  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
-}
+  .btn-glass-blue:hover {
+    background-image: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(59, 130, 246, 0.1));
+    border-color: rgba(59, 130, 246, 0.5);
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+  }
 
-.btn-glass-green {
-  background: linear-gradient(135deg, var(--glass-green), rgba(16, 185, 129, 0.05));
-  border-color: var(--glass-green-border);
-  color: #6ee7b7;
-}
+  .btn-glass-green {
+    background-image: linear-gradient(135deg, var(--glass-green), rgba(16, 185, 129, 0.05));
+    border-color: var(--glass-green-border);
+    color: #6ee7b7;
+  }
 
-.btn-glass-green:hover {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.1));
-  border-color: rgba(16, 185, 129, 0.5);
-  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
-}
+  .btn-glass-green:hover {
+    background-image: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.1));
+    border-color: rgba(16, 185, 129, 0.5);
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
+  }
 
-.btn-glass-purple {
-  background: linear-gradient(135deg, var(--glass-purple), rgba(147, 51, 234, 0.05));
-  border-color: var(--glass-purple-border);
-  color: #c4b5fd;
-}
+  .btn-glass-purple {
+    background-image: linear-gradient(135deg, var(--glass-purple), rgba(147, 51, 234, 0.05));
+    border-color: var(--glass-purple-border);
+    color: #c4b5fd;
+  }
 
-.btn-glass-purple:hover {
-  background: linear-gradient(135deg, rgba(147, 51, 234, 0.25), rgba(147, 51, 234, 0.1));
-  border-color: rgba(147, 51, 234, 0.5);
-  box-shadow: 0 8px 32px rgba(147, 51, 234, 0.3);
-}
+  .btn-glass-purple:hover {
+    background-image: linear-gradient(135deg, rgba(147, 51, 234, 0.25), rgba(147, 51, 234, 0.1));
+    border-color: rgba(147, 51, 234, 0.5);
+    box-shadow: 0 8px 32px rgba(147, 51, 234, 0.3);
+  }
 
-.btn-glass-red {
-  background: linear-gradient(135deg, var(--glass-red), rgba(239, 68, 68, 0.05));
-  border-color: var(--glass-red-border);
-  color: #fca5a5;
-}
+  .btn-glass-red {
+    background-image: linear-gradient(135deg, var(--glass-red), rgba(239, 68, 68, 0.05));
+    border-color: var(--glass-red-border);
+    color: #fca5a5;
+  }
 
-.btn-glass-red:hover {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(239, 68, 68, 0.1));
-  border-color: rgba(239, 68, 68, 0.5);
-  box-shadow: 0 8px 32px rgba(239, 68, 68, 0.3);
-}
+  .btn-glass-red:hover {
+    background-image: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(239, 68, 68, 0.1));
+    border-color: rgba(239, 68, 68, 0.5);
+    box-shadow: 0 8px 32px rgba(239, 68, 68, 0.3);
+  }
 
-.btn-glass-orange {
-  background: linear-gradient(135deg, var(--glass-orange), rgba(249, 115, 22, 0.05));
-  border-color: var(--glass-orange-border);
-  color: #fdba74;
-}
+  .btn-glass-orange {
+    background-image: linear-gradient(135deg, var(--glass-orange), rgba(249, 115, 22, 0.05));
+    border-color: var(--glass-orange-border);
+    color: #fdba74;
+  }
 
-.btn-glass-orange:hover {
-  background: linear-gradient(135deg, rgba(249, 115, 22, 0.25), rgba(249, 115, 22, 0.1));
-  border-color: rgba(249, 115, 22, 0.5);
-  box-shadow: 0 8px 32px rgba(249, 115, 22, 0.3);
-}
+  .btn-glass-orange:hover {
+    background-image: linear-gradient(135deg, rgba(249, 115, 22, 0.25), rgba(249, 115, 22, 0.1));
+    border-color: rgba(249, 115, 22, 0.5);
+    box-shadow: 0 8px 32px rgba(249, 115, 22, 0.3);
+  }
 
-/* Panel Glass */
-.panel-glass {
-  background: rgba(5, 5, 5, 0.95);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 1rem;
-  position: relative;
-  overflow: visible;
-}
+  /* Panel Glass */
+  .panel-glass {
+    background-color: rgba(5, 5, 5, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+    position: relative;
+    overflow: visible;
+  }
 
-.panel-glass::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-  border-radius: 1rem 1rem 0 0;
-}
+  .panel-glass::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-image: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    border-radius: 1rem 1rem 0 0;
+  }
 
-.panel-glass::after {
-  display: none;
-}
+  .panel-glass::after {
+    display: none;
+  }
 
-/* Dropdown Glass */
-.dropdown-glass {
-  background: rgba(8, 8, 8, 0.98);
-  backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow:
-    0 32px 64px rgba(0, 0, 0, 0.8),
-    0 0 0 1px rgba(255, 255, 255, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  animation: fadeIn 0.1s ease-out;
-}
+  /* Dropdown Glass */
+  .dropdown-glass {
+    background-color: rgba(8, 8, 8, 0.98);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 32px 64px rgba(0, 0, 0, 0.8),
+      0 0 0 1px rgba(255, 255, 255, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    animation: fadeIn 0.1s ease-out;
+  }
 
-.dropdown-option:hover {
-  transform: translateX(4px);
-  background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-/* Status dropdown glass - separate from regular dropdown-glass */
-.status-dropdown-glass {
-  background: rgba(8, 8, 8, 0.98);
-  backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow:
-    0 32px 64px rgba(0, 0, 0, 0.8),
-    0 0 0 1px rgba(255, 255, 255, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  animation: fadeIn 0.1s ease-out;
-  z-index: 999999;
-  position: absolute;
+  .dropdown-option:hover {
+    transform: translateX(4px);
+    background-image: linear-gradient(90deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Status dropdown glass - separate from regular dropdown-glass */
+  .status-dropdown-glass {
+    background-color: rgba(8, 8, 8, 0.98);
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 32px 64px rgba(0, 0, 0, 0.8),
+      0 0 0 1px rgba(255, 255, 255, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    animation: fadeIn 0.1s ease-out;
+    z-index: 999999;
+    position: absolute;
+  }
 }
 
 
 /* ============================================
    HEADER
    ============================================ */
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 9999;
-  background: linear-gradient(135deg,
-      rgba(0, 0, 0, 0.98),
-      rgba(5, 5, 5, 0.95),
-      rgba(0, 0, 0, 0.97));
-  backdrop-filter: blur(24px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  overflow: visible;
-}
+@layer components {
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 9999;
+    background-image: linear-gradient(135deg,
+        rgba(var(--mde-green-rgb)),
+        rgba(5, 5, 5, 0.95),
+        rgba(0, 0, 0, 0.97));
+    backdrop-filter: blur(24px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: visible;
+  }
 
-.header > div {
-  position: relative;
-  z-index: 10000;
-  overflow: visible;
-}
+  .header>div {
+    position: relative;
+    z-index: 10000;
+    overflow: visible;
+  }
 
-.header .dropdown-glass {
-  position: absolute;
-  z-index: 99999;
-  top: 100%;
-  left: 0;
-  right: 0;
-  margin-top: 4px;
-}
+  .header .dropdown-glass {
+    position: absolute;
+    z-index: 99999;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+  }
 
-.header [class*="relative"] {
-  overflow: visible;
+  .header [class*="relative"] {
+    overflow: visible;
+  }
 }
 
 /* ============================================
    ORGANIZATION CARDS
    ============================================ */
-.organization-card {
-  background: linear-gradient(135deg,
-      rgba(8, 8, 8, 0.98),
-      rgba(15, 15, 15, 0.95),
-      rgba(5, 5, 5, 0.98));
-  backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 1rem;
-  position: relative;
-  z-index: auto;
-  overflow: visible;
-  transition: all 0.15s ease-out;
-  /* Add margin to prevent edge cutoff */
-  margin: 2px;
-}
+@layer components {
+  .organization-card {
+    background-image: linear-gradient(135deg,
+        rgba(8, 8, 8, 0.98),
+        rgba(15, 15, 15, 0.95),
+        rgba(5, 5, 5, 0.98));
+    backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 1rem;
+    position: relative;
+    z-index: auto;
+    overflow: visible;
+    transition: all 0.15s ease-out;
+    /* Add margin to prevent edge cutoff */
+    margin: 2px;
+  }
 
-.organization-card:hover {
-  transform: translateY(-1px) scale(1.005);
-  transition: all 0.1s ease-out;
-}
+  .organization-card:hover {
+    transform: translateY(-1px) scale(1.005);
+    transition: all 0.1s ease-out;
+  }
 
-.organization-card::before,
-.organization-card::after {
-  display: none;
+  .organization-card::before,
+  .organization-card::after {
+    display: none;
+  }
 }
 
 /* Expanded card state - maintain elevated appearance without hover effect */
@@ -776,6 +796,196 @@ body {
 } */
 
 /* ============================================
+   BRAND COLOR UTILITIES (MANUAL since tailwind /opacity unreliable in context)
+   Generated scales: bg-mde-*-{5|10|15|20|30}; border-mde-*-{20|40|60}; text-mde-*
+   ============================================ */
+@layer utilities {
+
+  /* Backgrounds */
+  .bg-mde-yellow-5 {
+    background-color: rgb(var(--mde-yellow-rgb) / 0.05);
+  }
+
+  .bg-mde-yellow-10 {
+    background-color: rgb(var(--mde-yellow-rgb) / 0.10);
+  }
+
+  .bg-mde-yellow-15 {
+    background-color: rgb(var(--mde-yellow-rgb) / 0.15);
+  }
+
+  .bg-mde-yellow-20 {
+    background-color: rgb(var(--mde-yellow-rgb) / 0.20);
+  }
+
+  .bg-mde-yellow-30 {
+    background-color: rgb(var(--mde-yellow-rgb) / 0.30);
+  }
+
+  .bg-mde-green-5 {
+    background-color: rgb(var(--mde-green-rgb) / 0.05);
+  }
+
+  .bg-mde-green-10 {
+    background-color: rgb(var(--mde-green-rgb) / 0.10);
+  }
+
+  .bg-mde-green-15 {
+    background-color: rgb(var(--mde-green-rgb) / 0.15);
+  }
+
+  .bg-mde-green-20 {
+    background-color: rgb(var(--mde-green-rgb) / 0.20);
+  }
+
+  .bg-mde-green-30 {
+    background-color: rgb(var(--mde-green-rgb) / 0.30);
+  }
+
+  .bg-mde-blue-5 {
+    background-color: rgb(var(--mde-blue-rgb) / 0.05);
+  }
+
+  .bg-mde-blue-10 {
+    background-color: rgb(var(--mde-blue-rgb) / 0.10);
+  }
+
+  .bg-mde-blue-15 {
+    background-color: rgb(var(--mde-blue-rgb) / 0.15);
+  }
+
+  .bg-mde-blue-20 {
+    background-color: rgb(var(--mde-blue-rgb) / 0.20);
+  }
+
+  .bg-mde-blue-30 {
+    background-color: rgb(var(--mde-blue-rgb) / 0.30);
+  }
+
+  .bg-mde-pink-5 {
+    background-color: rgb(var(--mde-pink-rgb) / 0.05);
+  }
+
+  .bg-mde-pink-10 {
+    background-color: rgb(var(--mde-pink-rgb) / 0.10);
+  }
+
+  .bg-mde-pink-15 {
+    background-color: rgb(var(--mde-pink-rgb) / 0.15);
+  }
+
+  .bg-mde-pink-20 {
+    background-color: rgb(var(--mde-pink-rgb) / 0.20);
+  }
+
+  .bg-mde-pink-30 {
+    background-color: rgb(var(--mde-pink-rgb) / 0.30);
+  }
+
+  .bg-mde-red-5 {
+    background-color: rgb(var(--mde-red-rgb) / 0.05);
+  }
+
+  .bg-mde-red-10 {
+    background-color: rgb(var(--mde-red-rgb) / 0.10);
+  }
+
+  .bg-mde-red-15 {
+    background-color: rgb(var(--mde-red-rgb) / 0.15);
+  }
+
+  .bg-mde-red-20 {
+    background-color: rgb(var(--mde-red-rgb) / 0.20);
+  }
+
+  .bg-mde-red-30 {
+    background-color: rgb(var(--mde-red-rgb) / 0.30);
+  }
+
+  /* Borders */
+  .border-mde-yellow-20 {
+    border-color: rgb(var(--mde-yellow-rgb) / 0.20);
+  }
+
+  .border-mde-yellow-40 {
+    border-color: rgb(var(--mde-yellow-rgb) / 0.40);
+  }
+
+  .border-mde-yellow-60 {
+    border-color: rgb(var(--mde-yellow-rgb) / 0.60);
+  }
+
+  .border-mde-green-20 {
+    border-color: rgb(var(--mde-green-rgb) / 0.20);
+  }
+
+  .border-mde-green-40 {
+    border-color: rgb(var(--mde-green-rgb) / 0.40);
+  }
+
+  .border-mde-green-60 {
+    border-color: rgb(var(--mde-green-rgb) / 0.60);
+  }
+
+  .border-mde-blue-20 {
+    border-color: rgb(var(--mde-blue-rgb) / 0.20);
+  }
+
+  .border-mde-blue-40 {
+    border-color: rgb(var(--mde-blue-rgb) / 0.40);
+  }
+
+  .border-mde-blue-60 {
+    border-color: rgb(var(--mde-blue-rgb) / 0.60);
+  }
+
+  .border-mde-pink-20 {
+    border-color: rgb(var(--mde-pink-rgb) / 0.20);
+  }
+
+  .border-mde-pink-40 {
+    border-color: rgb(var(--mde-pink-rgb) / 0.40);
+  }
+
+  .border-mde-pink-60 {
+    border-color: rgb(var(--mde-pink-rgb) / 0.60);
+  }
+
+  .border-mde-red-20 {
+    border-color: rgb(var(--mde-red-rgb) / 0.20);
+  }
+
+  .border-mde-red-40 {
+    border-color: rgb(var(--mde-red-rgb) / 0.40);
+  }
+
+  .border-mde-red-60 {
+    border-color: rgb(var(--mde-red-rgb) / 0.60);
+  }
+
+  /* Text */
+  .text-mde-yellow {
+    color: rgb(var(--mde-yellow-rgb));
+  }
+
+  .text-mde-green {
+    color: rgb(var(--mde-green-rgb));
+  }
+
+  .text-mde-blue {
+    color: rgb(var(--mde-blue-rgb));
+  }
+
+  .text-mde-pink {
+    color: rgb(var(--mde-pink-rgb));
+  }
+
+  .text-mde-red {
+    color: rgb(var(--mde-red-rgb));
+  }
+}
+
+/* ============================================
    STAINED GLASS EFFECTS
    ============================================ */
 .stained-glass::before {
@@ -903,13 +1113,13 @@ input[type="email"],
 input[type="url"],
 textarea,
 button {
-  font-family: var(--font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
+  font-family: var(--mde-font, --font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
   font-weight: 400;
   letter-spacing: normal;
 }
 
 select {
-  font-family: var(--font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
+  font-family: var(--mde-font, --font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
   font-size: 0.875rem;
   line-height: 1.4;
   appearance: none;
@@ -921,13 +1131,13 @@ select {
 }
 
 button {
-  font-family: var(--font-outfit, 'Outfit', Arial, sans-serif);
+  font-family: var(--mde-font, --font-outfit, 'Outfit', Arial, sans-serif);
   font-weight: 500;
 }
 
 
 ::placeholder {
-  font-family: var(--font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
+  font-family: var(--mde-font, --font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
   font-weight: 400;
   opacity: 0.6;
 }
@@ -944,7 +1154,7 @@ textarea:focus {
    DROPDOWN OPTIONS STYLING
    ============================================ */
 select option {
-  font-family: var(--font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
+  font-family: var(--mde-font, --font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
   font-size: 0.875rem;
   line-height: 1.6;
   padding: 10px 12px;
@@ -1330,7 +1540,8 @@ textarea:disabled {
 
 /* Optional: Keep a custom focus style for accessibility that doesn't flash */
 .admin-header button:focus-visible {
-  outline: 2px solid #3b82f6; /* blue-500 */
+  outline: 2px solid #3b82f6;
+  /* blue-500 */
   outline-offset: 2px;
   /* This will only show for keyboard navigation, not mouse clicks */
 }
@@ -1358,6 +1569,7 @@ body {
 .organization-card {
   overflow-anchor: none;
 }
+
 /* ============================================
    SVG ICON STYLING
    ============================================ */
@@ -1736,7 +1948,7 @@ body {
 
 /* Enhanced textarea styling with flexible height */
 .comments-section textarea {
-  font-family: var(--font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
+  font-family: var(--mde-font, --font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
   line-height: 1;
   /* Reduced line height */
   scrollbar-width: thin;
@@ -1891,6 +2103,7 @@ body {
   position: relative;
   z-index: 999998;
 }
+
 .scoring-section .status-dropdown-glass {
   /* Override any scoring section rules */
   z-index: 999999;
@@ -1945,11 +2158,12 @@ body {
     width: max-content;
     max-width: 200px;
   }
-  
+
   .organization-card .email-row {
     /* Position email to the left of years active */
     position: absolute;
-    top: 1.75rem; /* Align with years active row */
+    top: 1.75rem;
+    /* Align with years active row */
     right: 100%;
     margin-right: 0.75rem;
     width: max-content;
@@ -1959,6 +2173,7 @@ body {
 
 /* Responsive breakpoint: Move website and email down when screen gets narrow */
 @media (max-width: 768px) {
+
   .organization-card .website-row,
   .organization-card .email-row {
     /* Reset positioning - let them stack naturally */
@@ -1967,7 +2182,7 @@ body {
     max-width: none;
     margin-right: 0;
   }
-  
+
   /* Ensure proper stacking order */
   .organization-card .flex.flex-col.items-end {
     gap: 0.375rem;
@@ -1975,8 +2190,8 @@ body {
 }
 
 /* Ensure badges and years active never move */
-.organization-card .flex.flex-col.items-end > div:first-child,
-.organization-card .flex.flex-col.items-end > div:nth-child(2) {
+.organization-card .flex.flex-col.items-end>div:first-child,
+.organization-card .flex.flex-col.items-end>div:nth-child(2) {
   position: relative;
   z-index: 1;
 }
@@ -2001,57 +2216,71 @@ body {
 }
 
 /* 1. Fix css/no-invalid-properties for font variables by providing fallback font-families */
-body {
-  font-family: var(--font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
-}
-.font-heading {
-  font-family: var(--font-outfit, 'Outfit', Arial, sans-serif);
-}
+/* NOTE: Do not override the global body font here; Root body already uses var(--mde-font) (Karla).
+   If you need IBM Plex for a specific area, use the .font-body utility on a wrapper. */
 .font-body {
-  font-family: var(--font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
+  font-family: var(--mde-font, --font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
 }
+
+.font-heading {
+  font-family: var(--mde-font, --font-outfit, 'Outfit', Arial, sans-serif);
+}
+
+.font-body {
+  font-family: var(--mde-font, --font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
+}
+
 .font-mono {
-  font-family: var(--font-space-mono, 'Space Mono', monospace);
+  font-family: var(--mde-font, --font-space-mono, 'Space Mono', monospace);
 }
+
 .text-hero,
 .text-title,
 .text-heading,
 .text-subheading {
-  font-family: var(--font-outfit, 'Outfit', Arial, sans-serif);
+  font-family: var(--mde-font, --font-outfit, 'Outfit', Arial, sans-serif);
 }
+
 .text-body-large,
 .text-body,
 .text-caption,
 .text-micro {
-  font-family: var(--font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
+  font-family: var(--mde-font, --font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
 }
+
 .text-code {
-  font-family: var(--font-space-mono, 'Space Mono', monospace);
+  font-family: var(--mde-font, --font-space-mono, 'Space Mono', monospace);
 }
+
 select,
 input[type="text"],
 input[type="email"],
 input[type="url"],
 textarea,
 button {
-  font-family: var(--font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
+  font-family: var(--mde-font, --font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
 }
+
 button {
-  font-family: var(--font-outfit, 'Outfit', Arial, sans-serif);
+  font-family: var(--mde-font, --font-outfit, 'Outfit', Arial, sans-serif);
 }
+
 ::placeholder {
-  font-family: var(--font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
+  font-family: var(--mde-font, --font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
 }
+
 select option {
-  font-family: var(--font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
+  font-family: var(--mde-font, --font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
 }
+
 .comments-section textarea {
-  font-family: var(--font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
+  font-family: var(--mde-font, --font-ibm-plex, 'IBM Plex Sans', Arial, sans-serif);
 }
 
 /* 2. Fix css/no-invalid-properties: remove unknown property '-bottom' */
 .metadata-progress-indicator {
-  /* -bottom: 1.5rem; */ /* Remove this line */
+  /* -bottom: 1.5rem; */
+  /* Remove this line */
   bottom: 1.5rem;
   right: 0;
   background: rgba(15, 15, 15, 0.9);
@@ -2075,3 +2304,139 @@ select option {
    - resize
    These are not errors and do not break CSS, but you may want to provide fallbacks or check browser compatibility if needed.
 */
+
+/* ============================================
+   MDE-INSPIRED LIGHTWEIGHT UTILITIES (OPT-IN)
+   These are small helpers to evoke MDE styling without importing heavy themes.
+   Use selectively in markup: e.g., class="mde-link", "btn-glass btn-mde-yellow", "badge-mde".
+   ============================================ */
+
+/* Link accent with subtle underline that turns MDE yellow on hover */
+a.mde-link {
+  color: #e5e7eb;
+  /* neutral text on dark */
+  text-decoration-line: underline;
+  text-decoration-color: rgba(246, 236, 107, 0.45);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+a.mde-link:hover,
+a.mde-link:focus-visible {
+  color: var(--mde-yellow);
+  text-decoration-color: currentColor;
+  outline: none;
+}
+
+/* Muted link that only reveals accent on interaction */
+.mde-link-muted {
+  color: #9ca3af;
+  text-decoration-line: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+.mde-link-muted:hover,
+.mde-link-muted:focus-visible {
+  color: #f3f4f6;
+  text-decoration-color: var(--mde-yellow);
+  outline: none;
+}
+
+/* Yellow glass button variant (combine with .btn-glass) */
+.btn-mde-yellow {
+  background: linear-gradient(135deg, rgba(246, 236, 107, 0.22), rgba(246, 236, 107, 0.08));
+  border-color: rgba(246, 236, 107, 0.4);
+  color: #111827;
+  /* readable on yellow */
+}
+
+.btn-mde-yellow:hover {
+  background: linear-gradient(135deg, rgba(246, 236, 107, 0.3), rgba(246, 236, 107, 0.14));
+  border-color: rgba(246, 236, 107, 0.6);
+  box-shadow: 0 8px 24px rgba(246, 236, 107, 0.25);
+}
+
+.btn-mde-yellow:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Pill badge with yellow accent */
+.badge-mde {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.125rem 0.5rem;
+  font-size: 0.75rem;
+  /* text-xs */
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--mde-yellow);
+  background: rgba(246, 236, 107, 0.08);
+  border: 1px solid rgba(246, 236, 107, 0.35);
+  border-radius: 9999px;
+}
+
+.badge-mde::before {
+  content: "";
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 9999px;
+  background: var(--mde-yellow);
+  box-shadow: 0 0 8px rgba(246, 236, 107, 0.6);
+}
+
+/* Divider with subtle yellow glow */
+.mde-divider {
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, rgba(246, 236, 107, 0.35), transparent);
+}
+
+/* Yellow focus outline for accessible components */
+.focus-ring-mde {
+  outline: 2px solid rgba(246, 236, 107, 0.9);
+  outline-offset: 2px;
+}
+
+/* Brand-colored text selection */
+::selection {
+  background: var(--mde-yellow);
+  color: #111827;
+}
+
+::-moz-selection {
+  background: var(--mde-yellow);
+  color: #111827;
+}
+
+/* Optional blockquote accent */
+.blockquote-mde {
+  position: relative;
+  padding-left: 1rem;
+  border-left: 3px solid rgba(246, 236, 107, 0.7);
+  color: #e5e7eb;
+}
+
+.blockquote-mde cite {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+
+/* Honor reduced motion preferences for our custom transitions */
+@media (prefers-reduced-motion: reduce) {
+
+  a.mde-link,
+  .mde-link-muted,
+  .btn-glass,
+  .btn-mde-yellow,
+  .badge-mde {
+    transition: none;
+  }
+}

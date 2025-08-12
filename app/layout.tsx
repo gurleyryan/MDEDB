@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Outfit, IBM_Plex_Sans, Space_Mono } from "next/font/google";
+import { Outfit, IBM_Plex_Sans, Space_Mono, Karla } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import "./globals.css";
@@ -19,6 +19,13 @@ const ibmPlex = IBM_Plex_Sans({
 
 const spaceMono = Space_Mono({
   variable: "--font-space-mono",
+  subsets: ["latin"],
+  weight: ['400', '700'],
+  display: 'swap',
+});
+
+const karla = Karla({
+  variable: "--mde-font",
   subsets: ["latin"],
   weight: ['400', '700'],
   display: 'swap',
@@ -58,7 +65,7 @@ export default function RootLayout({
         <meta name="theme-color" content="#f6ec6b" />
       </head>
       <body
-        className={`${outfit.variable} ${ibmPlex.variable} ${spaceMono.variable} font-ibm-plex antialiased`}
+        className={`${outfit.variable} ${ibmPlex.variable} ${spaceMono.variable} ${karla.variable} font-mde antialiased`}
       >
         {children}
         <Analytics />

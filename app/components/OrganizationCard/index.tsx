@@ -47,7 +47,7 @@ const linkifyText = (text: string): ReactNode => {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-blue-400 hover:text-blue-300 hover:underline break-words"
+        className="text-mde-blue hover:text-blue-300 hover:underline break-words"
         title={match}
       >
         {match}
@@ -249,7 +249,7 @@ export function OrganizationCard({
 
   return (
     <div
-      className={`organization-card panel-glass relative rounded-2xl backdrop-blur-sm shadow-2xl transition-all duration-300 stained-glass ${getRegionalTheme(org.country_code)} ${isExpanded || isEditing ? 'expanded-card' : 'hover:shadow-3xl'
+      className={`font-mde organization-card panel-glass relative rounded-2xl backdrop-blur-sm shadow-2xl transition-all duration-300 stained-glass ${getRegionalTheme(org.country_code)} ${isExpanded || isEditing ? 'expanded-card' : 'hover:shadow-3xl'
         }`}
       style={{
         overflow: 'visible',
@@ -337,7 +337,7 @@ export function OrganizationCard({
                 type="text"
                 value={editForm.org_name || ''}
                 onChange={(e) => handleFieldChange('org_name', e.target.value)}
-                className={`w-full p-2 bg-gray-700 border rounded text-white text-xl font-bold focus:outline-none ${errors.org_name ? 'border-red-500' : 'border-gray-600 focus:border-blue-500'
+                className={`w-full p-2 bg-gray-700 border rounded text-white text-xl font-bold focus:outline-none ${errors.org_name ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'
                   }`}
               />
               {errors.org_name && (
@@ -373,7 +373,7 @@ export function OrganizationCard({
                   value={editForm.logo || ''}
                   onChange={(e) => handleFieldChange('logo', e.target.value)}
                   onBlur={(e) => e.target.value && handleFieldChange('logo', formatUrl(e.target.value))}
-                  className="mt-2 w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-blue-500"
+                  className="mt-2 w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-mde-blue"
                   placeholder="Or paste a logo URL"
                 />
                 {editForm.logo && (
@@ -411,7 +411,7 @@ export function OrganizationCard({
                   value={editForm.banner || ''}
                   onChange={(e) => handleFieldChange('banner', e.target.value)}
                   onBlur={(e) => e.target.value && handleFieldChange('banner', formatUrl(e.target.value))}
-                  className="mt-2 w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-blue-500"
+                  className="mt-2 w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-mde-blue"
                   placeholder="Or paste a banner URL"
                 />
                 {editForm.banner && (
@@ -433,7 +433,7 @@ export function OrganizationCard({
                       handleFieldChange('website', formatted);
                     }
                   }}
-                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none ${errors.website ? 'border-red-500' : 'border-gray-600 focus:border-blue-500'
+                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none ${errors.website ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'
                     }`}
                 />
                 {errors.website && (
@@ -447,7 +447,7 @@ export function OrganizationCard({
                   type="text"
                   value={editForm.email || ''}
                   onChange={(e) => handleFieldChange('email', e.target.value)}
-                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none ${errors.email ? 'border-red-500' : 'border-gray-600 focus:border-blue-500'}`}
+                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none ${errors.email ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'}`}
                   placeholder="Multiple emails separated by commas"
                 />
                 {errors.email && (
@@ -467,7 +467,7 @@ export function OrganizationCard({
                       handleFieldChange('country_code', formatted);
                     }
                   }}
-                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none ${errors.country_code ? 'border-red-500' : 'border-gray-600 focus:border-blue-500'
+                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none ${errors.country_code ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'
                     }`}
                   maxLength={2}
                 />
@@ -482,7 +482,7 @@ export function OrganizationCard({
                   type="text"
                   value={editForm.type_of_work || ''}
                   onChange={(e) => handleFieldChange('type_of_work', e.target.value)}
-                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none ${errors.type_of_work ? 'border-red-500' : 'border-gray-600 focus:border-blue-500'
+                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none ${errors.type_of_work ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'
                     }`}
                 />
                 {errors.type_of_work && (
@@ -499,7 +499,7 @@ export function OrganizationCard({
                     value={editForm.instagram || ''}
                     onChange={(e) => handleFieldChange('instagram', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('instagram', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-blue-500"
+                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-mde-blue"
                     placeholder="https://instagram.com/yourorg"
                   />
                 </div>
@@ -510,7 +510,7 @@ export function OrganizationCard({
                     value={editForm.twitter || ''}
                     onChange={(e) => handleFieldChange('twitter', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('twitter', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-blue-500"
+                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-mde-blue"
                     placeholder="https://x.com/yourorg"
                   />
                 </div>
@@ -521,7 +521,7 @@ export function OrganizationCard({
                     value={editForm.facebook || ''}
                     onChange={(e) => handleFieldChange('facebook', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('facebook', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-blue-500"
+                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-mde-blue"
                     placeholder="https://facebook.com/yourorg"
                   />
                 </div>
@@ -532,7 +532,7 @@ export function OrganizationCard({
                     value={editForm.tiktok || ''}
                     onChange={(e) => handleFieldChange('tiktok', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('tiktok', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-blue-500"
+                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-mde-blue"
                     placeholder="https://tiktok.com/@yourorg"
                   />
                 </div>
@@ -543,7 +543,7 @@ export function OrganizationCard({
                     value={editForm.linkedin || ''}
                     onChange={(e) => handleFieldChange('linkedin', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('linkedin', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-blue-500"
+                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-mde-blue"
                     placeholder="https://linkedin.com/company/yourorg"
                   />
                 </div>
@@ -554,7 +554,7 @@ export function OrganizationCard({
                     value={editForm.youtube || ''}
                     onChange={(e) => handleFieldChange('youtube', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('youtube', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-blue-500"
+                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-mde-blue"
                     placeholder="https://youtube.com/@yourorg"
                   />
                 </div>
@@ -566,7 +566,7 @@ export function OrganizationCard({
                   type="text"
                   value={editForm.years_active || ''}
                   onChange={(e) => handleFieldChange('years_active', e.target.value)}
-                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none ${errors.years_active ? 'border-red-500' : 'border-gray-600 focus:border-blue-500'
+                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none ${errors.years_active ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'
                     }`}
                   placeholder="e.g., 2013–present, 2018–2023"
                 />
@@ -581,7 +581,7 @@ export function OrganizationCard({
                   type="text"
                   value={editForm.capacity || ''}
                   onChange={(e) => handleFieldChange('capacity', e.target.value)}
-                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none ${errors.capacity ? 'border-red-500' : 'border-gray-600 focus:border-blue-500'
+                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none ${errors.capacity ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'
                     }`}
                 />
                 {errors.capacity && (
@@ -595,7 +595,7 @@ export function OrganizationCard({
               <textarea
                 value={editForm.mission_statement || ''}
                 onChange={(e) => handleFieldChange('mission_statement', e.target.value)}
-                className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none h-20 resize-none ${errors.mission_statement ? 'border-red-500' : 'border-gray-600 focus:border-blue-500'
+                className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none h-20 resize-none ${errors.mission_statement ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'
                   }`}
               />
               {errors.mission_statement && (
@@ -608,7 +608,7 @@ export function OrganizationCard({
               <textarea
                 value={editForm.notable_success || ''}
                 onChange={(e) => handleFieldChange('notable_success', e.target.value)}
-                className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none h-20 resize-none ${errors.notable_success ? 'border-red-500' : 'border-gray-600 focus:border-blue-500'
+                className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none h-20 resize-none ${errors.notable_success ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'
                   }`}
               />
               {errors.notable_success && (
@@ -621,7 +621,7 @@ export function OrganizationCard({
               <textarea
                 value={editForm.cta_notes || ''}
                 onChange={(e) => handleFieldChange('cta_notes', e.target.value)}
-                className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none h-20 resize-none ${errors.cta_notes ? 'border-red-500' : 'border-gray-600 focus:border-blue-500'
+                className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none h-20 resize-none ${errors.cta_notes ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'
                   }`}
               />
               {errors.cta_notes && (
@@ -764,12 +764,12 @@ export function OrganizationCard({
                       {/* Website */}
                       {org.website && websiteInfo?.isValid && (
                         <div className="flex items-center gap-1 min-w-0">
-                          <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
+                          <span className="text-mde-blue flex-shrink-0">{ClimateIcons.website}</span>
                           <a
                             href={websiteInfo.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0"
+                            className="text-sm text-mde-blue hover:text-blue-300 hover:underline truncate min-w-0"
                             title={org.website}
                           >
                             {websiteInfo.hostname}
@@ -779,7 +779,7 @@ export function OrganizationCard({
                       {/* If website exists but is invalid */}
                       {org.website && !websiteInfo?.isValid && (
                         <div className="flex items-center gap-1 min-w-0">
-                          <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
+                          <span className="text-mde-blue flex-shrink-0">{ClimateIcons.website}</span>
                           <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
                         </div>
                       )}
@@ -831,13 +831,13 @@ export function OrganizationCard({
                         if (hasWebsite && !hasEmail && !hasYears) {
                           return (
                             <div className="flex items-center gap-1 min-w-0 w-full">
-                              <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
+                              <span className="text-mde-blue flex-shrink-0">{ClimateIcons.website}</span>
                               {websiteInfo?.isValid ? (
                                 <a
                                   href={websiteInfo.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0"
+                                  className="text-sm text-mde-blue hover:text-blue-300 hover:underline truncate min-w-0"
                                   title={org.website}
                                 >
                                   {websiteInfo.hostname}
@@ -926,13 +926,13 @@ export function OrganizationCard({
                                 </span>
                                 {/* Website (icon + hostname together) */}
                                 <span className="flex items-center gap-1 min-w-0 truncate">
-                                  <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
+                                  <span className="text-mde-blue flex-shrink-0">{ClimateIcons.website}</span>
                                   {websiteInfo?.isValid ? (
                                     <a
                                       href={websiteInfo.url}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0 max-w-[120px] sm:max-w-[160px] md:max-w-[200px]"
+                                      className="text-sm text-mde-blue hover:text-blue-300 hover:underline truncate min-w-0 max-w-[120px] sm:max-w-[160px] md:max-w-[200px]"
                                       title={org.website}
                                     >
                                       {websiteInfo.hostname}
@@ -1003,13 +1003,13 @@ export function OrganizationCard({
                         if (hasWebsite && !hasEmail && hasYears) {
                           return (
                             <div className="flex items-center gap-1 min-w-0 website-row">
-                              <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
+                              <span className="text-mde-blue flex-shrink-0">{ClimateIcons.website}</span>
                               {websiteInfo?.isValid ? (
                                 <a
                                   href={websiteInfo.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0"
+                                  className="text-sm text-mde-blue hover:text-blue-300 hover:underline truncate min-w-0"
                                   title={org.website}
                                 >{websiteInfo.hostname}</a>
                               ) : (
@@ -1099,13 +1099,13 @@ export function OrganizationCard({
                           return (
                             <>
                               <div className="flex items-center gap-1 min-w-0 website-row">
-                                <span className="text-blue-400 flex-shrink-0">{ClimateIcons.website}</span>
+                                <span className="text-mde-blue flex-shrink-0">{ClimateIcons.website}</span>
                                 {websiteInfo?.isValid ? (
                                   <a
                                     href={websiteInfo.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-sm text-blue-400 hover:text-blue-300 hover:underline truncate min-w-0"
+                                    className="text-sm text-mde-blue hover:text-blue-300 hover:underline truncate min-w-0"
                                     title={org.website}
                                   >{websiteInfo.hostname}</a>
                                 ) : (
@@ -1172,9 +1172,9 @@ export function OrganizationCard({
               )}
 
               {org.notable_success && (
-                <div className="p-2 bg-emerald-500/10 border-l-2 border-emerald-500 rounded-r text-sm">
+                <div className="notable-success-block relative z-10 p-2 bg-mde-green-15 border-l-2 border-mde-green-40 rounded-r text-sm">
                   <div className="flex items-start gap-2">
-                    <span className="text-emerald-200 font-medium flex-shrink-0 mt-0.5">
+                    <span className="text-mde-green font-medium flex-shrink-0 mt-0.5">
                       {ClimateIcons.trophy}
                     </span>
                     <div className="flex-1 min-w-0 text-gray-300 break-words">
@@ -1185,9 +1185,9 @@ export function OrganizationCard({
               )}
 
               {org.cta_notes && (
-                <div className="p-2 bg-blue-500/10 border-l-2 border-blue-500 rounded-r text-sm">
+                <div className="p-2 bg-mde-blue-15 border-l-2 border-mde-blue-40 rounded-r text-sm">
                   <div className="flex items-start gap-2">
-                    <span className="text-blue-200 font-medium flex-shrink-0 mt-0.5">
+                    <span className="text-mde-blue font-medium flex-shrink-0 mt-0.5">
                       {ClimateIcons.announcement}
                     </span>
                     <div className="flex-1 min-w-0 text-gray-300 break-words">

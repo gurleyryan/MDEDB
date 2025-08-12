@@ -36,6 +36,13 @@ module.exports = {
         'micro': ['0.75rem', { lineHeight: '1.4' }],
       },
       colors: {
+        // Custom brand colors (alpha-ready for /opacity modifiers)
+        'mtg-green': 'rgb(105 189 69 / <alpha-value>)',
+        'mde-yellow': 'rgb(247 237 106 / <alpha-value>)',
+        'mde-green': 'rgb(105 189 69 / <alpha-value>)',
+        'mde-blue': 'rgb(153 217 224 / <alpha-value>)',
+        'mde-pink': 'rgb(244 156 211 / <alpha-value>)',
+        'mde-red': 'rgb(242 109 109 / <alpha-value>)',
         'ocean': {
           50: '#f0f9ff',
           500: '#0ea5e9',
