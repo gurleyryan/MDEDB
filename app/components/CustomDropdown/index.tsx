@@ -201,7 +201,7 @@ export function CustomDropdown({
               top: dropdownPos.top,
               left: dropdownPos.left,
               width: dropdownPos.width,
-              zIndex: 200000, // higher than modal/buttons
+              zIndex: 40, // below sticky header (50)
               height: `${calculateDropdownHeight()}px`,
             }
           : {
@@ -209,7 +209,7 @@ export function CustomDropdown({
               top: '100%',
               left: 0,
               right: 0,
-              zIndex: 100000,
+              zIndex: 40,
               height: `${calculateDropdownHeight()}px`,
             }
       }
@@ -225,8 +225,8 @@ export function CustomDropdown({
       className={`relative ${className}`}
       style={{
         position: 'relative',
-        zIndex: isOpen ? 100_000 : 'auto', // Ensure dropdown is above modal
-        isolation: isOpen ? 'isolate' : 'auto'
+        zIndex: isOpen ? 40 : 'auto',
+        isolation: 'auto'
       }}
     >
       {/* Dropdown Button */}
@@ -237,7 +237,7 @@ export function CustomDropdown({
         className={`btn-glass cursor-pointer w-full px-3 py-2 text-white text-sm font-mde focus:outline-none transition-all duration-200 flex items-center justify-between ${isOpen ? 'ring-1 ring-blue-500/50' : ''}`}
         style={{
           position: 'relative',
-          zIndex: isOpen ? 100_000 : 'auto',
+          zIndex: isOpen ? 41 : 'auto', /* keep button above menu for focus outline */
           ...(colorCoded && selectedOption?.color && {
             color: selectedOption.color,
             borderColor: selectedOption.color + '50'

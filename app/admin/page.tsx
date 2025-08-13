@@ -490,14 +490,13 @@ export default function AdminOrgs() {
         <div className="p-4 max-w-7xl mx-auto">
           {/* Organization Cards without Framer Motion */}
           <div className="space-y-6 relative">
-            {filteredOrgs.map((org, index) => (
+            {filteredOrgs.map((org) => (
               <div
                 key={org.id}
                 className="will-change-auto relative"
                 style={{
-                  // Status dropdowns need to escape this container
-                  zIndex: expandedOrg === org.id ? 1001 : Math.max(1, 50 - index),
-                  // Critical: Don't create stacking context that traps status dropdowns
+                  // Remove legacy elevated z-index that put expanded cards above header
+                  // Keep container neutral so header (z-[120]) always stays on top
                   transform: 'none',
                   filter: 'none',
                   position: 'relative',
@@ -525,7 +524,7 @@ export default function AdminOrgs() {
                   />
 
                   {/* Separate Scoring Section */}
-                  <div style={{ zIndex: 1000 }}> {/* Lower z-index for scoring section */}
+                  <div> {/* Scoring section inherits low stacking (no custom z-index) */}
                     <ScoringSection
                       orgId={org.id}
                       orgName={org.org_name}

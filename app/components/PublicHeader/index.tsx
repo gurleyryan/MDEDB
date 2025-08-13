@@ -78,7 +78,7 @@ export function PublicHeader({
   };
 
   return (
-    <div className="header sticky top-0 z-50 backdrop-blur-2xl border-b border-gray-700/50 shadow-2xl">
+  <div className="header sticky top-0 z-[120] isolation-auto backdrop-blur-2xl border-b border-gray-700/50 shadow-2xl">
       <div className="w-full mx-auto px-4 py-2">
         {/* Header Title */}
         <div className="flex items-center justify-between mb-3">

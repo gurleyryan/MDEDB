@@ -179,11 +179,7 @@ export function ScoringSection({
                         : 'border-red-500/30 bg-red-500/5'
                     : 'border-gray-600 hover:border-gray-500'
                   }`}
-                  style={{ 
-                    position: 'relative',
-                    zIndex: SCORING_CRITERIA.length - index + 1000,
-                    overflow: 'visible'
-                  }}
+                  style={{ position: 'relative', overflow: 'visible' }}
                 >
                   {/* Enhanced Header with Full Text */}
                   <div className="flex justify-between items-start mb-2">
@@ -205,11 +201,7 @@ export function ScoringSection({
                     {/* Compact Scoring Dropdown */}
                     <div 
                       className="flex flex-col items-end gap-1 flex-shrink-0"
-                      style={{ 
-                        position: 'relative',
-                        zIndex: SCORING_CRITERIA.length - index + 2000,
-                        overflow: 'visible'
-                      }}
+                      style={{ position: 'relative', overflow: 'visible' }}
                     >
                       <CustomDropdown
                         value={currentScore?.toString() || ''}
@@ -255,11 +247,7 @@ export function ScoringSection({
                         : 'border-red-500/30 bg-red-500/5'
                     : 'border-gray-600 hover:border-gray-500'
                   }`}
-                  style={{ 
-                    position: 'relative',
-                    zIndex: SCORING_CRITERIA.length - actualIndex + 1000,
-                    overflow: 'visible'
-                  }}
+                  style={{ position: 'relative', overflow: 'visible' }}
                 >
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1 min-w-0 pr-2">
@@ -278,11 +266,7 @@ export function ScoringSection({
                     
                     <div 
                       className="flex flex-col items-end gap-1 flex-shrink-0"
-                      style={{ 
-                        position: 'relative',
-                        zIndex: SCORING_CRITERIA.length - actualIndex + 2000,
-                        overflow: 'visible'
-                      }}
+                      style={{ position: 'relative', overflow: 'visible' }}
                     >
                       <CustomDropdown
                         value={currentScore?.toString() || ''}
@@ -361,11 +345,7 @@ export function ScoringSection({
                         : 'border-red-500/30 bg-red-500/5'
                     : 'border-gray-600 hover:border-gray-500'
                   }`}
-                  style={{ 
-                    position: 'relative',
-                    zIndex: SCORING_CRITERIA.length - actualIndex + 1000,
-                    overflow: 'visible'
-                  }}
+                  style={{ position: 'relative', overflow: 'visible' }}
                 >
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1 min-w-0 pr-2">
@@ -384,11 +364,7 @@ export function ScoringSection({
                     
                     <div 
                       className="flex flex-col items-end gap-1 flex-shrink-0"
-                      style={{ 
-                        position: 'relative',
-                        zIndex: SCORING_CRITERIA.length - actualIndex + 2000,
-                        overflow: 'visible'
-                      }}
+                      style={{ position: 'relative', overflow: 'visible' }}
                     >
                       <CustomDropdown
                         value={currentScore?.toString() || ''}

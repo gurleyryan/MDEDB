@@ -162,7 +162,7 @@ export function AddOrganizationModal({
 
   const modalContent = (
     <div
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-2 z-[99999]"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-2 z-[100]"
       style={{
         opacity: 1,
         visibility: 'visible',

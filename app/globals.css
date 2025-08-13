@@ -329,7 +329,7 @@ body {
       0 0 0 1px rgba(255, 255, 255, 0.05),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
     animation: fadeIn 0.1s ease-out;
-    z-index: 999999;
+    z-index: 40; /* normalized */
     position: absolute;
   }
 }
@@ -342,7 +342,7 @@ body {
   .header {
     position: sticky;
     top: 0;
-    z-index: 9999;
+    z-index: 50; /* normalized header layer */
     background-image: linear-gradient(135deg,
         rgba(var(--mde-green-rgb)),
         rgba(5, 5, 5, 0.95),
@@ -350,17 +350,31 @@ body {
     backdrop-filter: blur(24px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     overflow: visible;
+    isolation: isolate; /* keep internal stacking separate */
+  }
+
+  /* Slightly more opaque backing so underlying card highlights don't visually punch through */
+  .header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg,
+      rgba(5,5,5,0.92),
+      rgba(10,10,10,0.90) 40%,
+      rgba(5,5,5,0.88));
+    pointer-events: none;
+    z-index: -1;
   }
 
   .header>div {
     position: relative;
-    z-index: 10000;
+    z-index: inherit;
     overflow: visible;
   }
 
   .header .dropdown-glass {
     position: absolute;
-    z-index: 99999;
+    z-index: 40; /* sits under header level */
     top: 100%;
     left: 0;
     right: 0;
@@ -405,15 +419,17 @@ body {
 
 /* Expanded card state - maintain elevated appearance without hover effect */
 .organization-card.expanded-card {
-  transform: translateY(-2px) scale(1.01);
+  /* Remove translate/scale to avoid creating new stacking contexts & visual overlap */
+  transform: none;
   box-shadow:
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(59, 130, 246, 0.3),
-    0 0 32px rgba(59, 130, 246, 0.2);
-  transition: all 0.15s ease-out;
+    0 24px 48px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(59, 130, 246, 0.25),
+    0 0 24px rgba(59, 130, 246, 0.15);
+  transition: box-shadow 0.15s ease-out, background-color 0.15s ease-out;
   /* Ensure colored edges are preserved */
   border-radius: 1rem;
   overflow: visible;
+  z-index: 1; /* keep under header (50/120 utility) */
 }
 
 /* Remove hover effects when expanded */
@@ -1016,8 +1032,9 @@ body {
    ============================================ */
 .organization-card .status-dropdown-container {
   position: relative;
-  z-index: 20000;
-  overflow: visible;
+  /* Reset elevated z-index so headers (z-50) remain above */
+  z-index: auto;
+  overflow: visible; /* keep for dropdown positioning */
 }
 
 .organization-card .status-dropdown-container .dropdown-glass {
@@ -1026,7 +1043,8 @@ body {
   left: 0;
   right: 0;
   margin-top: 4px;
-  z-index: 20001;
+  /* Below sticky header (z-50) */
+  z-index: 40;
   background: rgba(31, 41, 55, 0.95);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -1035,10 +1053,7 @@ body {
     0 0 0 1px rgba(255, 255, 255, 0.05);
 }
 
-.organization-card .status-dropdown-container .dropdown-glass .dropdown-option {
-  position: relative;
-  z-index: 20002;
-}
+/* Individual dropdown options no longer need explicit z-index */
 
 .organization-card .status-dropdown-container,
 .organization-card .status-dropdown-container>div,
@@ -1049,7 +1064,7 @@ body {
 
 .status-dropdown-container .dropdown-glass,
 .status-dropdown-container [class*="dropdown"] {
-  z-index: 20001;
+  z-index: 40;
 }
 
 /* ============================================
@@ -2063,81 +2078,20 @@ body {
   /* Slightly higher when expanded */
 }
 
-/* Level 2: Scoring Section (50-99) - MUCH LOWER */
-.scoring-section {
-  position: relative;
-  z-index: 50;
-  /* Don't create stacking context */
-  isolation: auto;
-}
-
-/* Level 3: Scoring Components (200-399) */
-
-.scoring-section .dropdown-glass {
-  position: absolute;
-  z-index: 400;
-  /* Fixed z-index for scoring dropdowns */
-}
-
-/* Level 4: Header (9999) */
-.admin-header {
-  position: sticky;
-  top: 0;
-  z-index: 9999;
-}
-
-.admin-header .dropdown-glass {
-  position: absolute;
-  z-index: 10000;
-}
-
-/* Level 5: Status Dropdown (999990+) - ALWAYS ON TOP */
-.status-dropdown-container {
-  position: relative;
-  z-index: 99999;
-  isolation: isolate;
-  overflow: visible;
-}
-
-.status-dropdown-container button {
-  position: relative;
-  z-index: 999998;
-}
-
-.scoring-section .status-dropdown-glass {
-  /* Override any scoring section rules */
-  z-index: 999999;
-  position: absolute;
-}
-
-/* Ensure status dropdown glass is never overridden */
-.organization-card .status-dropdown-glass,
-.scoring-section .status-dropdown-glass,
-* .status-dropdown-glass {
-  background: rgba(8, 8, 8, 0.98);
-  backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow:
-    0 32px 64px rgba(0, 0, 0, 0.8),
-    0 0 0 1px rgba(255, 255, 255, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  z-index: 999999;
-  position: absolute;
-}
-
-/* CRITICAL: Ensure organization cards don't create stacking contexts */
-.organization-card,
-.organization-card *:not(.status-dropdown-container):not(.status-dropdown-container *) {
-  /* Remove any properties that create stacking contexts */
-  filter: none;
-  isolation: auto;
-}
-
-/* Level 6: Modals (99999+) */
-.modal-overlay,
-[class*="modal"] {
-  z-index: 99999;
-}
+/* Normalized Layering Scale -----------------
+  0  : Base content, cards
+  40 : Dropdown menus
+  50 : Sticky headers (.header / .admin-header)
+  60 : Future tooltips
+  100: Modals / overlays
+--------------------------------------------- */
+.scoring-section { position: relative; z-index: 1; }
+.scoring-section .dropdown-glass { z-index: 40; }
+.admin-header { position: sticky; top: 0; z-index: 50; }
+.admin-header .dropdown-glass { z-index: 40; }
+.status-dropdown-container button { position: relative; }
+.elevation-modal, .modal-overlay, [class*="modal"] { z-index: 100; }
+.organization-card { isolation: auto; }
 
 /* Add to app/globals.css - Fixed responsive organization card layout */
 
