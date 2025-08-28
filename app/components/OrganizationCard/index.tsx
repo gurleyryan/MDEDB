@@ -249,7 +249,7 @@ export function OrganizationCard({
 
   return (
     <div
-      className={`font-mde organization-card panel-glass relative rounded-2xl backdrop-blur-sm shadow-2xl transition-all duration-300 stained-glass ${getRegionalTheme(org.country_code)} ${isExpanded || isEditing ? 'expanded-card' : 'hover:shadow-3xl'
+      className={`font-mde organization-card org-panel-glass relative rounded-2xl backdrop-blur-sm shadow-2xl transition-all duration-300 stained-glass ${getRegionalTheme(org.country_code)} ${isExpanded || isEditing ? 'expanded-card' : 'hover:shadow-3xl'
         }`}
       style={{
         overflow: 'visible',
@@ -327,7 +327,7 @@ export function OrganizationCard({
         </div>
       )}
       {/* Card Content with enhanced glass effect */}
-      <div className={`p-6 backdrop-blur relative panel-glass ${org.website ? 'rounded-b-2xl' : 'rounded-2xl'}`}>
+      <div className={`p-6 backdrop-blur relative org-panel-glass ${org.website ? 'rounded-b-2xl' : 'rounded-2xl'}`}>
         {isEditing ? (
           // Edit Mode
           <div className="space-y-4 mb-6">
@@ -361,7 +361,7 @@ export function OrganizationCard({
                   <button
                     type="button"
                     onClick={() => logoInputRef.current?.click()}
-                    className="btn-glass btn-glass-blue px-3 py-1.5 rounded-md text-xs font-medium hover:shadow-glow-blue flex items-center gap-2"
+                    className="org-btn-glass org-btn-glass-blue px-3 py-1.5 rounded-md text-xs font-medium hover:shadow-glow-blue flex items-center gap-2"
                   >
                     {ClimateIcons.plus}
                     <span>{editForm.logo ? 'Change Logo' : 'Choose Logo'}</span>
@@ -399,7 +399,7 @@ export function OrganizationCard({
                   <button
                     type="button"
                     onClick={() => bannerInputRef.current?.click()}
-                    className="btn-glass btn-glass-purple px-3 py-1.5 rounded-md text-xs font-medium hover:shadow-glow-purple flex items-center gap-2"
+                    className="org-btn-glass org-btn-glass-purple px-3 py-1.5 rounded-md text-xs font-medium hover:shadow-glow-purple flex items-center gap-2"
                   >
                     {ClimateIcons.plus}
                     <span>{editForm.banner ? 'Change Banner' : 'Choose Banner'}</span>
@@ -1202,7 +1202,7 @@ export function OrganizationCard({
                           href={url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="btn-glass btn-glass-blue whitespace-nowrap px-3 py-1.5 rounded-md text-xs font-medium hover:shadow-glow-blue flex items-center gap-1 flex-shrink-0"
+                          className="org-btn-glass org-btn-glass-mde-blue whitespace-nowrap px-3 py-1.5 rounded-md text-xs font-medium hover:shadow-glow-mde-blue flex items-center gap-1 flex-shrink-0"
                           title={label}
                         >
                           {ClimateIcons.website}
@@ -1288,7 +1288,7 @@ export function OrganizationCard({
                     <button
                       onClick={handleSave}
                       disabled={updatingId === org.id || Object.keys(errors).length > 0}
-                      className="btn-glass btn-glass-green px-4 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
+                      className="org-btn-glass org-btn-glass-green px-4 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
                     >
                       {ClimateIcons.save}
                       <span className="transition-opacity duration-200">
@@ -1298,7 +1298,7 @@ export function OrganizationCard({
 
                     <button
                       onClick={handleCancel}
-                      className="btn-glass text-gray-300 px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
+                      className="org-btn-glass text-gray-300 px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
                     >
                       {ClimateIcons.cancel}
                       <span className="transition-opacity duration-200">Cancel</span>
@@ -1309,7 +1309,7 @@ export function OrganizationCard({
                     <button
                       onClick={startEdit}
                       onMouseDown={(e) => e.preventDefault()}
-                      className="btn-glass btn-glass-blue px-4 py-2.5 rounded-lg text-sm font-medium hover:shadow-glow-blue flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
+                      className="org-btn-glass org-btn-glass-blue px-4 py-2.5 rounded-lg text-sm font-medium hover:shadow-glow-blue flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
                     >
                       {ClimateIcons.edit}
                       <span className="transition-opacity duration-200">Edit Info</span>
@@ -1318,7 +1318,7 @@ export function OrganizationCard({
                     <button
                       onClick={() => onExpand(org.id)}
                       onMouseDown={(e) => e.preventDefault()}
-                      className="btn-glass btn-glass-purple px-4 py-2.5 rounded-lg text-sm font-medium hover:shadow-glow-purple flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
+                      className="org-btn-glass org-btn-glass-purple px-4 py-2.5 rounded-lg text-sm font-medium hover:shadow-glow-purple flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
                     >
                       {ClimateIcons.scoring}
                       <span className="transition-opacity duration-200">

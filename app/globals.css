@@ -6,7 +6,9 @@
    ============================================ */
 :root {
   --background: #000000;
+  /* Dark background */
   --foreground: #ffffff;
+  /* Light text */
   --mde-yellow: #f7ed6a;
   --mde-green: #9ac45a;
   --mde-blue: #99d9e0;
@@ -25,6 +27,20 @@
   --glass-bg: rgba(15, 15, 15, 0.8);
   --glass-border: rgba(255, 255, 255, 0.1);
   --glass-shadow: rgba(0, 0, 0, 0.5);
+
+  /* Organization Card Glass Variables (Always Dark) */
+  --org-glass-bg: rgba(5, 5, 5, 0.95);
+  --org-glass-border: rgba(255, 255, 255, 0.08);
+  --org-glass-shadow: rgba(0, 0, 0, 0.8);
+
+  /* Organization-specific button colors (Always Dark) */
+  --org-glass-blue: rgba(153, 217, 224, 0.15);
+  --org-glass-green: rgba(16, 185, 129, 0.15);
+  --org-glass-purple: rgba(147, 51, 234, 0.15);
+  --org-glass-green-border: rgba(16, 185, 129, 0.3);
+  --org-glass-purple-border: rgba(147, 51, 234, 0.3);
+  --org-mde-blue-border: rgba(59, 130, 246, 0.3);
+  --org-mde-blue-rgb: 59, 130, 246;
 
   /* Stained Glass Colors */
   --glass-blue: rgba(59, 130, 246, 0.15);
@@ -46,19 +62,43 @@
   --space-xl: 2rem;
 }
 
+/* Light Mode Variables */
+:root.light {
+  --background: #f9fafb;
+  /* Light gray background */
+  --foreground: #1f2937;
+  /* Dark text */
+
+  /* Light Mode Glass Effect Variables */
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --glass-shadow: rgba(0, 0, 0, 0.1);
+
+  /* Light Mode Stained Glass Colors */
+  --glass-blue: rgba(59, 130, 246, 0.1);
+  --glass-blue-border: rgba(59, 130, 246, 0.2);
+  --glass-green: rgba(16, 185, 129, 0.1);
+  --glass-green-border: rgba(16, 185, 129, 0.2);
+  --glass-purple: rgba(147, 51, 234, 0.1);
+  --glass-purple-border: rgba(147, 51, 234, 0.2);
+  --glass-red: rgba(239, 68, 68, 0.1);
+  --glass-red-border: rgba(239, 68, 68, 0.2);
+  --glass-orange: rgba(249, 115, 22, 0.1);
+  --glass-orange-border: rgba(249, 115, 22, 0.2);
+}
+
 /* ============================================
    BASE STYLES
    ============================================ */
 body {
-  background:
-    radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(16, 185, 129, 0.04) 0%, transparent 50%),
-    linear-gradient(135deg, #000000, #0a0a0a, #000000);
   color: var(--foreground);
   font-family: var(--mde-font, 'Karla', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif);
   font-feature-settings: "rlig" 1, "calt" 1;
   min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Light mode body styles - removed to let Tailwind handle backgrounds */
 
 /* ============================================
    TYPOGRAPHY SYSTEM
@@ -200,14 +240,14 @@ body {
     left: 0;
     right: 0;
     height: 1px;
-    background-image: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background-image: linear-gradient(90deg, transparent, var(--glass-border), transparent);
   }
 
   .btn-glass:hover {
     transform: translateY(-1px);
     box-shadow:
-      0 10px 25px rgba(0, 0, 0, 0.3),
-      0 0 0 1px rgba(255, 255, 255, 0.1);
+      0 10px 25px var(--glass-shadow),
+      0 0 0 1px var(--glass-border);
   }
 
   .btn-glass:active {
@@ -278,9 +318,9 @@ body {
 
   /* Panel Glass */
   .panel-glass {
-    background-color: rgba(5, 5, 5, 0.95);
+    background-color: var(--glass-bg);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--glass-border);
     border-radius: 1rem;
     position: relative;
     overflow: visible;
@@ -293,7 +333,7 @@ body {
     left: 0;
     right: 0;
     height: 1px;
-    background-image: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    background-image: linear-gradient(90deg, transparent, var(--glass-border), transparent);
     border-radius: 1rem 1rem 0 0;
   }
 
@@ -301,16 +341,333 @@ body {
     display: none;
   }
 
+  /* Organization Card Glass (Always Dark) */
+  .org-panel-glass {
+    background-color: var(--org-glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--org-glass-border);
+    border-radius: 1rem;
+    position: relative;
+    overflow: visible;
+  }
+
+  .org-panel-glass::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-image: linear-gradient(90deg, transparent, var(--org-glass-border), transparent);
+    border-radius: 1rem 1rem 0 0;
+  }
+
+  .org-panel-glass::after {
+    display: none;
+  }
+
+  /* Organization-specific button glass for dark-only styling */
+  .org-btn-glass {
+    background-color: var(--org-glass-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--org-glass-border);
+    border-radius: 0.75rem;
+    transition: all 0.1s ease-out;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .org-btn-glass::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-image: linear-gradient(90deg, transparent, var(--org-glass-border), transparent);
+  }
+
+  .org-btn-glass:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 10px 25px var(--org-glass-shadow),
+      0 0 0 1px var(--org-glass-border);
+  }
+
+  .org-btn-glass:active {
+    transform: translateY(0);
+    transition: all 0.05s ease-out;
+  }
+
+  /* Organization Button Variants */
+  .org-btn-glass-blue {
+    background-image: linear-gradient(135deg, var(--org-glass-blue), rgba(59, 130, 246, 0.05));
+    border-color: var(--org-mde-blue-border);
+    color: rgb(var(--org-mde-blue-rgb));
+  }
+
+  .org-btn-glass-blue:hover {
+    background-image: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(59, 130, 246, 0.1));
+    border-color: rgba(59, 130, 246, 0.5);
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+  }
+
+  /* MDE Blue Button Variant */
+  .org-btn-glass-mde-blue {
+    background-image: linear-gradient(135deg, rgba(var(--mde-blue-rgb), 0.15), rgba(var(--mde-blue-rgb), 0.05));
+    border-color: rgba(var(--mde-blue-rgb), 0.3);
+    color: rgb(var(--mde-blue-rgb));
+  }
+
+  .org-btn-glass-mde-blue:hover {
+    background-image: linear-gradient(135deg, rgba(var(--mde-blue-rgb), 0.25), rgba(var(--mde-blue-rgb), 0.1));
+    border-color: rgba(var(--mde-blue-rgb), 0.5);
+    box-shadow: 0 8px 32px rgba(var(--mde-blue-rgb), 0.3);
+  }
+
+  .org-btn-glass-green {
+    background-image: linear-gradient(135deg, var(--org-glass-green), rgba(16, 185, 129, 0.05));
+    border-color: var(--org-glass-green-border);
+    color: #6ee7b7;
+  }
+
+  .org-btn-glass-green:hover {
+    background-image: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.1));
+    border-color: rgba(16, 185, 129, 0.5);
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
+  }
+
+  .org-btn-glass-purple {
+    background-image: linear-gradient(135deg, var(--org-glass-purple), rgba(147, 51, 234, 0.05));
+    border-color: var(--org-glass-purple-border);
+    color: #c4b5fd;
+  }
+
+  .org-btn-glass-purple:hover {
+    background-image: linear-gradient(135deg, rgba(147, 51, 234, 0.25), rgba(147, 51, 234, 0.1));
+    border-color: rgba(147, 51, 234, 0.5);
+    box-shadow: 0 8px 32px rgba(147, 51, 234, 0.3);
+  }
+
+  /* Organization-specific components that should always stay dark */
+  .organization-card .btn-glass:not([style*="color"]),
+  .organization-card .btn-glass-blue,
+  .organization-card .btn-glass-purple,
+  .organization-card .btn-glass-green {
+    background-color: var(--org-glass-bg) !important;
+    border-color: var(--org-glass-border) !important;
+  }
+
+  .organization-card .btn-glass:not([style*="color"]) {
+    color: #e5e7eb !important;
+  }
+
+  /* Force all CustomDropdown buttons in org cards to stay dark */
+  .organization-card button.btn-glass {
+    background-color: var(--org-glass-bg) !important;
+    border-color: var(--org-glass-border) !important;
+  }
+
+  /* Only override text color if no inline color styling */
+  .organization-card button.btn-glass:not([style*="color"]) {
+    color: #e5e7eb !important;
+  }
+
+  .organization-card .btn-glass-blue {
+    background-image: linear-gradient(135deg, var(--org-glass-blue), rgba(59, 130, 246, 0.05)) !important;
+    border-color: var(--org-mde-blue-border) !important;
+    color: rgb(var(--org-mde-blue-rgb)) !important;
+  }
+
+  .organization-card .btn-glass-purple {
+    background-image: linear-gradient(135deg, var(--org-glass-purple), rgba(147, 51, 234, 0.05)) !important;
+    border-color: var(--org-glass-purple-border) !important;
+    color: #c4b5fd !important;
+  }
+
+  .organization-card .btn-glass-green {
+    background-image: linear-gradient(135deg, var(--org-glass-green), rgba(16, 185, 129, 0.05)) !important;
+    border-color: var(--org-glass-green-border) !important;
+    color: #6ee7b7 !important;
+  }
+
+  /* Organization dropdown always dark but preserve color coding */
+  .organization-card .dropdown-glass,
+  .organization-card .dropdown-glass>div,
+  .organization-card div.dropdown-glass {
+    background-color: var(--org-glass-bg) !important;
+    border-color: var(--org-glass-border) !important;
+  }
+
+  /* Dropdown options without color coding stay dark */
+  .organization-card .dropdown-glass button:not([style*="background"]),
+  .organization-card div.dropdown-glass button:not([style*="background"]) {
+    background-color: var(--org-glass-bg) !important;
+    color: #e5e7eb !important;
+  }
+
+  /* Dropdown options on hover without color coding */
+  .organization-card .dropdown-glass button:not([style*="background"]):hover,
+  .organization-card div.dropdown-glass button:not([style*="background"]):hover {
+    background-color: rgba(55, 65, 81, 0.8) !important;
+  }
+
+  /* Don't override text color in dropdowns to preserve color coding */
+  .organization-card .btn-glass:not([style*="color"]) {
+    color: #e5e7eb !important;
+  }
+
+  /* Scoring section components always dark but preserve color coding */
+  .scoring-section .btn-glass:not([style*="color"]),
+  .scoring-section .btn-glass-purple {
+    background-color: var(--org-glass-bg) !important;
+    border-color: var(--org-glass-border) !important;
+  }
+
+  /* Force all CustomDropdown buttons in scoring section to stay dark */
+  .scoring-section button.btn-glass {
+    background-color: var(--org-glass-bg) !important;
+    border-color: var(--org-glass-border) !important;
+  }
+
+  /* Only override text color if no inline color styling */
+  .scoring-section button.btn-glass:not([style*="color"]) {
+    color: #e5e7eb !important;
+  }
+
+  .scoring-section .dropdown-glass,
+  .scoring-section .dropdown-glass>div,
+  .scoring-section div.dropdown-glass {
+    background-color: var(--org-glass-bg) !important;
+    border-color: var(--org-glass-border) !important;
+  }
+
+  /* Dropdown options without color coding stay dark */
+  .scoring-section .dropdown-glass button:not([style*="background"]),
+  .scoring-section div.dropdown-glass button:not([style*="background"]) {
+    background-color: var(--org-glass-bg) !important;
+    color: #e5e7eb !important;
+  }
+
+  /* Dropdown options on hover without color coding */
+  .scoring-section .dropdown-glass button:not([style*="background"]):hover,
+  .scoring-section div.dropdown-glass button:not([style*="background"]):hover {
+    background-color: rgba(55, 65, 81, 0.8) !important;
+  }
+
+  /* Don't override text color in scoring dropdowns to preserve color coding */
+  .scoring-section .btn-glass:not([style*="color"]) {
+    color: #e5e7eb !important;
+  }
+
+  .scoring-section .btn-glass-purple {
+    background-image: linear-gradient(135deg, var(--org-glass-purple), rgba(147, 51, 234, 0.05)) !important;
+    border-color: var(--org-glass-purple-border) !important;
+    color: #c4b5fd !important;
+  }
+
+  /* Input text visibility fixes - higher specificity */
+  .header .panel-glass input,
+  input.panel-glass {
+    color: #1f2937 !important;
+    /* Dark text in light mode */
+  }
+
+  :root.dark .header .panel-glass input,
+  :root.dark input.panel-glass {
+    color: #ffffff !important;
+    /* White text in dark mode */
+  }
+
+  /* Override Tailwind text-white class in org cards and scoring sections */
+  .organization-card .text-white:not([style*="color"]),
+  .scoring-section .text-white:not([style*="color"]) {
+    color: #e5e7eb !important;
+  }
+
+  /* Ensure CustomDropdown buttons stay dark regardless of theme */
+  .organization-card .btn-glass.text-white,
+  .scoring-section .btn-glass.text-white {
+    background-color: var(--org-glass-bg) !important;
+    border-color: var(--org-glass-border) !important;
+  }
+
+  .organization-card .btn-glass.text-white:not([style*="color"]),
+  .scoring-section .btn-glass.text-white:not([style*="color"]) {
+    color: #e5e7eb !important;
+  }
+
+  /* Page Background Glass */
+  .page-glass-bg {
+    background: var(--background);
+    position: relative;
+  }
+
+  .page-glass-bg::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at center,
+        rgba(var(--mde-green-rgb), 0.03) 0%,
+        transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Scroll to Top Button */
+  .scroll-to-top-btn {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      0 20px 40px var(--glass-shadow),
+      0 0 0 1px var(--glass-border),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .scroll-to-top-btn:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 25px 50px var(--glass-shadow),
+      0 0 0 1px var(--glass-border),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  /* Light mode panel glass - removed to keep organization cards dark */
+
   /* Dropdown Glass */
   .dropdown-glass {
-    background-color: rgba(8, 8, 8, 0.98);
+    background-color: var(--glass-bg);
     backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      0 32px 64px var(--glass-shadow),
+      0 0 0 1px var(--glass-border),
+      inset 0 1px 0 var(--glass-border);
+    animation: fadeIn 0.1s ease-out;
+  }
+
+  /* Make ALL dropdown menus consistently dark regardless of theme */
+  .dropdown-glass,
+  div.dropdown-glass {
+    background-color: rgba(5, 5, 5, 0.95) !important;
+    border-color: rgba(255, 255, 255, 0.08) !important;
     box-shadow:
       0 32px 64px rgba(0, 0, 0, 0.8),
-      0 0 0 1px rgba(255, 255, 255, 0.05),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    animation: fadeIn 0.1s ease-out;
+      0 0 0 1px rgba(255, 255, 255, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+  }
+
+  /* Dropdown option base styling for all dropdowns */
+  .dropdown-glass button:not([style*="background"]) {
+    background-color: rgba(5, 5, 5, 0.95) !important;
+    color: #e5e7eb !important;
+  }
+
+  .dropdown-glass button:not([style*="background"]):hover {
+    background-color: rgba(55, 65, 81, 0.8) !important;
   }
 
   .dropdown-option:hover {
@@ -321,19 +678,19 @@ body {
 
   /* Status dropdown glass - separate from regular dropdown-glass */
   .status-dropdown-glass {
-    background-color: rgba(8, 8, 8, 0.98);
+    background-color: var(--glass-bg);
     backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--glass-border);
     box-shadow:
-      0 32px 64px rgba(0, 0, 0, 0.8),
-      0 0 0 1px rgba(255, 255, 255, 0.05),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      0 32px 64px var(--glass-shadow),
+      0 0 0 1px var(--glass-border),
+      inset 0 1px 0 var(--glass-border);
     animation: fadeIn 0.1s ease-out;
-    z-index: 40; /* normalized */
+    z-index: 40;
+    /* normalized */
     position: absolute;
   }
 }
-
 
 /* ============================================
    HEADER
@@ -342,7 +699,8 @@ body {
   .header {
     position: sticky;
     top: 0;
-    z-index: 50; /* normalized header layer */
+    z-index: 50;
+    /* normalized header layer */
     background-image: linear-gradient(135deg,
         rgba(var(--mde-green-rgb)),
         rgba(5, 5, 5, 0.95),
@@ -350,7 +708,8 @@ body {
     backdrop-filter: blur(24px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     overflow: visible;
-    isolation: isolate; /* keep internal stacking separate */
+    isolation: isolate;
+    /* keep internal stacking separate */
   }
 
   /* Slightly more opaque backing so underlying card highlights don't visually punch through */
@@ -359,9 +718,9 @@ body {
     position: absolute;
     inset: 0;
     background: linear-gradient(135deg,
-      rgba(5,5,5,0.92),
-      rgba(10,10,10,0.90) 40%,
-      rgba(5,5,5,0.88));
+        rgba(5, 5, 5, 0.92),
+        rgba(10, 10, 10, 0.90) 40%,
+        rgba(5, 5, 5, 0.88));
     pointer-events: none;
     z-index: -1;
   }
@@ -374,7 +733,8 @@ body {
 
   .header .dropdown-glass {
     position: absolute;
-    z-index: 40; /* sits under header level */
+    z-index: 40;
+    /* sits under header level */
     top: 100%;
     left: 0;
     right: 0;
@@ -383,6 +743,92 @@ body {
 
   .header [class*="relative"] {
     overflow: visible;
+  }
+
+  /* Light mode header styles */
+  .light .header {
+    background-image: linear-gradient(135deg,
+        rgba(var(--mde-green-rgb)),
+        rgba(250, 250, 250, 0.95),
+        rgba(255, 255, 255, 0.97));
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .light .header::before {
+    background: linear-gradient(135deg,
+        rgba(250, 250, 250, 0.92),
+        rgba(245, 245, 245, 0.90) 40%,
+        rgba(250, 250, 250, 0.88));
+  }
+
+  /* Ensure header text has proper contrast */
+  .header h1 {
+    color: white !important;
+  }
+
+  .light .header h1 {
+    color: #1f2937 !important;
+  }
+
+  .header button {
+    color: rgba(255, 255, 255, 0.8) !important;
+  }
+
+  .header button:hover {
+    color: white !important;
+  }
+
+  .light .header button {
+    color: #374151 !important;
+  }
+
+  .light .header button:hover {
+    color: #111827 !important;
+  }
+
+  /* Icon colors in header */
+  .header svg {
+    color: currentColor;
+  }
+
+  .header .absolute svg {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .light .header .absolute svg {
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  /* Dropdown option text in headers - ensure light text regardless of theme */
+  .header .dropdown-glass button {
+    color: #e5e7eb !important;
+  }
+
+  .header .dropdown-glass button:hover {
+    color: #ffffff !important;
+  }
+
+  /* Ensure dropdown option text labels stay light - target all text elements */
+  .header .dropdown-glass button span {
+    color: inherit !important;
+  }
+
+  /* Override inline color styles for color-coded dropdown options in headers */
+  .header .dropdown-glass button[style*="color"] {
+    color: #e5e7eb !important;
+  }
+
+  .header .dropdown-glass button[style*="color"]:hover {
+    color: #ffffff !important;
+  }
+
+  /* Target specific text content within color-coded buttons */
+  .header .dropdown-glass button[style*="color"] span {
+    color: #e5e7eb !important;
+  }
+
+  .header .dropdown-glass button[style*="color"]:hover span {
+    color: #ffffff !important;
   }
 }
 
@@ -429,7 +875,8 @@ body {
   /* Ensure colored edges are preserved */
   border-radius: 1rem;
   overflow: visible;
-  z-index: 1; /* keep under header (50/120 utility) */
+  z-index: 1;
+  /* keep under header (50/120 utility) */
 }
 
 /* Remove hover effects when expanded */
@@ -1034,7 +1481,8 @@ body {
   position: relative;
   /* Reset elevated z-index so headers (z-50) remain above */
   z-index: auto;
-  overflow: visible; /* keep for dropdown positioning */
+  overflow: visible;
+  /* keep for dropdown positioning */
 }
 
 .organization-card .status-dropdown-container .dropdown-glass {
@@ -1045,12 +1493,12 @@ body {
   margin-top: 4px;
   /* Below sticky header (z-50) */
   z-index: 40;
-  background: rgba(31, 41, 55, 0.95);
+  background: var(--org-glass-bg);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--org-glass-border);
   box-shadow:
-    0 25px 50px -12px rgba(0, 0, 0, 0.8),
-    0 0 0 1px rgba(255, 255, 255, 0.05);
+    0 25px 50px -12px var(--org-glass-shadow),
+    0 0 0 1px var(--org-glass-border);
 }
 
 /* Individual dropdown options no longer need explicit z-index */
@@ -1093,12 +1541,12 @@ body {
   margin-top: 4px;
   z-index: 3000;
   /* Higher than scoring criteria containers */
-  background: rgba(31, 41, 55, 0.95);
+  background: var(--org-glass-bg);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--org-glass-border);
   box-shadow:
-    0 25px 50px -12px rgba(0, 0, 0, 0.8),
-    0 0 0 1px rgba(255, 255, 255, 0.05);
+    0 25px 50px -12px var(--org-glass-shadow),
+    0 0 0 1px var(--org-glass-border);
 }
 
 /* Scoring section dropdown options */
@@ -1459,6 +1907,10 @@ select::-webkit-scrollbar-thumb:hover {
 
 .shadow-glow-purple {
   box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+}
+
+.shadow-glow-mde-blue {
+  box-shadow: 0 0 20px rgba(var(--mde-blue-rgb), 0.3);
 }
 
 .text-balance {
@@ -2085,13 +2537,38 @@ body {
   60 : Future tooltips
   100: Modals / overlays
 --------------------------------------------- */
-.scoring-section { position: relative; z-index: 1; }
-.scoring-section .dropdown-glass { z-index: 40; }
-.admin-header { position: sticky; top: 0; z-index: 50; }
-.admin-header .dropdown-glass { z-index: 40; }
-.status-dropdown-container button { position: relative; }
-.elevation-modal, .modal-overlay, [class*="modal"] { z-index: 100; }
-.organization-card { isolation: auto; }
+.scoring-section {
+  position: relative;
+  z-index: 1;
+}
+
+.scoring-section .dropdown-glass {
+  z-index: 40;
+}
+
+.admin-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.admin-header .dropdown-glass {
+  z-index: 40;
+}
+
+.status-dropdown-container button {
+  position: relative;
+}
+
+.elevation-modal,
+.modal-overlay,
+[class*="modal"] {
+  z-index: 100;
+}
+
+.organization-card {
+  isolation: auto;
+}
 
 /* Add to app/globals.css - Fixed responsive organization card layout */
 

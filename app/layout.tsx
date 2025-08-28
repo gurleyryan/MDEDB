@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Outfit, IBM_Plex_Sans, Space_Mono, Karla } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next"
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { ThemeProvider } from "./components/ThemeProvider";
 import "./globals.css";
 
 const outfit = Outfit({
@@ -43,7 +44,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="bg-gray-50 dark:bg-black transition-colors duration-300">
       <head>
         {/* Favicon */}
         <link rel="icon" href="/favicon.ico" />
@@ -65,9 +66,11 @@ export default function RootLayout({
         <meta name="theme-color" content="#f6ec6b" />
       </head>
       <body
-        className={`${outfit.variable} ${ibmPlex.variable} ${spaceMono.variable} ${karla.variable} font-mde antialiased`}
+        className={`${outfit.variable} ${ibmPlex.variable} ${spaceMono.variable} ${karla.variable} font-mde antialiased bg-gray-50 dark:bg-black transition-colors duration-300`}
       >
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
         <Analytics />
         <SpeedInsights />
       </body>

@@ -127,7 +127,7 @@ export default function HomePage() {
   // Loading and error states
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+      <div className="min-h-screen page-glass-bg text-gray-900 dark:text-white flex items-center justify-center transition-colors duration-300">
         <div className="text-center">
           <div className="animate-spin h-12 w-12 border-4 border-blue-400 border-t-transparent rounded-full mx-auto mb-4"></div>
           <p className="text-lg">Loading organizations...</p>
@@ -138,7 +138,7 @@ export default function HomePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+      <div className="min-h-screen page-glass-bg text-gray-900 dark:text-white flex items-center justify-center transition-colors duration-300">
         <div className="text-center max-w-md">
           <div className="text-red-400 text-6xl mb-4">⚠️</div>
           <h2 className="text-2xl font-bold mb-2">Error Loading Organizations</h2>
@@ -155,7 +155,13 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div 
+      className="min-h-screen page-glass-bg text-gray-900 dark:text-white transition-colors duration-300"
+      style={{
+        backgroundColor: 'var(--background, #f9fafb)', // Fallback
+        color: 'var(--foreground, #111827)' // Fallback
+      }}
+    >
       <PublicHeader
         isLoading={loading}
         metadataProgress={{
@@ -206,21 +212,8 @@ export default function HomePage() {
           className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full backdrop-blur-2xl shadow-2xl flex items-center justify-center transition-all duration-200 group scroll-to-top-btn"
           title="Scroll to top"
           aria-label="Scroll to top"
-          style={{
-            background: `
-                      radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.3), transparent 70%),
-                      radial-gradient(circle at 70% 70%, rgba(16, 185, 129, 0.2), transparent 70%),
-                      linear-gradient(135deg, rgba(15, 15, 15, 0.9), rgba(25, 25, 25, 0.8))
-                    `,
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            boxShadow: `
-                      0 20px 40px rgba(0, 0, 0, 0.4),
-                      0 0 0 1px rgba(255, 255, 255, 0.05),
-                      inset 0 1px 0 rgba(255, 255, 255, 0.1)
-                    `
-          }}
         >
-          <div className="text-blue-300 group-hover:text-blue-200 transition-all duration-200 group-hover:translate-y-[-1px]">
+          <div className="text-blue-400 dark:text-blue-300 group-hover:text-blue-300 dark:group-hover:text-blue-200 transition-all duration-200 group-hover:translate-y-[-1px]">
             {ClimateIcons.scrollToTop}
           </div>
         </button>

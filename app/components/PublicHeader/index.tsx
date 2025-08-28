@@ -1,12 +1,13 @@
 'use client';
 import { CustomDropdown } from '../CustomDropdown';
 import { ClimateIcons } from '../Icons';
-import { 
-  getContinentOptions, 
-  getSortFieldOptions 
+import {
+  getContinentOptions,
+  getSortFieldOptions
 } from '../../utils/selectOptions';
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../hooks/useUser';
+import { useTheme } from '../../hooks/useTheme';
 import Image from 'next/image';
 
 interface FilterOptions {
@@ -50,6 +51,7 @@ export function PublicHeader({
 }: PublicHeaderProps) {
   const router = useRouter();
   const { user, role, logout } = useUser(); // role: 'admin' | 'artist' | 'org' | undefined
+  const { theme, toggleTheme } = useTheme();
 
   const clearAllFilters = () => {
     onSearchChange('');
@@ -78,7 +80,7 @@ export function PublicHeader({
   };
 
   return (
-  <div className="header sticky top-0 z-[120] isolation-auto backdrop-blur-2xl border-b border-gray-700/50 shadow-2xl">
+    <div className="header sticky top-0 z-[120] isolation-auto backdrop-blur-2xl shadow-2xl">
       <div className="w-full mx-auto px-4 py-2">
         {/* Header Title */}
         <div className="flex items-center justify-between mb-3">
@@ -89,11 +91,27 @@ export function PublicHeader({
               width={40}
               height={40}
             />
-            <h1 className="text-2xl font-bold text-white">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
               AMPLIFY: Climate Org Directory
             </h1>
           </div>
           <div className="flex items-center gap-3">
+            {/* MDEUS Badge */}
+            <a 
+              href="https://www.musicdeclares.net/us/campaigns/mde-us-amplify-program"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="opacity-80 hover:opacity-100 transition-opacity"
+              title="Visit Music Declares Emergency US - AMPLIFY Program"
+            >
+              <Image
+                src="/MDEUS.png"
+                alt="MDEUS"
+                width={60}
+                height={20}
+                className="opacity-80 hover:opacity-100 transition-opacity"
+              />
+            </a>
             {user ? (
               <>
                 <button
@@ -102,16 +120,25 @@ export function PublicHeader({
                     else if (role === 'admin') router.push('/admin');
                     else if (role === 'org') router.push('/org');
                   }}
-                  className="btn-glass px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2"
+                  className="btn-glass px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
                   {role === 'artist' ? 'Artist' : role === 'admin' ? 'Admin' : 'Org'} Dashboard
+                </button>
+                {/* Theme Toggle */}
+                <button
+                  onClick={toggleTheme}
+                  className="btn-glass px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+                >
+                  {theme === 'light' ? ClimateIcons.moon : ClimateIcons.sun}
+                  <span className="hidden sm:inline">{theme === 'light' ? 'Dark' : 'Light'}</span>
                 </button>
                 <button
                   onClick={() => {
                     logout();
                     router.push('/');
                   }}
-                  className="btn-glass text-gray-300 px-3 py-2 rounded-lg text-sm font-medium hover:text-white transition-colors flex items-center gap-2"
+                  className="btn-glass text-gray-600 dark:text-gray-300 px-3 py-2 rounded-lg text-sm font-medium hover:text-gray-900 dark:hover:text-white transition-colors flex items-center gap-2"
                 >
                   {ClimateIcons.logout}
                   <span>Logout</span>
@@ -120,7 +147,7 @@ export function PublicHeader({
             ) : (
               <button
                 onClick={() => router.push('/login')}
-                className="btn-glass px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2"
+                className="btn-glass px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
               >
                 {ClimateIcons.login}
                 <span>Login</span>
@@ -129,8 +156,8 @@ export function PublicHeader({
           </div>
         </div>
 
-  {/* Search Bar with Loading Indicators */}
-  <div className="relative mb-3 sm:mb-6">
+        {/* Search Bar with Loading Indicators */}
+        <div className="relative mb-3 sm:mb-6">
           <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10">
             {isSearching ? (
               <div className="animate-spin">
@@ -143,38 +170,38 @@ export function PublicHeader({
               ClimateIcons.search
             )}
           </div>
-          
+
           <input
             type="text"
             placeholder="Search organizations..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 panel-glass border border-gray-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all duration-200"
+            className="w-full pl-10 pr-4 py-2 panel-glass border border-gray-600/50 dark:border-gray-600/50 rounded-lg placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all duration-200"
           />
-          
+
           {/* Search Loading Bar */}
           {isSearching && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-700 rounded-b-lg overflow-hidden">
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-300 dark:bg-gray-700 rounded-b-lg overflow-hidden">
               <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 search-progress-bar animate-pulse rounded-b-lg"></div>
             </div>
           )}
 
           {/* Metadata Loading Bar */}
           {metadataProgress && metadataProgress.loading > 0 && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-700 rounded-b-lg overflow-hidden">
-              <div 
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-300 dark:bg-gray-700 rounded-b-lg overflow-hidden">
+              <div
                 className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 transition-all duration-500 ease-out rounded-b-lg"
-                style={{ 
+                style={{
                   width: `${metadataProgress.percentage}%`,
                   boxShadow: '0 0 8px rgba(16, 185, 129, 0.4)'
                 }}
               />
             </div>
           )}
-          
+
           {/* Metadata Progress Text */}
           {metadataProgress && metadataProgress.loading > 0 && (
-            <div className="absolute -bottom-6 right-0 text-xs text-gray-400 flex items-center gap-1">
+            <div className="absolute -bottom-5 right-0 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
               <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
               <span>Loading metadata: {metadataProgress.loaded}/{metadataProgress.total}</span>
             </div>
@@ -189,14 +216,14 @@ export function PublicHeader({
             {hasActiveFilters && (
               <button
                 onClick={clearAllFilters}
-                className="btn-glass text-gray-400 hover:text-white px-3 py-2 rounded-lg text-xs transition-all duration-200 flex items-center gap-1 ml-2"
+                className="btn-glass text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-lg text-xs transition-all duration-200 flex items-center gap-1 ml-2"
               >
                 {ClimateIcons.cancel}
                 <span>Clear Filters</span>
               </button>
             )}
           </div>
-          
+
           {/* Right: Filter and Sort Controls (flattened so each item wraps independently) */}
           <div className="flex items-center gap-3 flex-wrap w-full sm:w-auto justify-end sm:justify-start ml-auto">
             {/* Continent Filter */}
@@ -237,11 +264,10 @@ export function PublicHeader({
                 ...sortOptions,
                 direction: sortOptions.direction === 'asc' ? 'desc' : 'asc'
               })}
-              className={`btn-glass px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 min-w-[80px] justify-center ${
-                sortOptions.direction === 'asc' 
-                  ? 'btn-glass-blue text-blue-300' 
+              className={`btn-glass px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 min-w-[80px] justify-center ${sortOptions.direction === 'asc'
+                  ? 'btn-glass-blue text-blue-300'
                   : 'btn-glass-purple text-purple-300'
-              }`}
+                }`}
               title={`Currently sorting ${sortOptions.direction === 'asc' ? 'ascending' : 'descending'}. Click to toggle.`}
             >
               {sortOptions.direction === 'asc' ? (
