@@ -24,7 +24,8 @@ export default defineConfig([
   { files: ["**/*.md"], plugins: { markdown }, language: "markdown/gfm", extends: ["markdown/recommended"] },
   { files: ["**/*.css"], plugins: { css }, language: "css/css", extends: ["css/recommended"],
     rules: {
-      "css/no-invalid-properties": "off"
+      "css/no-invalid-properties": "off",
+      "css/no-important": "off"
     }
   },
   {
