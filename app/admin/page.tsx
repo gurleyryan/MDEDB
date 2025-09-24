@@ -420,7 +420,13 @@ export default function AdminOrgs() {
 
   // Update the AdminHeader to use the new handler
   return (
-    <div className="min-h-screen page-glass-bg text-gray-900 dark:text-white transition-colors duration-300 relative">
+    <div 
+      className="min-h-screen page-glass-bg text-gray-900 dark:text-white transition-colors duration-300 relative"
+      style={{
+        backgroundColor: 'var(--background, #f9fafb)', // Fallback
+        color: 'var(--foreground, #111827)' // Fallback
+      }}
+    >
       {/* Content with glass panels */}
       <div className="relative z-10">
         {/* Enhanced Admin Header */}

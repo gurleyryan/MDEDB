@@ -41,6 +41,8 @@
   --org-glass-purple-border: rgba(147, 51, 234, 0.3);
   --org-mde-blue-border: rgba(59, 130, 246, 0.3);
   --org-mde-blue-rgb: 59, 130, 246;
+  --org-mde-green-rgb: 16, 185, 129;
+  --org-mde-purple-rgb: 147, 51, 234;
 
   /* Stained Glass Colors */
   --glass-blue: rgba(59, 130, 246, 0.15);
@@ -73,6 +75,22 @@
   --glass-bg: rgba(255, 255, 255, 0.8);
   --glass-border: rgba(0, 0, 0, 0.1);
   --glass-shadow: rgba(0, 0, 0, 0.1);
+
+  /* Light Mode Organization Card Glass Variables */
+  --org-glass-bg: rgba(255, 255, 255, 0.9);
+  --org-glass-border: rgba(0, 0, 0, 0.1);
+  --org-glass-shadow: rgba(0, 0, 0, 0.1);
+
+  /* Light Mode Organization button colors */
+  --org-glass-blue: rgba(59, 130, 246, 0.1);
+  --org-glass-green: rgba(16, 185, 129, 0.1);
+  --org-glass-purple: rgba(147, 51, 234, 0.1);
+  --org-glass-green-border: rgba(16, 185, 129, 0.3);
+  --org-glass-purple-border: rgba(147, 51, 234, 0.3);
+  --org-mde-blue-border: rgba(59, 130, 246, 0.3);
+  --org-mde-blue-rgb: 37, 99, 235;
+  --org-mde-green-rgb: 5, 150, 105;
+  --org-mde-purple-rgb: 126, 34, 206;
 
   /* Light Mode Stained Glass Colors */
   --glass-blue: rgba(59, 130, 246, 0.1);
@@ -346,7 +364,6 @@ body {
     background-color: var(--org-glass-bg);
     backdrop-filter: blur(20px);
     border: 1px solid var(--org-glass-border);
-    border-radius: 1rem;
     position: relative;
     overflow: visible;
   }
@@ -403,119 +420,189 @@ body {
   .org-btn-glass-blue {
     background-image: linear-gradient(135deg, var(--org-glass-blue), rgba(59, 130, 246, 0.05));
     border-color: var(--org-mde-blue-border);
-    color: rgb(var(--org-mde-blue-rgb));
+    color: #3b82f6; /* Blue that works on both light and dark backgrounds */
+  }
+
+  :root.light .org-btn-glass-blue {
+    color: #1d4ed8; /* Darker blue for light mode */
   }
 
   .org-btn-glass-blue:hover {
     background-image: linear-gradient(135deg, rgba(59, 130, 246, 0.25), rgba(59, 130, 246, 0.1));
     border-color: rgba(59, 130, 246, 0.5);
     box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+    color: #60a5fa; /* Lighter blue on hover */
+  }
+
+  :root.light .org-btn-glass-blue:hover {
+    color: #1e40af; /* Even darker blue for light mode hover */
   }
 
   /* MDE Blue Button Variant */
   .org-btn-glass-mde-blue {
     background-image: linear-gradient(135deg, rgba(var(--mde-blue-rgb), 0.15), rgba(var(--mde-blue-rgb), 0.05));
     border-color: rgba(var(--mde-blue-rgb), 0.3);
-    color: rgb(var(--mde-blue-rgb));
+    color: #99d9e0; /* MDE blue that works on dark backgrounds */
+  }
+
+  :root.light .org-btn-glass-mde-blue {
+    color: #0891b2; /* Darker cyan for light mode */
   }
 
   .org-btn-glass-mde-blue:hover {
     background-image: linear-gradient(135deg, rgba(var(--mde-blue-rgb), 0.25), rgba(var(--mde-blue-rgb), 0.1));
     border-color: rgba(var(--mde-blue-rgb), 0.5);
     box-shadow: 0 8px 32px rgba(var(--mde-blue-rgb), 0.3);
+    color: #a7f3d0; /* Lighter on hover */
+  }
+
+  :root.light .org-btn-glass-mde-blue:hover {
+    color: #0e7490; /* Even darker cyan for light mode hover */
   }
 
   .org-btn-glass-green {
     background-image: linear-gradient(135deg, var(--org-glass-green), rgba(16, 185, 129, 0.05));
     border-color: var(--org-glass-green-border);
-    color: #6ee7b7;
+    color: #10b981; /* Green that works on both backgrounds */
+  }
+
+  :root.light .org-btn-glass-green {
+    color: #059669; /* Darker green for light mode */
   }
 
   .org-btn-glass-green:hover {
     background-image: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(16, 185, 129, 0.1));
     border-color: rgba(16, 185, 129, 0.5);
     box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
+    color: #34d399; /* Lighter green on hover */
+  }
+
+  :root.light .org-btn-glass-green:hover {
+    color: #047857; /* Even darker green for light mode hover */
   }
 
   .org-btn-glass-purple {
     background-image: linear-gradient(135deg, var(--org-glass-purple), rgba(147, 51, 234, 0.05));
     border-color: var(--org-glass-purple-border);
-    color: #c4b5fd;
+    color: #8b5cf6; /* Purple that works on both backgrounds */
+  }
+
+  :root.light .org-btn-glass-purple {
+    color: #7c3aed; /* Darker purple for light mode */
   }
 
   .org-btn-glass-purple:hover {
     background-image: linear-gradient(135deg, rgba(147, 51, 234, 0.25), rgba(147, 51, 234, 0.1));
     border-color: rgba(147, 51, 234, 0.5);
     box-shadow: 0 8px 32px rgba(147, 51, 234, 0.3);
+    color: #a78bfa; /* Lighter purple on hover */
   }
 
-  /* Organization-specific components that should always stay dark */
+  :root.light .org-btn-glass-purple:hover {
+    color: #6d28d9; /* Even darker purple for light mode hover */
+  }
+
+  /* Organization-specific components that adapt to theme */
   .organization-card .btn-glass:not([style*="color"]),
   .organization-card .btn-glass-blue,
   .organization-card .btn-glass-purple,
   .organization-card .btn-glass-green {
-    background-color: var(--org-glass-bg) !important;
-    border-color: var(--org-glass-border) !important;
+    background-color: var(--org-glass-bg);
+    border-color: var(--org-glass-border);
   }
 
   .organization-card .btn-glass:not([style*="color"]) {
-    color: #e5e7eb !important;
+    color: var(--foreground);
   }
 
-  /* Force all CustomDropdown buttons in org cards to stay dark */
+  /* Force all CustomDropdown buttons in org cards to use theme */
   .organization-card button.btn-glass {
-    background-color: var(--org-glass-bg) !important;
-    border-color: var(--org-glass-border) !important;
+    background-color: var(--org-glass-bg);
+    border-color: var(--org-glass-border);
   }
 
   /* Only override text color if no inline color styling */
   .organization-card button.btn-glass:not([style*="color"]) {
-    color: #e5e7eb !important;
+    color: var(--foreground);
   }
 
   .organization-card .btn-glass-blue {
-    background-image: linear-gradient(135deg, var(--org-glass-blue), rgba(59, 130, 246, 0.05)) !important;
-    border-color: var(--org-mde-blue-border) !important;
-    color: rgb(var(--org-mde-blue-rgb)) !important;
+    background-image: linear-gradient(135deg, var(--org-glass-blue), rgba(59, 130, 246, 0.05));
+    border-color: var(--org-mde-blue-border);
+    color: rgb(var(--org-mde-blue-rgb));
   }
 
   .organization-card .btn-glass-purple {
-    background-image: linear-gradient(135deg, var(--org-glass-purple), rgba(147, 51, 234, 0.05)) !important;
-    border-color: var(--org-glass-purple-border) !important;
-    color: #c4b5fd !important;
+    background-image: linear-gradient(135deg, var(--org-glass-purple), rgba(147, 51, 234, 0.05));
+    border-color: var(--org-glass-purple-border);
+    color: rgb(var(--org-mde-purple-rgb));
   }
 
   .organization-card .btn-glass-green {
-    background-image: linear-gradient(135deg, var(--org-glass-green), rgba(16, 185, 129, 0.05)) !important;
-    border-color: var(--org-glass-green-border) !important;
-    color: #6ee7b7 !important;
+    background-image: linear-gradient(135deg, var(--org-glass-green), rgba(16, 185, 129, 0.05));
+    border-color: var(--org-glass-green-border);
+    color: rgb(var(--org-mde-green-rgb));
   }
 
-  /* Organization dropdown always dark but preserve color coding */
+  /* Organization dropdown adapts to theme but preserves color coding */
   .organization-card .dropdown-glass,
   .organization-card .dropdown-glass>div,
   .organization-card div.dropdown-glass {
-    background-color: var(--org-glass-bg) !important;
-    border-color: var(--org-glass-border) !important;
+    background-color: var(--org-glass-bg);
+    border-color: var(--org-glass-border);
   }
 
-  /* Dropdown options without color coding stay dark */
+  /* Dropdown options without color coding adapt to theme */
   .organization-card .dropdown-glass button:not([style*="background"]),
   .organization-card div.dropdown-glass button:not([style*="background"]) {
-    background-color: var(--org-glass-bg) !important;
-    color: #e5e7eb !important;
+    background-color: var(--org-glass-bg);
+    color: var(--foreground);
   }
 
   /* Dropdown options on hover without color coding */
   .organization-card .dropdown-glass button:not([style*="background"]):hover,
   .organization-card div.dropdown-glass button:not([style*="background"]):hover {
-    background-color: rgba(55, 65, 81, 0.8) !important;
+    background-color: var(--glass-bg);
   }
 
-  /* Don't override text color in dropdowns to preserve color coding */
+  /* Theme-aware text color for buttons */
   .organization-card .btn-glass:not([style*="color"]) {
-    color: #e5e7eb !important;
+    color: var(--foreground);
   }
+
+  /* Organization card form inputs are theme-aware */
+  .organization-card input[type="text"],
+  .organization-card input[type="url"],
+  .organization-card input[type="email"],
+  .organization-card textarea,
+  .organization-card select {
+    background-color: var(--background);
+    color: var(--foreground);
+    border-color: var(--org-glass-border);
+  }
+
+  .organization-card input[type="text"]:focus,
+  .organization-card input[type="url"]:focus,
+  .organization-card input[type="email"]:focus,
+  .organization-card textarea:focus,
+  .organization-card select:focus {
+    border-color: var(--mde-blue);
+  }
+
+  /* Organization card labels are theme-aware */
+  .organization-card label {
+    color: var(--foreground);
+    opacity: 0.7;
+  }
+
+  /* Organization card placeholder text */
+  .organization-card input::placeholder,
+  .organization-card textarea::placeholder {
+    color: var(--foreground);
+    opacity: 0.5;
+  }
+
+  /* General text content within organization cards - let Tailwind handle theme-aware text colors */
 
   /* Scoring section components always dark but preserve color coding */
   .scoring-section .btn-glass:not([style*="color"]),
@@ -579,22 +666,11 @@ body {
     /* White text in dark mode */
   }
 
-  /* Override Tailwind text-white class in org cards and scoring sections */
-  .organization-card .text-white:not([style*="color"]),
-  .scoring-section .text-white:not([style*="color"]) {
-    color: #e5e7eb !important;
-  }
-
-  /* Ensure CustomDropdown buttons stay dark regardless of theme */
+  /* Keep CustomDropdown buttons dark regardless of theme (only background/border) */
   .organization-card .btn-glass.text-white,
   .scoring-section .btn-glass.text-white {
     background-color: var(--org-glass-bg) !important;
     border-color: var(--org-glass-border) !important;
-  }
-
-  .organization-card .btn-glass.text-white:not([style*="color"]),
-  .scoring-section .btn-glass.text-white:not([style*="color"]) {
-    color: #e5e7eb !important;
   }
 
   /* Page Background Glass */
@@ -867,11 +943,7 @@ body {
 .organization-card.expanded-card {
   /* Remove translate/scale to avoid creating new stacking contexts & visual overlap */
   transform: none;
-  box-shadow:
-    0 24px 48px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(59, 130, 246, 0.25),
-    0 0 24px rgba(59, 130, 246, 0.15);
-  transition: box-shadow 0.15s ease-out, background-color 0.15s ease-out;
+  transition: background-color 0.15s ease-out;
   /* Ensure colored edges are preserved */
   border-radius: 1rem;
   overflow: visible;
@@ -884,187 +956,69 @@ body {
   transform: translateY(-2px) scale(1.01);
 }
 
-/* Regional theming for expanded cards */
-.organization-card.expanded-card.north-america {
-  box-shadow:
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(59, 130, 246, 0.4),
-    0 0 32px rgba(59, 130, 246, 0.3);
-}
-
-.organization-card.expanded-card.south-america {
-  box-shadow:
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(16, 185, 129, 0.4),
-    0 0 32px rgba(16, 185, 129, 0.3);
-}
-
-.organization-card.expanded-card.europe {
-  box-shadow:
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(147, 51, 234, 0.4),
-    0 0 32px rgba(147, 51, 234, 0.3);
-}
-
-.organization-card.expanded-card.africa {
-  box-shadow:
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(249, 115, 22, 0.4),
-    0 0 32px rgba(249, 115, 22, 0.3);
-}
-
-.organization-card.expanded-card.asia {
-  box-shadow:
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(239, 68, 68, 0.4),
-    0 0 32px rgba(239, 68, 68, 0.3);
-}
-
-.organization-card.expanded-card.oceania {
-  box-shadow:
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(6, 182, 212, 0.4),
-    0 0 32px rgba(6, 182, 212, 0.3);
-}
-
-.organization-card.expanded-card.middle-east {
-  box-shadow:
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(217, 119, 6, 0.4),
-    0 0 32px rgba(217, 119, 6, 0.3);
-}
+/* Regional theming for expanded cards - removed shadows */
 
 /* Regional Theming */
 .organization-card.north-america {
   border: 1px solid rgba(59, 130, 246, 0.3);
-  box-shadow:
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(59, 130, 246, 0.2),
-    inset 0 1px 0 rgba(59, 130, 246, 0.1),
-    0 0 20px rgba(59, 130, 246, 0.1);
 }
 
 .organization-card.north-america:hover {
   border-color: rgba(59, 130, 246, 0.5);
-  box-shadow:
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(59, 130, 246, 0.4),
-    0 0 32px rgba(59, 130, 246, 0.3),
-    inset 0 1px 0 rgba(59, 130, 246, 0.2);
   transform: translateY(-2px) scale(1.01);
 }
 
 .organization-card.south-america {
   border: 1px solid rgba(16, 185, 129, 0.3);
-  box-shadow:
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(16, 185, 129, 0.2),
-    inset 0 1px 0 rgba(16, 185, 129, 0.1),
-    0 0 20px rgba(16, 185, 129, 0.1);
 }
 
 .organization-card.south-america:hover {
   border-color: rgba(16, 185, 129, 0.5);
-  box-shadow:
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(16, 185, 129, 0.4),
-    0 0 32px rgba(16, 185, 129, 0.3),
-    inset 0 1px 0 rgba(16, 185, 129, 0.2);
   transform: translateY(-2px) scale(1.01);
 }
 
 .organization-card.europe {
   border: 1px solid rgba(147, 51, 234, 0.3);
-  box-shadow:
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(147, 51, 234, 0.2),
-    inset 0 1px 0 rgba(147, 51, 234, 0.1),
-    0 0 20px rgba(147, 51, 234, 0.1);
 }
 
 .organization-card.europe:hover {
   border-color: rgba(147, 51, 234, 0.5);
-  box-shadow:
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(147, 51, 234, 0.4),
-    0 0 32px rgba(147, 51, 234, 0.3),
-    inset 0 1px 0 rgba(147, 51, 234, 0.2);
   transform: translateY(-2px) scale(1.01);
 }
 
 .organization-card.africa {
   border: 1px solid rgba(249, 115, 22, 0.3);
-  box-shadow:
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(249, 115, 22, 0.2),
-    inset 0 1px 0 rgba(249, 115, 22, 0.1),
-    0 0 20px rgba(249, 115, 22, 0.1);
 }
 
 .organization-card.africa:hover {
   border-color: rgba(249, 115, 22, 0.5);
-  box-shadow:
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(249, 115, 22, 0.4),
-    0 0 32px rgba(249, 115, 22, 0.3),
-    inset 0 1px 0 rgba(249, 115, 22, 0.2);
   transform: translateY(-2px) scale(1.01);
 }
 
 .organization-card.asia {
   border: 1px solid rgba(239, 68, 68, 0.3);
-  box-shadow:
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(239, 68, 68, 0.2),
-    inset 0 1px 0 rgba(239, 68, 68, 0.1),
-    0 0 20px rgba(239, 68, 68, 0.1);
 }
 
 .organization-card.asia:hover {
   border-color: rgba(239, 68, 68, 0.5);
-  box-shadow:
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(239, 68, 68, 0.4),
-    0 0 32px rgba(239, 68, 68, 0.3),
-    inset 0 1px 0 rgba(239, 68, 68, 0.2);
   transform: translateY(-2px) scale(1.01);
 }
 
 .organization-card.oceania {
   border: 1px solid rgba(6, 182, 212, 0.3);
-  box-shadow:
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(6, 182, 212, 0.2),
-    inset 0 1px 0 rgba(6, 182, 212, 0.1),
-    0 0 20px rgba(6, 182, 212, 0.1);
 }
 
 .organization-card.oceania:hover {
   border-color: rgba(6, 182, 212, 0.5);
-  box-shadow:
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(6, 182, 212, 0.4),
-    0 0 32px rgba(6, 182, 212, 0.3),
-    inset 0 1px 0 rgba(6, 182, 212, 0.2);
   transform: translateY(-2px) scale(1.01);
 }
 
 .organization-card.middle-east {
   border: 1px solid rgba(217, 119, 6, 0.3);
-  box-shadow:
-    0 32px 64px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(217, 119, 6, 0.2),
-    inset 0 1px 0 rgba(217, 119, 6, 0.1),
-    0 0 20px rgba(217, 119, 6, 0.1);
 }
 
 .organization-card.middle-east:hover {
   border-color: rgba(217, 119, 6, 0.5);
-  box-shadow:
-    0 40px 80px rgba(0, 0, 0, 0.7),
-    0 0 0 2px rgba(217, 119, 6, 0.4),
-    0 0 32px rgba(217, 119, 6, 0.3),
-    inset 0 1px 0 rgba(217, 119, 6, 0.2);
   transform: translateY(-2px) scale(1.01);
 }
 
@@ -1565,6 +1519,112 @@ body {
 .scoring-section .grid {
   gap: 0.5rem;
   /* Increase gap to prevent cutoff */
+}
+
+/* Theme-aware styling for scoring criteria cards */
+.scoring-section .scoring-criterion-card:not([style*="background"]) {
+  background-color: var(--org-glass-bg);
+  border-color: var(--org-glass-border);
+}
+
+.scoring-section .scoring-criterion-card:not([style*="background"]):hover {
+  border-color: var(--org-glass-border);
+  opacity: 0.9;
+}
+
+/* Theme-aware text styling for scoring criteria */
+.scoring-section .scoring-criterion-card .criterion-number {
+  background-color: var(--org-glass-border);
+  color: var(--foreground, #9ca3af);
+}
+
+.scoring-section .scoring-criterion-card .criterion-title {
+  color: var(--foreground);
+}
+
+.scoring-section .scoring-criterion-card .criterion-description {
+  color: var(--foreground, #6b7280);
+}
+
+/* Theme-aware scoring badges */
+.scoring-badge-strong {
+  background-color: rgba(34, 197, 94, 0.1);
+  color: rgb(134, 239, 172);
+}
+
+.scoring-badge-promising {
+  background-color: rgba(249, 115, 22, 0.1);
+  color: rgb(253, 186, 116);
+}
+
+.scoring-badge-low {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: rgb(252, 165, 165);
+}
+
+/* Light mode badge colors */
+:root.light .scoring-badge-strong {
+  background-color: rgba(34, 197, 94, 0.15);
+  color: rgb(21, 128, 61);
+}
+
+:root.light .scoring-badge-promising {
+  background-color: rgba(249, 115, 22, 0.15);
+  color: rgb(154, 52, 18);
+}
+
+:root.light .scoring-badge-low {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: rgb(153, 27, 27);
+}
+
+/* Theme-aware total score badges */
+.scoring-total-strong {
+  background-color: rgba(34, 197, 94, 0.2);
+  color: rgb(134, 239, 172);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.scoring-total-promising {
+  background-color: rgba(249, 115, 22, 0.2);
+  color: rgb(253, 186, 116);
+  border-color: rgba(249, 115, 22, 0.3);
+}
+
+.scoring-total-low {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: rgb(252, 165, 165);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* Light mode total score badge colors */
+:root.light .scoring-total-strong {
+  background-color: rgba(34, 197, 94, 0.25);
+  color: rgb(21, 128, 61);
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+:root.light .scoring-total-promising {
+  background-color: rgba(249, 115, 22, 0.25);
+  color: rgb(154, 52, 18);
+  border-color: rgba(249, 115, 22, 0.4);
+}
+
+:root.light .scoring-total-low {
+  background-color: rgba(239, 68, 68, 0.25);
+  color: rgb(153, 27, 27);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* Theme-aware save button */
+.scoring-save-btn {
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.scoring-save-btn:hover {
+  backdrop-filter: blur(16px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 /* ============================================
@@ -2869,5 +2929,46 @@ a.mde-link:focus-visible {
   .btn-mde-yellow,
   .badge-mde {
     transition: none;
+  }
+}
+
+/* ============================================
+   MOBILE HEADER COLLAPSE ANIMATIONS
+   ============================================ */
+
+/* Smooth animations for collapsible header content */
+@media (max-width: 640px) {
+  .header .transition-all {
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.2s ease-in-out,
+                transform 0.2s ease-in-out;
+  }
+  
+  /* When collapsed, fade out content */
+  .header [class*="max-h-0"] {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  
+  /* When expanded, fade in content */
+  .header [class*="max-h-96"],
+  .header [class*="max-h-screen"] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  /* Ensure mobile header buttons have proper touch targets */
+  .header button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Mobile hamburger menu button animation */
+  .header button[aria-label*="filters"] {
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .header button[aria-label*="filters"]:active {
+    transform: scale(0.95);
   }
 }

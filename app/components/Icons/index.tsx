@@ -4,7 +4,7 @@ import {
   SortAscendingIcon, SortDescendingIcon, FunnelIcon, MagnifyingGlassIcon, PlusIcon, SignInIcon, SignOutIcon, HashIcon, ListChecksIcon, ChatCircleIcon, LightbulbIcon,
   EnvelopeIcon, UsersIcon, TrophyIcon, MegaphoneIcon,
   InstagramLogoIcon, XLogoIcon, FacebookLogoIcon, TiktokLogoIcon, LinkedinLogoIcon, YoutubeLogoIcon,
-  SunIcon, MoonIcon,
+  SunIcon, MoonIcon, ListIcon,
 } from '@phosphor-icons/react';
 
 export const ClimateIcons = {
@@ -32,6 +32,8 @@ export const ClimateIcons = {
   capacity: <UsersIcon className="w-4 h-4" weight="duotone" />,
   sun: <SunIcon className="w-4 h-4" weight="duotone" />,
   moon: <MoonIcon className="w-4 h-4" weight="duotone" />,
+  menuOpen: <ListIcon className="w-4 h-4" weight="duotone" />,
+  close: <XIcon className="w-4 h-4" weight="duotone" />,
 
   // Social Icons (Phosphor)
   instagram: <InstagramLogoIcon className="w-5 h-5" weight="duotone" />,

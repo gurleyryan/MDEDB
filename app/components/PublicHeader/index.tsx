@@ -1,4 +1,5 @@
 'use client';
+import { useState } from 'react';
 import { CustomDropdown } from '../CustomDropdown';
 import { ClimateIcons } from '../Icons';
 import {
@@ -52,6 +53,7 @@ export function PublicHeader({
   const router = useRouter();
   const { user, role, logout } = useUser(); // role: 'admin' | 'artist' | 'org' | undefined
   const { theme, toggleTheme } = useTheme();
+  const [isMobileCollapsed, setIsMobileCollapsed] = useState(true);
 
   const clearAllFilters = () => {
     onSearchChange('');
@@ -84,80 +86,146 @@ export function PublicHeader({
       <div className="w-full mx-auto px-4 py-2">
         {/* Header Title */}
         <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => router.push('/')}>
             <Image
               src="/logo.png"
               alt="AMPLIFY: Climate Org Directory"
               width={40}
               height={40}
             />
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-300">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white transition-colors duration-300 hover:text-blue-500 dark:hover:text-blue-400">
               AMPLIFY: Climate Org Directory
             </h1>
           </div>
-          <div className="flex items-center gap-3">
-            {/* MDEUS Badge */}
-            <a 
-              href="https://www.musicdeclares.net/us/campaigns/mde-us-amplify-program"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="opacity-80 hover:opacity-100 transition-opacity"
-              title="Visit Music Declares Emergency US - AMPLIFY Program"
-            >
-              <Image
-                src="/MDEUS.png"
-                alt="MDEUS"
-                width={60}
-                height={20}
-                className="opacity-80 hover:opacity-100 transition-opacity"
-              />
-            </a>
+          <div className="flex items-start gap-1 sm:gap-2 flex-shrink-0 max-w-[30%] sm:max-w-none mt-3 sm:mt-0">
+            {/* Action buttons - 2x2 Grid on mobile, row on desktop */}
             {user ? (
-              <>
+              <div className="grid grid-cols-2 grid-rows-2 gap-0 sm:flex sm:gap-2 sm:w-auto sm:h-auto flex-shrink-0">
+                {/* Top-left: Dashboard */}
                 <button
                   onClick={() => {
                     if (role === 'artist') router.push('/artist');
                     else if (role === 'admin') router.push('/admin');
                     else if (role === 'org') router.push('/org');
                   }}
-                  className="btn-glass px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  className="btn-glass w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 rounded-none rounded-tl-lg sm:rounded-lg text-xs sm:text-sm font-medium flex items-center justify-center sm:gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
-                  {role === 'artist' ? 'Artist' : role === 'admin' ? 'Admin' : 'Org'} Dashboard
+                  {role === 'admin' ? ClimateIcons.approved : role === 'artist' ? ClimateIcons.trophy : ClimateIcons.guide}
+                  <span className="hidden sm:inline">{role === 'artist' ? 'Artist' : role === 'admin' ? 'Admin' : 'Org'} Dashboard</span>
                 </button>
-                {/* Theme Toggle */}
+                
+                {/* Top-right: Hamburger */}
+                <button
+                  onClick={() => setIsMobileCollapsed(!isMobileCollapsed)}
+                  className="sm:hidden btn-glass w-8 h-8 rounded-none rounded-tr-lg text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors flex items-center justify-center"
+                  title={isMobileCollapsed ? 'Show filters' : 'Hide filters'}
+                  aria-label={isMobileCollapsed ? 'Show filters' : 'Hide filters'}
+                >
+                  {isMobileCollapsed ? ClimateIcons.menuOpen : ClimateIcons.close}
+                </button>
+                
+                {/* Bottom-left: Theme */}
                 <button
                   onClick={toggleTheme}
-                  className="btn-glass px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  className="btn-glass w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 rounded-none rounded-bl-lg sm:rounded-lg text-xs sm:text-sm font-medium flex items-center justify-center sm:gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                   title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
                 >
                   {theme === 'light' ? ClimateIcons.moon : ClimateIcons.sun}
                   <span className="hidden sm:inline">{theme === 'light' ? 'Dark' : 'Light'}</span>
                 </button>
+                
+                {/* Bottom-right: Logout */}
                 <button
                   onClick={() => {
                     logout();
                     router.push('/');
                   }}
-                  className="btn-glass text-gray-600 dark:text-gray-300 px-3 py-2 rounded-lg text-sm font-medium hover:text-gray-900 dark:hover:text-white transition-colors flex items-center gap-2"
+                  className="btn-glass text-gray-600 dark:text-gray-300 w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 rounded-none rounded-br-lg sm:rounded-lg text-xs sm:text-sm font-medium hover:text-gray-900 dark:hover:text-white transition-colors flex items-center justify-center sm:gap-2"
                 >
                   {ClimateIcons.logout}
-                  <span>Logout</span>
+                  <span className="hidden sm:inline">Logout</span>
                 </button>
-              </>
+              </div>
             ) : (
-              <button
-                onClick={() => router.push('/login')}
-                className="btn-glass px-3 py-2 rounded-lg text-sm font-medium flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+              <div className="grid grid-cols-2 grid-rows-2 gap-0 sm:flex sm:gap-2 sm:w-auto sm:h-auto flex-shrink-0">
+                {/* Top-left: MDEUS Logo for logged-out users */}
+                <div className="w-11 h-10 sm:w-auto sm:h-10 flex items-center justify-center sm:gap-2 rounded-none rounded-tl-lg sm:rounded-lg bg-transparent hover:bg-white/10 dark:hover:bg-black/10 transition-colors">
+                  <a 
+                    href="https://www.musicdeclares.net/us/campaigns/mde-us-amplify-program"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="opacity-80 hover:opacity-100 transition-opacity flex items-center justify-center sm:gap-2 w-full h-full"
+                    title="Visit Music Declares Emergency US - AMPLIFY Program"
+                  >
+                    <Image
+                      src="/MDEUS.png"
+                      alt="MDEUS"
+                      width={40}
+                      height={40}
+                      className="w-8 h-8 object-contain sm:w-8 sm:h-8"
+                    />
+                    <span className="hidden sm:inline text-sm sm:text-sm text-gray-700 dark:text-gray-300">MDEUS</span>
+                  </a>
+                </div>
+                
+                {/* Top-right: Hamburger */}
+                <button
+                  onClick={() => setIsMobileCollapsed(!isMobileCollapsed)}
+                  className="sm:hidden btn-glass w-8 h-8 rounded-none rounded-tr-lg text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors flex items-center justify-center"
+                  title={isMobileCollapsed ? 'Show filters' : 'Hide filters'}
+                  aria-label={isMobileCollapsed ? 'Show filters' : 'Hide filters'}
+                >
+                  {isMobileCollapsed ? ClimateIcons.menuOpen : ClimateIcons.close}
+                </button>
+                
+                {/* Bottom-left: Theme */}
+                <button
+                  onClick={toggleTheme}
+                  className="btn-glass w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 rounded-none rounded-bl-lg sm:rounded-lg text-xs sm:text-sm font-medium flex items-center justify-center sm:gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+                >
+                  {theme === 'light' ? ClimateIcons.moon : ClimateIcons.sun}
+                  <span className="hidden sm:inline">{theme === 'light' ? 'Dark' : 'Light'}</span>
+                </button>
+                
+                {/* Bottom-right: Login */}
+                <button
+                  onClick={() => router.push('/login')}
+                  className="btn-glass w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 rounded-none rounded-br-lg sm:rounded-lg text-xs sm:text-sm font-medium flex items-center justify-center sm:gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                >
+                  {ClimateIcons.login}
+                  <span className="hidden sm:inline">Login</span>
+                </button>
+              </div>
+            )}
+            
+            {/* Desktop MDEUS Logo - only show when logged in */}
+            {user && (
+              <a 
+                href="https://www.musicdeclares.net/us/campaigns/mde-us-amplify-program"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="opacity-80 hover:opacity-100 transition-opacity flex-shrink-0 hidden sm:block"
+                title="Visit Music Declares Emergency US - AMPLIFY Program"
               >
-                {ClimateIcons.login}
-                <span>Login</span>
-              </button>
+                <Image
+                  src="/MDEUS.png"
+                  alt="MDEUS"
+                  width={40}
+                  height={40}
+                  className="opacity-80 hover:opacity-100 transition-opacity w-[60px] h-auto"
+                />
+              </a>
             )}
           </div>
         </div>
 
-        {/* Search Bar with Loading Indicators */}
-        <div className="relative mb-3 sm:mb-6">
+        {/* Collapsible Content - Hidden on mobile when collapsed */}
+        <div className={`transition-all duration-300 overflow-hidden ${
+          isMobileCollapsed ? 'max-h-0 sm:max-h-none' : 'max-h-96'
+        }`}>
+          {/* Search Bar with Loading Indicators */}
+          <div className="relative mb-3 sm:mb-6">
           <div className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10">
             {isSearching ? (
               <div className="animate-spin">
@@ -238,7 +306,7 @@ export function PublicHeader({
                 placeholder="Filter by continent..."
                 colorCoded={true}
                 className="w-full"
-                portal={false}
+                portal={true}
               />
             </div>
 
@@ -254,7 +322,7 @@ export function PublicHeader({
                 placeholder="Sort by..."
                 colorCoded={true}
                 className="w-full"
-                portal={false}
+                portal={true}
               />
             </div>
 
@@ -288,6 +356,7 @@ export function PublicHeader({
             </button>
           </div>
         </div>
+        </div> {/* End of collapsible content */}
       </div>
     </div>
   );

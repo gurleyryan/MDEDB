@@ -124,21 +124,47 @@ export function CustomDropdown({
   useEffect(() => {
     if (isOpen && portal && buttonRef.current) {
       const updateDropdownPos = () => {
-        const rect = buttonRef.current!.getBoundingClientRect();
+        if (!buttonRef.current) return;
+        const rect = buttonRef.current.getBoundingClientRect();
         setDropdownPos({
-          top: rect.bottom + window.scrollY,
-          left: rect.left + window.scrollX,
+          top: rect.bottom, // Use viewport position, not adding scrollY
+          left: rect.left,
           width: rect.width,
         });
       };
 
       updateDropdownPos();
-      window.addEventListener('scroll', updateDropdownPos, true);
-      window.addEventListener('resize', updateDropdownPos);
+      
+      // Use requestAnimationFrame for smoother updates during scroll/resize
+      let rafId: number;
+      const handleUpdate = () => {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(updateDropdownPos);
+      };
+      
+      // Listen to scroll and resize events
+      window.addEventListener('scroll', handleUpdate, { passive: true, capture: true });
+      window.addEventListener('resize', handleUpdate, { passive: true });
+      
+      // Also listen for any parent scroll containers
+      const scrollableParents: Element[] = [];
+      let parent = buttonRef.current?.parentElement;
+      while (parent && parent !== document.body) {
+        const overflow = window.getComputedStyle(parent).overflow;
+        if (overflow === 'auto' || overflow === 'scroll' || overflow === 'hidden') {
+          scrollableParents.push(parent);
+          parent.addEventListener('scroll', handleUpdate, { passive: true });
+        }
+        parent = parent.parentElement;
+      }
 
       return () => {
-        window.removeEventListener('scroll', updateDropdownPos, true);
-        window.removeEventListener('resize', updateDropdownPos);
+        if (rafId) cancelAnimationFrame(rafId);
+        window.removeEventListener('scroll', handleUpdate, true);
+        window.removeEventListener('resize', handleUpdate);
+        scrollableParents.forEach(parent => {
+          parent.removeEventListener('scroll', handleUpdate);
+        });
       };
     }
   }, [isOpen, portal]);
@@ -197,11 +223,11 @@ export function CustomDropdown({
       style={
         portal && dropdownPos
           ? {
-              position: 'absolute',
+              position: 'fixed', // Use fixed instead of absolute for better scroll performance
               top: dropdownPos.top,
               left: dropdownPos.left,
               width: dropdownPos.width,
-              zIndex: 40, // below sticky header (50)
+              zIndex: 9999, // High z-index for portal mode
               height: `${calculateDropdownHeight()}px`,
             }
           : {
@@ -209,7 +235,7 @@ export function CustomDropdown({
               top: '100%',
               left: 0,
               right: 0,
-              zIndex: 40,
+              zIndex: 200, // Higher than sticky header z-[120]
               height: `${calculateDropdownHeight()}px`,
             }
       }
@@ -225,7 +251,7 @@ export function CustomDropdown({
       className={`relative ${className}`}
       style={{
         position: 'relative',
-        zIndex: isOpen ? 40 : 'auto',
+        zIndex: isOpen ? 40 : 'auto', // Moderate z-index for portal mode
         isolation: 'auto'
       }}
     >

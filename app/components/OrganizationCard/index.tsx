@@ -249,7 +249,7 @@ export function OrganizationCard({
 
   return (
     <div
-      className={`font-mde organization-card org-panel-glass relative rounded-2xl backdrop-blur-sm shadow-2xl transition-all duration-300 stained-glass ${getRegionalTheme(org.country_code)} ${isExpanded || isEditing ? 'expanded-card' : 'hover:shadow-3xl'
+      className={`font-mde organization-card org-panel-glass relative rounded-2xl backdrop-blur-sm transition-all duration-300 stained-glass ${getRegionalTheme(org.country_code)} ${isExpanded || isEditing ? 'expanded-card' : ''
         }`}
       style={{
         overflow: 'visible',
@@ -280,8 +280,8 @@ export function OrganizationCard({
             <div className="w-full h-full bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 animate-pulse">
               <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/40 to-transparent" />
               <div className="absolute bottom-4 left-4 right-4">
-                <div className="h-4 bg-gray-600 rounded animate-pulse mb-2"></div>
-                <div className="h-4 bg-gray-600 rounded w-3/4 animate-pulse"></div>
+                <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded animate-pulse mb-2"></div>
+                <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/4 animate-pulse"></div>
               </div>
             </div>
           ) : metadata?.image && !isPlaceholderUrl(metadata.image) ? (
@@ -327,17 +327,17 @@ export function OrganizationCard({
         </div>
       )}
       {/* Card Content with enhanced glass effect */}
-      <div className={`p-6 backdrop-blur relative org-panel-glass ${org.website ? 'rounded-b-2xl' : 'rounded-2xl'}`}>
+      <div className={`p-6 backdrop-blur relative org-panel-glass ${(org.banner || org.website) ? 'rounded-b-2xl' : 'rounded-2xl'}`}>
         {isEditing ? (
           // Edit Mode
           <div className="space-y-4 mb-6">
             <div>
-              <label className="block text-xs text-gray-400 mb-1">Organization Name</label>
+              <label className="block text-xs  mb-1">Organization Name</label>
               <input
                 type="text"
                 value={editForm.org_name || ''}
                 onChange={(e) => handleFieldChange('org_name', e.target.value)}
-                className={`w-full p-2 bg-gray-700 border rounded text-white text-xl font-bold focus:outline-none ${errors.org_name ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'
+                className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-xl font-bold focus:outline-none ${errors.org_name ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                   }`}
               />
               {errors.org_name && (
@@ -348,7 +348,7 @@ export function OrganizationCard({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Logo upload + preview */}
               <div>
-                <label className="block text-xs text-gray-400 mb-1">Logo</label>
+                <label className="block text-xs  mb-1">Logo</label>
                 <div className="flex items-center gap-3">
                   {/* Hidden native input; triggered by button */}
                   <input
@@ -366,14 +366,14 @@ export function OrganizationCard({
                     {ClimateIcons.plus}
                     <span>{editForm.logo ? 'Change Logo' : 'Choose Logo'}</span>
                   </button>
-                  {uploading.logo && <span className="text-gray-400 text-xs">Uploading…</span>}
+                  {uploading.logo && <span className=" text-xs">Uploading…</span>}
                 </div>
                 <input
                   type="url"
                   value={editForm.logo || ''}
                   onChange={(e) => handleFieldChange('logo', e.target.value)}
                   onBlur={(e) => e.target.value && handleFieldChange('logo', formatUrl(e.target.value))}
-                  className="mt-2 w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-mde-blue"
+                  className="mt-2 w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                   placeholder="Or paste a logo URL"
                 />
                 {editForm.logo && (
@@ -386,7 +386,7 @@ export function OrganizationCard({
 
               {/* Banner upload + preview */}
               <div>
-                <label className="block text-xs text-gray-400 mb-1">Banner</label>
+                <label className="block text-xs  mb-1">Banner</label>
                 <div className="flex items-center gap-3">
                   {/* Hidden native input; triggered by button */}
                   <input
@@ -404,14 +404,14 @@ export function OrganizationCard({
                     {ClimateIcons.plus}
                     <span>{editForm.banner ? 'Change Banner' : 'Choose Banner'}</span>
                   </button>
-                  {uploading.banner && <span className="text-gray-400 text-xs">Uploading…</span>}
+                  {uploading.banner && <span className=" text-xs">Uploading…</span>}
                 </div>
                 <input
                   type="url"
                   value={editForm.banner || ''}
                   onChange={(e) => handleFieldChange('banner', e.target.value)}
                   onBlur={(e) => e.target.value && handleFieldChange('banner', formatUrl(e.target.value))}
-                  className="mt-2 w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-mde-blue"
+                  className="mt-2 w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                   placeholder="Or paste a banner URL"
                 />
                 {editForm.banner && (
@@ -422,7 +422,7 @@ export function OrganizationCard({
                 {errors.banner && <p className="text-red-400 text-xs mt-1">{errors.banner}</p>}
               </div>
               <div>
-                <label className="block text-xs text-gray-400 mb-1">Website</label>
+                <label className="block text-xs  mb-1">Website</label>
                 <input
                   type="url"
                   value={editForm.website || ''}
@@ -433,7 +433,7 @@ export function OrganizationCard({
                       handleFieldChange('website', formatted);
                     }
                   }}
-                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none ${errors.website ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'
+                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none ${errors.website ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                     }`}
                 />
                 {errors.website && (
@@ -442,12 +442,12 @@ export function OrganizationCard({
               </div>
 
               <div>
-                <label className="block text-xs text-gray-400 mb-1">Email</label>
+                <label className="block text-xs  mb-1">Email</label>
                 <input
                   type="text"
                   value={editForm.email || ''}
                   onChange={(e) => handleFieldChange('email', e.target.value)}
-                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none ${errors.email ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'}`}
+                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none ${errors.email ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'}`}
                   placeholder="Multiple emails separated by commas"
                 />
                 {errors.email && (
@@ -456,7 +456,7 @@ export function OrganizationCard({
               </div>
 
               <div>
-                <label className="block text-xs text-gray-400 mb-1">Country Code</label>
+                <label className="block text-xs  mb-1">Country Code</label>
                 <input
                   type="text"
                   value={editForm.country_code || ''}
@@ -467,7 +467,7 @@ export function OrganizationCard({
                       handleFieldChange('country_code', formatted);
                     }
                   }}
-                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none ${errors.country_code ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'
+                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none ${errors.country_code ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                     }`}
                   maxLength={2}
                 />
@@ -477,12 +477,12 @@ export function OrganizationCard({
               </div>
 
               <div>
-                <label className="block text-xs text-gray-400 mb-1">Type of Work</label>
+                <label className="block text-xs  mb-1">Type of Work</label>
                 <input
                   type="text"
                   value={editForm.type_of_work || ''}
                   onChange={(e) => handleFieldChange('type_of_work', e.target.value)}
-                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none ${errors.type_of_work ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'
+                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none ${errors.type_of_work ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                     }`}
                 />
                 {errors.type_of_work && (
@@ -493,80 +493,80 @@ export function OrganizationCard({
               {/* Social links */}
               <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Instagram</label>
+                  <label className="block text-xs  mb-1">Instagram</label>
                   <input
                     type="url"
                     value={editForm.instagram || ''}
                     onChange={(e) => handleFieldChange('instagram', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('instagram', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-mde-blue"
+                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                     placeholder="https://instagram.com/yourorg"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">X (Twitter)</label>
+                  <label className="block text-xs  mb-1">X (Twitter)</label>
                   <input
                     type="url"
                     value={editForm.twitter || ''}
                     onChange={(e) => handleFieldChange('twitter', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('twitter', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-mde-blue"
+                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                     placeholder="https://x.com/yourorg"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">Facebook</label>
+                  <label className="block text-xs  mb-1">Facebook</label>
                   <input
                     type="url"
                     value={editForm.facebook || ''}
                     onChange={(e) => handleFieldChange('facebook', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('facebook', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-mde-blue"
+                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                     placeholder="https://facebook.com/yourorg"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">TikTok</label>
+                  <label className="block text-xs  mb-1">TikTok</label>
                   <input
                     type="url"
                     value={editForm.tiktok || ''}
                     onChange={(e) => handleFieldChange('tiktok', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('tiktok', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-mde-blue"
+                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                     placeholder="https://tiktok.com/@yourorg"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">LinkedIn</label>
+                  <label className="block text-xs  mb-1">LinkedIn</label>
                   <input
                     type="url"
                     value={editForm.linkedin || ''}
                     onChange={(e) => handleFieldChange('linkedin', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('linkedin', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-mde-blue"
+                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                     placeholder="https://linkedin.com/company/yourorg"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-gray-400 mb-1">YouTube</label>
+                  <label className="block text-xs  mb-1">YouTube</label>
                   <input
                     type="url"
                     value={editForm.youtube || ''}
                     onChange={(e) => handleFieldChange('youtube', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('youtube', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none border-gray-600 focus:border-mde-blue"
+                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                     placeholder="https://youtube.com/@yourorg"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs text-gray-400 mb-1">Years Active</label>
+                <label className="block text-xs  mb-1">Years Active</label>
                 <input
                   type="text"
                   value={editForm.years_active || ''}
                   onChange={(e) => handleFieldChange('years_active', e.target.value)}
-                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none ${errors.years_active ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'
+                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none ${errors.years_active ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                     }`}
                   placeholder="e.g., 2013–present, 2018–2023"
                 />
@@ -576,12 +576,12 @@ export function OrganizationCard({
               </div>
 
               <div>
-                <label className="block text-xs text-gray-400 mb-1">Capacity</label>
+                <label className="block text-xs  mb-1">Capacity</label>
                 <input
                   type="text"
                   value={editForm.capacity || ''}
                   onChange={(e) => handleFieldChange('capacity', e.target.value)}
-                  className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none ${errors.capacity ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'
+                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none ${errors.capacity ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                     }`}
                 />
                 {errors.capacity && (
@@ -591,11 +591,11 @@ export function OrganizationCard({
             </div>
 
             <div>
-              <label className="block text-xs text-gray-400 mb-1">Mission Statement</label>
+              <label className="block text-xs  mb-1">Mission Statement</label>
               <textarea
                 value={editForm.mission_statement || ''}
                 onChange={(e) => handleFieldChange('mission_statement', e.target.value)}
-                className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none h-20 resize-none ${errors.mission_statement ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'
+                className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none h-20 resize-none ${errors.mission_statement ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                   }`}
               />
               {errors.mission_statement && (
@@ -604,11 +604,11 @@ export function OrganizationCard({
             </div>
 
             <div>
-              <label className="block text-xs text-gray-400 mb-1">Notable Success</label>
+              <label className="block text-xs  mb-1">Notable Success</label>
               <textarea
                 value={editForm.notable_success || ''}
                 onChange={(e) => handleFieldChange('notable_success', e.target.value)}
-                className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none h-20 resize-none ${errors.notable_success ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'
+                className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none h-20 resize-none ${errors.notable_success ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                   }`}
               />
               {errors.notable_success && (
@@ -617,11 +617,11 @@ export function OrganizationCard({
             </div>
 
             <div>
-              <label className="block text-xs text-gray-400 mb-1">CTA Notes</label>
+              <label className="block text-xs  mb-1">CTA Notes</label>
               <textarea
                 value={editForm.cta_notes || ''}
                 onChange={(e) => handleFieldChange('cta_notes', e.target.value)}
-                className={`w-full p-2 bg-gray-700 border rounded text-white text-sm focus:outline-none h-20 resize-none ${errors.cta_notes ? 'border-mde-red' : 'border-gray-600 focus:border-mde-blue'
+                className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none h-20 resize-none ${errors.cta_notes ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                   }`}
               />
               {errors.cta_notes && (
@@ -686,18 +686,18 @@ export function OrganizationCard({
                 <div className="flex-1 min-w-0">
                   {/* Org name with better responsive handling */}
                   <div className="mb-1">
-                    <h3 className="org-name-heading text-heading text-white break-normal leading-tight min-w-0">
+                    <h3 className="org-name-heading text-heading  break-normal leading-tight min-w-0">
                       {org.org_name}
                     </h3>
                   </div>
 
                   {/* Country code and type of work (Type hidden on mobile; shown separately below) */}
-                  <div className="text-gray-300 text-sm min-w-0 flex items-center gap-1">
-                    <span className="text-gray-400 flex-shrink-0">{ClimateIcons.mission}</span>
+                  <div className=" text-sm min-w-0 flex items-center gap-1">
+                    <span className=" flex-shrink-0">{ClimateIcons.mission}</span>
                     <span>{org.country_code}</span>
                     {org.type_of_work && (
                       <span className="hidden sm:inline">
-                        <span className="text-gray-500"> • </span>
+                        <span className=""> • </span>
                         <span>{org.type_of_work}</span>
                       </span>
                     )}
@@ -729,7 +729,7 @@ export function OrganizationCard({
                         href={href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-gray-400 hover:text-white transition-colors"
+                        className="transition-colors"
                         title={s.label}
                       >
                         <span className="sr-only">{s.label}</span>
@@ -754,7 +754,7 @@ export function OrganizationCard({
                         <div className="flex items-center gap-1 min-w-0 flex-shrink-0 mb-1">
                           <span className="text-yellow-400 flex-shrink-0">{ClimateIcons.calendar}</span>
                           <span
-                            className="text-gray-300 leading-tight text-xs sm:text-sm truncate min-w-0 max-w-[100px] sm:max-w-[120px] md:max-w-[150px]"
+                            className=" leading-tight text-xs sm:text-sm truncate min-w-0 max-w-[100px] sm:max-w-[120px] md:max-w-[150px]"
                             title={org.years_active}
                           >
                             {org.years_active}
@@ -780,7 +780,7 @@ export function OrganizationCard({
                       {org.website && !websiteInfo?.isValid && (
                         <div className="flex items-center gap-1 min-w-0">
                           <span className="text-mde-blue flex-shrink-0">{ClimateIcons.website}</span>
-                          <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
+                          <span className="text-sm  truncate min-w-0" title={org.website}>Invalid URL</span>
                         </div>
                       )}
                     </>
@@ -813,7 +813,7 @@ export function OrganizationCard({
                             {ClimateIcons.calendar}
                           </span>
                           <span
-                            className="text-gray-300 leading-tight text-xs sm:text-sm truncate min-w-0 max-w-[100px] sm:max-w-[120px] md:max-w-[150px]"
+                            className=" leading-tight text-xs sm:text-sm truncate min-w-0 max-w-[100px] sm:max-w-[120px] md:max-w-[150px]"
                             title={org.years_active}
                           >
                             {org.years_active}
@@ -843,7 +843,7 @@ export function OrganizationCard({
                                   {websiteInfo.hostname}
                                 </a>
                               ) : (
-                                <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
+                                <span className="text-sm  truncate min-w-0" title={org.website}>Invalid URL</span>
                               )}
                             </div>
                           );
@@ -866,7 +866,7 @@ export function OrganizationCard({
                             const info = createValidUrl(val);
                             const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
                             return (
-                              <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title={s.label}>
+                              <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className=" transition-colors" title={s.label}>
                                 <span className="sr-only">{s.label}</span>
                                 {s.icon}
                               </a>
@@ -891,7 +891,7 @@ export function OrganizationCard({
                                           title={email}
                                         >{email}</a>
                                         {index < emails.length - 1 && (
-                                          <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
+                                          <span className=" mx-1 flex-shrink-0">•</span>
                                         )}
                                       </span>
                                     ))
@@ -938,7 +938,7 @@ export function OrganizationCard({
                                       {websiteInfo.hostname}
                                     </a>
                                   ) : (
-                                    <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
+                                    <span className="text-sm  truncate min-w-0" title={org.website}>Invalid URL</span>
                                   )}
                                 </span>
                               </div>
@@ -959,7 +959,7 @@ export function OrganizationCard({
                                     const info = createValidUrl(val);
                                     const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
                                     return (
-                                      <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title={s.label}>
+                                      <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className=" transition-colors" title={s.label}>
                                         <span className="sr-only">{s.label}</span>
                                         {s.icon}
                                       </a>
@@ -984,7 +984,7 @@ export function OrganizationCard({
                                             title={email}
                                           >{email}</a>
                                           {index < emails.length - 1 && (
-                                            <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
+                                            <span className=" mx-1 flex-shrink-0">•</span>
                                           )}
                                         </span>
                                       ))
@@ -1013,7 +1013,7 @@ export function OrganizationCard({
                                   title={org.website}
                                 >{websiteInfo.hostname}</a>
                               ) : (
-                                <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
+                                <span className="text-sm  truncate min-w-0" title={org.website}>Invalid URL</span>
                               )}
                             </div>
                           );
@@ -1035,7 +1035,7 @@ export function OrganizationCard({
                             const info = createValidUrl(val);
                             const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
                             return (
-                              <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title={s.label}>
+                              <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className=" transition-colors" title={s.label}>
                                 <span className="sr-only">{s.label}</span>
                                 {s.icon}
                               </a>
@@ -1060,7 +1060,7 @@ export function OrganizationCard({
                                           title={email}
                                         >{email}</a>
                                         {index < emails.length - 1 && (
-                                          <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
+                                          <span className=" mx-1 flex-shrink-0">•</span>
                                         )}
                                       </span>
                                     ))
@@ -1090,7 +1090,7 @@ export function OrganizationCard({
                             const info = createValidUrl(val);
                             const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
                             return (
-                              <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors" title={s.label}>
+                              <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className=" transition-colors" title={s.label}>
                                 <span className="sr-only">{s.label}</span>
                                 {s.icon}
                               </a>
@@ -1109,7 +1109,7 @@ export function OrganizationCard({
                                     title={org.website}
                                   >{websiteInfo.hostname}</a>
                                 ) : (
-                                  <span className="text-sm text-gray-400 truncate min-w-0" title={org.website}>Invalid URL</span>
+                                  <span className="text-sm  truncate min-w-0" title={org.website}>Invalid URL</span>
                                 )}
                               </div>
                               <div className="flex items-center justify-end gap-2 min-w-0 email-row w-full">
@@ -1130,7 +1130,7 @@ export function OrganizationCard({
                                             title={email}
                                           >{email}</a>
                                           {index < emails.length - 1 && (
-                                            <span className="text-gray-500 mx-1 flex-shrink-0">•</span>
+                                            <span className=" mx-1 flex-shrink-0">•</span>
                                           )}
                                         </span>
                                       ))
@@ -1160,14 +1160,14 @@ export function OrganizationCard({
                   <span className="text-purple-400">
                     {ClimateIcons.capacity}
                   </span>
-                  <span className="text-gray-300">{org.capacity}</span>
+                  <span className="">{org.capacity}</span>
                 </div>
               )}
 
               {/* Type of Work on small screens: placed under top info, above Notable Success */}
               {org.type_of_work && (
                 <div className="sm:hidden flex items-center gap-2 text-sm">
-                  <span className="text-gray-300">{org.type_of_work}</span>
+                  <span className="">{org.type_of_work}</span>
                 </div>
               )}
 
@@ -1177,7 +1177,7 @@ export function OrganizationCard({
                     <span className="text-mde-green font-medium flex-shrink-0 mt-0.5">
                       {ClimateIcons.trophy}
                     </span>
-                    <div className="flex-1 min-w-0 text-gray-300 break-words">
+                    <div className="flex-1 min-w-0 break-words">
                       {linkifyText(org.notable_success)}
                     </div>
                   </div>
@@ -1190,7 +1190,7 @@ export function OrganizationCard({
                     <span className="text-mde-blue font-medium flex-shrink-0 mt-0.5">
                       {ClimateIcons.announcement}
                     </span>
-                    <div className="flex-1 min-w-0 text-gray-300 break-words">
+                    <div className="flex-1 min-w-0 break-words">
                       {linkifyText(org.cta_notes)}
                     </div>
                     {(() => {
@@ -1253,28 +1253,28 @@ export function OrganizationCard({
 
               {/* Compact Audit Trail - Show inline on larger screens when expanded */}
               {isExpanded && (
-                <div className="hidden lg:flex items-center gap-3 text-xs text-gray-400 flex-shrink-0">
+                <div className="hidden lg:flex items-center gap-3 text-xs  flex-shrink-0">
                   <div className="flex items-center gap-1">
                     {ClimateIcons.calendar}
-                    <span className="text-gray-500">Created:</span>
-                    <span className="text-gray-300">{formatDate(org.created_at)}</span>
+                    <span className="">Created:</span>
+                    <span className="">{formatDate(org.created_at)}</span>
                     {org.created_by_name && (
                       <>
-                        <span className="text-gray-500">by</span>
-                        <span className="text-gray-300">{org.created_by_name}</span>
+                        <span className="">by</span>
+                        <span className="">{org.created_by_name}</span>
                       </>
                     )}
                   </div>
 
-                  <div className="w-px h-3 bg-gray-600"></div>
+                  <div className="w-px h-3 bg-gray-600 dark:bg-gray-500"></div>
 
                   <div className="flex items-center gap-1">
-                    <span className="text-gray-500">Updated:</span>
-                    <span className="text-gray-300">{formatDate(org.updated_at)}</span>
+                    <span className="">Updated:</span>
+                    <span className="">{formatDate(org.updated_at)}</span>
                     {org.updated_by_name && (
                       <>
-                        <span className="text-gray-500">by</span>
-                        <span className="text-gray-300">{org.updated_by_name}</span>
+                        <span className="">by</span>
+                        <span className="">{org.updated_by_name}</span>
                       </>
                     )}
                   </div>
@@ -1298,7 +1298,7 @@ export function OrganizationCard({
 
                     <button
                       onClick={handleCancel}
-                      className="org-btn-glass text-gray-300 px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
+                      className="org-btn-glass px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
                     >
                       {ClimateIcons.cancel}
                       <span className="transition-opacity duration-200">Cancel</span>
@@ -1332,28 +1332,28 @@ export function OrganizationCard({
 
             {/* Second Row: Expanded Audit Trail - Show below on smaller screens when expanded */}
             {isExpanded && (
-              <div className="lg:hidden flex items-center justify-center gap-3 text-xs text-gray-400">
+              <div className="lg:hidden flex items-center justify-center gap-3 text-xs ">
                 <div className="flex items-center gap-1">
                   {ClimateIcons.calendar}
-                  <span className="text-gray-500">Created:</span>
-                  <span className="text-gray-300">{formatDate(org.created_at)}</span>
+                  <span className="">Created:</span>
+                  <span className="">{formatDate(org.created_at)}</span>
                   {org.created_by_name && (
                     <>
-                      <span className="text-gray-500">by</span>
-                      <span className="text-gray-300">{org.created_by_name}</span>
+                      <span className="">by</span>
+                      <span className="">{org.created_by_name}</span>
                     </>
                   )}
                 </div>
 
-                <div className="w-px h-3 bg-gray-600"></div>
+                <div className="w-px h-3 bg-gray-400 dark:bg-gray-600"></div>
 
                 <div className="flex items-center gap-1">
-                  <span className="text-gray-500">Updated:</span>
-                  <span className="text-gray-300">{formatDate(org.updated_at)}</span>
+                  <span className="">Updated:</span>
+                  <span className="">{formatDate(org.updated_at)}</span>
                   {org.updated_by_name && (
                     <>
-                      <span className="text-gray-500">by</span>
-                      <span className="text-gray-300">{org.updated_by_name}</span>
+                      <span className="">by</span>
+                      <span className="">{org.updated_by_name}</span>
                     </>
                   )}
                 </div>
