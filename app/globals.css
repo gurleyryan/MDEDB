@@ -697,10 +697,10 @@ body {
   .scroll-to-top-btn {
     background: var(--glass-bg);
     border: 1px solid var(--glass-border);
-    box-shadow:
+    /* box-shadow:
       0 20px 40px var(--glass-shadow),
       0 0 0 1px var(--glass-border),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      inset 0 1px 0 rgba(255, 255, 255, 0.1); */
   }
 
   .scroll-to-top-btn:hover {
@@ -1774,7 +1774,7 @@ select option:checked {
    ============================================ */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #6b7280 #1f2937;
+  scrollbar-color: #f7ed6a #1f2937;
   scroll-behavior: smooth;
 }
 
@@ -1788,7 +1788,7 @@ select option:checked {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #6b7280;
+  background: #f7ed6a;
   border-radius: 4px;
   transition: background 0.2s ease;
 }
@@ -1806,7 +1806,7 @@ select::-webkit-scrollbar-track {
 }
 
 select::-webkit-scrollbar-thumb {
-  background: #4b5563;
+  background: #f7ed6a;
   border-radius: 4px;
 }
 
@@ -2479,7 +2479,7 @@ body {
   line-height: 1;
   /* Reduced line height */
   scrollbar-width: thin;
-  scrollbar-color: #4b5563 #1f2937;
+  scrollbar-color: #f7ed6a #1f2937;
   flex: 1;
   min-height: 0px;
   /* Reduced from 80px */
@@ -2496,7 +2496,7 @@ body {
 }
 
 .comments-section textarea::-webkit-scrollbar-thumb {
-  background: #4b5563;
+  background: #f7ed6a;
   border-radius: 2px;
 }
 

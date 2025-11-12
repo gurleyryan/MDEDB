@@ -209,11 +209,11 @@ export default function HomePage() {
       {showScrollTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full backdrop-blur-2xl shadow-2xl flex items-center justify-center transition-all duration-200 group scroll-to-top-btn"
+          className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full backdrop-blur-2xl  flex items-center justify-center transition-all duration-200 group scroll-to-top-btn"
           title="Scroll to top"
           aria-label="Scroll to top"
         >
-          <div className="text-blue-400 dark:text-blue-300 group-hover:text-blue-300 dark:group-hover:text-blue-200 transition-all duration-200 group-hover:translate-y-[-1px]">
+          <div className="text-mde-yellow group-hover:text-mde-green dark:group-hover:text-mde-green transition-all duration-200 group-hover:translate-y-[-1px]">
             {ClimateIcons.scrollToTop}
           </div>
         </button>
