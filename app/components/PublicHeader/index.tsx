@@ -9,6 +9,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../hooks/useUser';
 import { useTheme } from '../../hooks/useTheme';
+import { useIsEmbedded } from '../../hooks/useIsEmbedded';
 import Image from 'next/image';
 
 interface FilterOptions {
@@ -53,6 +54,7 @@ export function PublicHeader({
   const router = useRouter();
   const { user, role, logout } = useUser(); // role: 'admin' | 'artist' | 'org' | undefined
   const { theme, toggleTheme } = useTheme();
+  const isEmbedded = useIsEmbedded();
   const [isMobileCollapsed, setIsMobileCollapsed] = useState(true);
 
   const clearAllFilters = () => {
@@ -97,9 +99,10 @@ export function PublicHeader({
               AMPLIFY: Climate Org Directory
             </h1>
           </div>
-          <div className="flex items-start gap-1 sm:gap-2 flex-shrink-0 max-w-[30%] sm:max-w-none mt-3 sm:mt-0">
-            {/* Action buttons - 2x2 Grid on mobile, row on desktop */}
-            {user ? (
+          {!isEmbedded && (
+            <div className="flex items-start gap-1 sm:gap-2 flex-shrink-0 max-w-[30%] sm:max-w-none mt-3 sm:mt-0">
+              {/* Action buttons - 2x2 Grid on mobile, row on desktop */}
+              {user ? (
               <div className="grid grid-cols-2 grid-rows-2 gap-0 sm:flex sm:gap-2 sm:w-auto sm:h-auto flex-shrink-0">
                 {/* Top-left: Dashboard */}
                 <button
@@ -218,6 +221,19 @@ export function PublicHeader({
               </a>
             )}
           </div>
+          )}
+          
+          {/* Mobile hamburger for embedded mode */}
+          {isEmbedded && (
+            <button
+              onClick={() => setIsMobileCollapsed(!isMobileCollapsed)}
+              className="sm:hidden btn-glass w-8 h-8 rounded-lg text-black dark:text-white hover:text-gray-700 dark:hover:text-gray-300 transition-colors flex items-center justify-center mt-3"
+              title={isMobileCollapsed ? 'Show filters' : 'Hide filters'}
+              aria-label={isMobileCollapsed ? 'Show filters' : 'Hide filters'}
+            >
+              {isMobileCollapsed ? ClimateIcons.menuOpen : ClimateIcons.close}
+            </button>
+          )}
         </div>
 
         {/* Collapsible Content - Hidden on mobile when collapsed */}
@@ -244,7 +260,7 @@ export function PublicHeader({
             placeholder="Search organizations..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 panel-glass border border-gray-600/50 dark:border-gray-600/50 rounded-lg placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all duration-200"
+            className="w-full pl-10 pr-4 py-2 panel-glass border border-gray-600/50 dark:border-gray-600/50 rounded-lg placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-[#f7ed6a]/70 focus:ring-1 focus:ring-[#f7ed6a]/30 transition-all duration-200"
           />
 
           {/* Search Loading Bar */}
