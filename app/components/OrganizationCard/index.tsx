@@ -263,12 +263,12 @@ export function OrganizationCard({
     >
       {/* Banner Image with proper rounding (custom overrides scraped) */}
       {(org.banner || org.website) && (
-        <div className="relative h-20 overflow-hidden">
+        <div className={`relative ${org.mission_statement ? 'min-h-20' : 'h-20'}`}>
           {org.banner ? (
             <img
               src={org.banner}
               alt={`${org.org_name} banner`}
-              className="w-full h-full object-cover opacity-60"
+              className="absolute inset-0 w-full h-full object-cover opacity-60 -z-10"
               onError={(e) => {
                 // Hide the banner if custom fails
                 const container = e.currentTarget.parentElement;
@@ -277,7 +277,7 @@ export function OrganizationCard({
             />
           ) : isMetadataLoading ? (
             // Skeleton loader for banner
-            <div className="w-full h-full bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 animate-pulse">
+            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 animate-pulse -z-10">
               <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/40 to-transparent" />
               <div className="absolute bottom-4 left-4 right-4">
                 <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded animate-pulse mb-2"></div>
@@ -288,7 +288,7 @@ export function OrganizationCard({
             <img
               src={metadata.image}
               alt={`${org.org_name} banner`}
-              className="w-full h-full object-cover opacity-60"
+              className="absolute inset-0 w-full h-full object-cover opacity-60 -z-10"
               onError={(e) => {
                 console.log(`Image failed to load for ${org.org_name}: ${metadata.image}`);
                 // Try HTTP version if HTTPS failed
@@ -308,7 +308,7 @@ export function OrganizationCard({
 
           {/* Mission Statement Overlay - simplified with auto-width glass box */}
           {org.mission_statement && (
-            <div className="absolute bottom-4 left-4 right-4 flex justify-center">
+            <div className="relative flex items-center justify-center px-4 py-3">
               {/* Glass box that sizes to content */}
               <div className="mission-statement-glass px-4 py-3 max-w-full">
                 <blockquote className="mission-statement-text text-sm leading-relaxed text-pretty text-center">
@@ -633,9 +633,9 @@ export function OrganizationCard({
           // Display Mode
           <>
             {/* Header with responsive two-column layout */}
-            <div className="flex justify-between items-start mb-3 gap-4 flex-wrap">
+            <div className="flex items-start mb-3 gap-4 flex-wrap">
               {/* Left Column: Favicon + Org Info */}
-              <div className="flex items-start gap-3 flex-1 min-w-0 max-w-[50%]">
+              <div className="flex items-start gap-3 flex-1 min-w-[200px] basis-0">
                 {/* Favicon */}
                 {(org.logo || org.website) && (
                   <div className="w-8 h-8 rounded-lg flex-shrink-0 bg-white/10 p-1">
@@ -691,15 +691,15 @@ export function OrganizationCard({
                     </h3>
                   </div>
 
-                  {/* Country code and type of work (Type hidden on mobile; shown separately below) */}
-                  <div className=" text-sm min-w-0 flex items-center gap-1">
+                  {/* Country code and type of work */}
+                  <div className=" text-sm min-w-40 flex items-center gap-1 flex-wrap">
                     <span className=" flex-shrink-0">{ClimateIcons.mission}</span>
                     <span>{org.country_code}</span>
                     {org.type_of_work && (
-                      <span className="hidden sm:inline">
+                      <>
                         <span className=""> • </span>
-                        <span>{org.type_of_work}</span>
-                      </span>
+                        <span className="">{org.type_of_work}</span>
+                      </>
                     )}
                   </div>
 
@@ -707,7 +707,7 @@ export function OrganizationCard({
               </div>
 
               {/* Right Cluster: Socials (middle) + Right Column, bottom-aligned and no gap */}
-              <div className="flex flex-col sm:flex-row items-end gap-0 min-w-0 max-w-full flex-shrink">
+              <div className="flex flex-col sm:flex-row items-end gap-0 min-w-0 flex-shrink-0 ml-auto">
                 {/* Middle Column: Social icons (narrow), sits just left of the right-hand column; wraps under on mobile */}
                 {(isPublic || emails.length === 0) && (() => {
                   const socials: Array<{ key: keyof Org; icon: ReactNode; label: string }> = [
@@ -1164,13 +1164,6 @@ export function OrganizationCard({
                 </div>
               )}
 
-              {/* Type of Work on small screens: placed under top info, above Notable Success */}
-              {org.type_of_work && (
-                <div className="sm:hidden flex items-center gap-2 text-sm">
-                  <span className="">{org.type_of_work}</span>
-                </div>
-              )}
-
               {org.notable_success && (
                 <div className="notable-success-block relative z-10 p-2 bg-foreground border-l-2 border-mde-green-60 rounded-r text-sm">
                   <div className="flex items-start gap-2">
@@ -1186,11 +1179,11 @@ export function OrganizationCard({
 
               {org.cta_notes && (
                 <div className="p-2 bg-mde-yellow-15 border-l-2 border-mde-yellow-60 rounded-r text-sm">
-                  <div className="flex items-start gap-2">
+                  <div className="flex items-start gap-2 flex-wrap">
                     <span className="text-foreground font-medium flex-shrink-0 mt-0.5">
                       {ClimateIcons.announcement}
                     </span>
-                    <div className="flex-1 min-w-0 break-words">
+                    <div className="flex-1 min-w-[200px] break-words">
                       {linkifyText(org.cta_notes)}
                     </div>
                     {(() => {
@@ -1202,7 +1195,7 @@ export function OrganizationCard({
                           href={url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="org-btn-glass org-btn-glass-mde-blue whitespace-nowrap px-3 py-1.5 rounded-md text-xs font-medium hover:shadow-glow-mde-blue flex items-center gap-1 flex-shrink-0 text-foreground hover:text-[#f7ed6a] transition-colors"
+                          className="org-btn-glass org-btn-glass-mde-blue whitespace-nowrap px-3 py-1.5 rounded-md text-xs font-medium hover:shadow-glow-mde-blue flex items-center justify-center gap-1 flex-shrink-0 text-foreground hover:text-[#f7ed6a] transition-colors ml-auto w-full sm:w-auto"
                           title={label}
                         >
                           {ClimateIcons.website}
