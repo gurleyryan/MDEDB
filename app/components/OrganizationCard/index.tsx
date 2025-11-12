@@ -47,7 +47,7 @@ const linkifyText = (text: string): ReactNode => {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-mde-blue hover:text-blue-300 hover:underline break-words"
+        className="text-foreground hover:text-[#f7ed6a] hover:underline break-words transition-colors"
         title={match}
       >
         {match}
@@ -249,7 +249,7 @@ export function OrganizationCard({
 
   return (
     <div
-      className={`font-mde organization-card org-panel-glass relative rounded-2xl backdrop-blur-sm transition-all duration-300 stained-glass ${getRegionalTheme(org.country_code)} ${isExpanded || isEditing ? 'expanded-card' : ''
+      className={`font-mde organization-card org-panel-glass backdrop-blur-sm transition-all duration-300 stained-glass ${getRegionalTheme(org.country_code)} ${isExpanded || isEditing ? 'expanded-card' : ''
         }`}
       style={{
         overflow: 'visible',
@@ -263,7 +263,7 @@ export function OrganizationCard({
     >
       {/* Banner Image with proper rounding (custom overrides scraped) */}
       {(org.banner || org.website) && (
-        <div className="relative h-48 overflow-hidden rounded-t-2xl">
+        <div className="relative h-20 overflow-hidden">
           {org.banner ? (
             <img
               src={org.banner}
@@ -327,7 +327,7 @@ export function OrganizationCard({
         </div>
       )}
       {/* Card Content with enhanced glass effect */}
-      <div className={`p-6 backdrop-blur relative org-panel-glass ${(org.banner || org.website) ? 'rounded-b-2xl' : 'rounded-2xl'}`}>
+      <div className={`p-6 backdrop-blur relative org-panel-glass`}>
         {isEditing ? (
           // Edit Mode
           <div className="space-y-4 mb-6">
@@ -337,7 +337,7 @@ export function OrganizationCard({
                 type="text"
                 value={editForm.org_name || ''}
                 onChange={(e) => handleFieldChange('org_name', e.target.value)}
-                className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-xl font-bold focus:outline-none ${errors.org_name ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
+                className={`w-full p-2 bg-white dark:bg-gray-700 border text-xl font-bold focus:outline-none ${errors.org_name ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                   }`}
               />
               {errors.org_name && (
@@ -729,7 +729,7 @@ export function OrganizationCard({
                         href={href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="transition-colors"
+                        className="text-foreground hover:text-[#f7ed6a] transition-colors"
                         title={s.label}
                       >
                         <span className="sr-only">{s.label}</span>
@@ -752,7 +752,7 @@ export function OrganizationCard({
                       {/* Years Active */}
                       {org.years_active && (
                         <div className="flex items-center gap-1 min-w-0 flex-shrink-0 mb-1">
-                          <span className="text-yellow-400 flex-shrink-0">{ClimateIcons.calendar}</span>
+                          <span className="text-mde-yellow flex-shrink-0">{ClimateIcons.calendar}</span>
                           <span
                             className=" leading-tight text-xs sm:text-sm truncate min-w-0 max-w-[100px] sm:max-w-[120px] md:max-w-[150px]"
                             title={org.years_active}
@@ -769,7 +769,7 @@ export function OrganizationCard({
                             href={websiteInfo.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-sm text-mde-blue hover:text-blue-300 hover:underline truncate min-w-0"
+                            className="text-sm text-foreground hover:text-[#f7ed6a] hover:underline truncate min-w-0 transition-colors"
                             title={org.website}
                           >
                             {websiteInfo.hostname}
@@ -809,7 +809,7 @@ export function OrganizationCard({
                       {/* Row 2: Years Active */}
                       {org.years_active && (
                         <div className="flex items-center gap-1 min-w-0 flex-shrink-0">
-                          <span className="text-yellow-400 flex-shrink-0">
+                          <span className="text-mde-yellow flex-shrink-0">
                             {ClimateIcons.calendar}
                           </span>
                           <span
@@ -837,7 +837,7 @@ export function OrganizationCard({
                                   href={websiteInfo.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-sm text-mde-blue hover:text-blue-300 hover:underline truncate min-w-0"
+                                  className="text-sm text-foreground hover:text-[#f7ed6a] hover:underline truncate min-w-0 transition-colors"
                                   title={org.website}
                                 >
                                   {websiteInfo.hostname}
@@ -932,7 +932,7 @@ export function OrganizationCard({
                                       href={websiteInfo.url}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="text-sm text-mde-blue hover:text-blue-300 hover:underline truncate min-w-0 max-w-[120px] sm:max-w-[160px] md:max-w-[200px]"
+                                      className="text-sm text-foreground hover:text-[#f7ed6a] hover:underline truncate min-w-0 max-w-[120px] sm:max-w-[160px] md:max-w-[200px] transition-colors"
                                       title={org.website}
                                     >
                                       {websiteInfo.hostname}
@@ -959,7 +959,7 @@ export function OrganizationCard({
                                     const info = createValidUrl(val);
                                     const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
                                     return (
-                                      <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className=" transition-colors" title={s.label}>
+                                      <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className="text-foreground hover:text-[#f7ed6a] transition-colors" title={s.label}>
                                         <span className="sr-only">{s.label}</span>
                                         {s.icon}
                                       </a>
@@ -1009,7 +1009,7 @@ export function OrganizationCard({
                                   href={websiteInfo.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="text-sm text-mde-blue hover:text-blue-300 hover:underline truncate min-w-0"
+                                  className="text-sm text-foreground hover:text-[#f7ed6a] hover:underline truncate min-w-0 transition-colors"
                                   title={org.website}
                                 >{websiteInfo.hostname}</a>
                               ) : (
@@ -1035,7 +1035,7 @@ export function OrganizationCard({
                             const info = createValidUrl(val);
                             const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
                             return (
-                              <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className=" transition-colors" title={s.label}>
+                              <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className="text-foreground hover:text-[#f7ed6a] transition-colors" title={s.label}>
                                 <span className="sr-only">{s.label}</span>
                                 {s.icon}
                               </a>
@@ -1090,7 +1090,7 @@ export function OrganizationCard({
                             const info = createValidUrl(val);
                             const href = info?.isValid ? info.url : (val.startsWith('http') ? val : `https://${val}`);
                             return (
-                              <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className=" transition-colors" title={s.label}>
+                              <a key={`${s.key}-${idx}`} href={href} target="_blank" rel="noopener noreferrer" className="text-foreground hover:text-[#f7ed6a] transition-colors" title={s.label}>
                                 <span className="sr-only">{s.label}</span>
                                 {s.icon}
                               </a>
@@ -1105,7 +1105,7 @@ export function OrganizationCard({
                                     href={websiteInfo.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-sm text-mde-blue hover:text-blue-300 hover:underline truncate min-w-0"
+                                    className="text-sm text-foreground hover:text-[#f7ed6a] hover:underline truncate min-w-0 transition-colors"
                                     title={org.website}
                                   >{websiteInfo.hostname}</a>
                                 ) : (
@@ -1172,9 +1172,9 @@ export function OrganizationCard({
               )}
 
               {org.notable_success && (
-                <div className="notable-success-block relative z-10 p-2 bg-mde-green-15 border-l-2 border-mde-green-40 rounded-r text-sm">
+                <div className="notable-success-block relative z-10 p-2 bg-foreground border-l-2 border-mde-green-60 rounded-r text-sm">
                   <div className="flex items-start gap-2">
-                    <span className="text-mde-green font-medium flex-shrink-0 mt-0.5">
+                    <span className="text-foreground font-medium flex-shrink-0 mt-0.5">
                       {ClimateIcons.trophy}
                     </span>
                     <div className="flex-1 min-w-0 break-words">
@@ -1185,9 +1185,9 @@ export function OrganizationCard({
               )}
 
               {org.cta_notes && (
-                <div className="p-2 bg-mde-blue-15 border-l-2 border-mde-blue-40 rounded-r text-sm">
+                <div className="p-2 bg-mde-yellow-15 border-l-2 border-mde-yellow-60 rounded-r text-sm">
                   <div className="flex items-start gap-2">
-                    <span className="text-mde-blue font-medium flex-shrink-0 mt-0.5">
+                    <span className="text-foreground font-medium flex-shrink-0 mt-0.5">
                       {ClimateIcons.announcement}
                     </span>
                     <div className="flex-1 min-w-0 break-words">
@@ -1202,7 +1202,7 @@ export function OrganizationCard({
                           href={url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="org-btn-glass org-btn-glass-mde-blue whitespace-nowrap px-3 py-1.5 rounded-md text-xs font-medium hover:shadow-glow-mde-blue flex items-center gap-1 flex-shrink-0"
+                          className="org-btn-glass org-btn-glass-mde-blue whitespace-nowrap px-3 py-1.5 rounded-md text-xs font-medium hover:shadow-glow-mde-blue flex items-center gap-1 flex-shrink-0 text-foreground hover:text-[#f7ed6a] transition-colors"
                           title={label}
                         >
                           {ClimateIcons.website}
@@ -1230,7 +1230,7 @@ export function OrganizationCard({
                 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <span className="text-yellow-400 flex items-center flex-shrink-0">
+                <span className="text-mde-yellow flex items-center flex-shrink-0">
                   {ClimateIcons.energy}
                 </span>
                 <div className="flex-1 sm:flex-initial">
