@@ -20,10 +20,23 @@ export default function ResetPasswordClient() {
     const hash = typeof window !== 'undefined' ? window.location.hash : '';
     const token = searchParams.get('token');
     const type = searchParams.get('type');
+    const error = searchParams.get('error');
+    const errorDescription = searchParams.get('error_description');
+
+    // Check if Supabase verify endpoint already returned an error
+    if (error) {
+      setTokenError(
+        errorDescription 
+          ? `${errorDescription}. Please request a new reset link.`
+          : 'Invalid or expired reset link. Please request a new one.'
+      );
+      return;
+    }
 
     const exchangePkce = async (code: string) => {
       const { error } = await supabase.auth.exchangeCodeForSession(code);
       if (error) {
+        console.error('Exchange error:', error);
         setTokenError('Invalid or expired reset link. Please request a new one.');
       }
     };
