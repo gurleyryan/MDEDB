@@ -1,11 +1,10 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { createClient } from '@/app/utils/supabase/client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 export default function ResetPasswordClient() {
-  const supabase = createClient();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -17,18 +16,25 @@ export default function ResetPasswordClient() {
   const [tokenError, setTokenError] = useState('');
   const [isExchanging, setIsExchanging] = useState(true);
 
+  const code = searchParams.get('code');
+  const token = searchParams.get('token');
+  const type = searchParams.get('type');
+  const urlError = searchParams.get('error');
+  const errorDescription = searchParams.get('error_description');
+  const hasCode = Boolean(code);
+
+  const supabase = useMemo(() => {
+    if (hasCode) return null;
+    return createClient();
+  }, [hasCode]);
+
   useEffect(() => {
     const hash = typeof window !== 'undefined' ? window.location.hash : '';
-    const code = searchParams.get('code');
-    const token = searchParams.get('token');
-    const type = searchParams.get('type');
-    const error = searchParams.get('error');
-    const errorDescription = searchParams.get('error_description');
 
     // Check if Supabase verify endpoint already returned an error
-    if (error) {
+    if (urlError) {
       setTokenError(
-        errorDescription 
+        errorDescription
           ? `${errorDescription}. Please request a new reset link.`
           : 'Invalid or expired reset link. Please request a new one.'
       );
@@ -50,7 +56,7 @@ export default function ResetPasswordClient() {
     }
 
     // Handle legacy flow: token + type=recovery
-    if (token && type === 'recovery') {
+    if (token && type === 'recovery' && supabase) {
       // Legacy flow still uses client exchange
       const exchangeLegacy = async () => {
         try {
@@ -79,7 +85,7 @@ export default function ResetPasswordClient() {
     // No valid auth params found
     setIsExchanging(false);
     setTokenError('Invalid or expired reset link. Please request a new one.');
-  }, [searchParams, supabase.auth]);
+  }, [code, token, type, urlError, errorDescription, supabase]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,6 +104,11 @@ export default function ResetPasswordClient() {
 
     if (password.length < 6) {
       setError('Password must be at least 6 characters');
+      return;
+    }
+
+    if (!supabase) {
+      setError('Session not ready. Please retry the link.');
       return;
     }
 
