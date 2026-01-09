@@ -41,9 +41,9 @@ A sophisticated platform to catalog, score, and assess grassroots climate organi
 ## User Contract
 
 ```gherkin
-AS AN MDE Organizer
-I WANT a database of grassroots climate organizations with actionable CTAs
-SO THAT I can point artists to the right organizations based on geography, issue, and impact
+As an MDE Organizer
+I want a database of grassroots climate organizations with actionable CTAs
+So that I can point artists to the right organizations based on geography, issue, and impact
 ```
 
 ### Primary Acceptance Criteria
