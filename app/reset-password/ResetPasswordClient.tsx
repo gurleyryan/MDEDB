@@ -17,6 +17,28 @@ export default function ResetPasswordClient() {
   const [tokenError, setTokenError] = useState('');
   const [isExchanging, setIsExchanging] = useState(true);
 
+  const projectRef = process.env.NEXT_PUBLIC_SUPABASE_URL?.match(/https?:\/\/([^.]+)\.supabase\.co/)?.[1];
+  const codeVerifierKey = projectRef ? `sb-${projectRef}-auth-token-code-verifier` : null;
+
+  const syncCodeVerifierFromCookie = () => {
+    if (!codeVerifierKey || typeof document === 'undefined') return;
+    const existing = window.localStorage.getItem(codeVerifierKey);
+    if (existing) return;
+
+    const cookie = document.cookie
+      .split('; ')
+      .find((c) => c.startsWith(`${codeVerifierKey}=`));
+
+    if (cookie) {
+      const [, value] = cookie.split('=');
+      try {
+        window.localStorage.setItem(codeVerifierKey, value);
+      } catch {
+        // ignore storage write errors
+      }
+    }
+  };
+
   useEffect(() => {
     const hash = typeof window !== 'undefined' ? window.location.hash : '';
     const code = searchParams.get('code');
@@ -32,8 +54,12 @@ export default function ResetPasswordClient() {
           ? `${errorDescription}. Please request a new reset link.`
           : 'Invalid or expired reset link. Please request a new one.'
       );
+      setIsExchanging(false);
       return;
     }
+
+    // Ensure PKCE code verifier is available (cookie -> localStorage) before exchange
+    syncCodeVerifierFromCookie();
 
     const exchangePkce = async (codeParam: string) => {
       try {
