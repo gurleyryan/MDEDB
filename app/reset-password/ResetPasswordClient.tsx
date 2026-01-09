@@ -82,7 +82,27 @@ export default function ResetPasswordClient() {
       return;
     }
 
-    // No valid auth params found
+    // If we have no auth params but do have a Supabase client, check if a session was already established
+    if (!code && !token && !hash && supabase) {
+      const checkSession = async () => {
+        try {
+          const { data } = await supabase.auth.getSession();
+          if (data.session) {
+            setTokenError('');
+            setIsExchanging(false);
+            return;
+          }
+        } catch (err) {
+          console.error('Session check error:', err);
+        }
+        setTokenError('Invalid or expired reset link. Please request a new one.');
+        setIsExchanging(false);
+      };
+      void checkSession();
+      return;
+    }
+
+    // No valid auth params found and no session
     setIsExchanging(false);
     setTokenError('Invalid or expired reset link. Please request a new one.');
   }, [code, token, type, urlError, errorDescription, supabase]);
@@ -199,7 +219,7 @@ export default function ResetPasswordClient() {
               </label>
               <input
                 type="password"
-                placeholder="••••••••"
+                placeholder=""
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -214,7 +234,7 @@ export default function ResetPasswordClient() {
               </label>
               <input
                 type="password"
-                placeholder="••••••••"
+                placeholder=""
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
