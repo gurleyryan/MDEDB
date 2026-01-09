@@ -18,6 +18,7 @@ export default function ResetPasswordClient() {
 
   useEffect(() => {
     const hash = typeof window !== 'undefined' ? window.location.hash : '';
+    const code = searchParams.get('code');
     const token = searchParams.get('token');
     const type = searchParams.get('type');
     const error = searchParams.get('error');
@@ -33,22 +34,33 @@ export default function ResetPasswordClient() {
       return;
     }
 
-    const exchangePkce = async (code: string) => {
-      const { error } = await supabase.auth.exchangeCodeForSession(code);
-      if (error) {
-        console.error('Exchange error:', error);
+    const exchangePkce = async (codeParam: string) => {
+      const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(codeParam);
+      if (exchangeError) {
+        console.error('Exchange error:', exchangeError);
         setTokenError('Invalid or expired reset link. Please request a new one.');
       }
     };
 
+    // Handle new PKCE flow: code parameter from verify redirect
+    if (code) {
+      void exchangePkce(code);
+      return;
+    }
+
+    // Handle legacy flow: token + type=recovery
     if (token && type === 'recovery') {
       void exchangePkce(token);
       return;
     }
 
-    if (!hash || !hash.includes('access_token')) {
-      setTokenError('Invalid or expired reset link. Please request a new one.');
+    // Handle hash-based flow (legacy)
+    if (hash && hash.includes('access_token')) {
+      return;
     }
+
+    // No valid auth params found
+    setTokenError('Invalid or expired reset link. Please request a new one.');
   }, [searchParams, supabase.auth]);
 
   const handleSubmit = async (e: React.FormEvent) => {
