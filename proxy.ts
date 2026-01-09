@@ -1,7 +1,13 @@
-import { type NextRequest } from 'next/server'
+import { NextResponse, type NextRequest } from 'next/server'
 import { updateSession } from '@/app/utils/supabase/middleware'
 
 export async function proxy(request: NextRequest) {
+  // Allow all API routes to proceed without auth checks
+  if (request.nextUrl.pathname.startsWith('/api/')) {
+    return NextResponse.next()
+  }
+
+  // Use the Supabase session update for all other routes
   return await updateSession(request)
 }
 
