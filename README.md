@@ -1,4 +1,6 @@
-# Climate Org Directory
+# AMPLIFY Operations Platform
+
+**Internal Operations System for Curating and Verifying Grassroots Climate Organizations**
 
 [![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js-black?logo=next.js)](https://nextjs.org/)
 [![Powered by Supabase](https://img.shields.io/badge/Powered%20by-Supabase-green?logo=supabase)](https://supabase.com/)
@@ -10,15 +12,18 @@
 ## Table of Contents
 
 - [Description](#description)
+- [User Contract](#user-contract)
+- [Enforcement Model](#enforcement-model)
 - [Features](#features)
+- [Scoring System](#scoring-system)
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
+- [Out of Scope](#out-of-scope)
+- [Architecture Decisions](#architecture-decisions)
+- [Known Constraints](#known-constraints)
 - [Installation](#installation)
-- [Usage](#usage)
-- [Admin Dashboard](#admin-dashboard)
-- [Scoring System](#scoring-system)
+- [Deployment](#deployment)
 - [Contributing](#contributing)
-- [Credits](#credits)
 - [License](#license)
 - [Questions](#questions)
 
@@ -33,27 +38,95 @@ A sophisticated platform to catalog, score, and assess grassroots climate organi
 
 ---
 
+## User Contract
+
+```gherkin
+AS AN MDE Organizer
+I WANT a database of grassroots climate organizations with actionable CTAs
+SO THAT I can point artists to the right organizations based on geography, issue, and impact
+```
+
+### Primary Acceptance Criteria
+
+- ✅ Search organizations by location (country/region)
+- ✅ Retrieve organizations with verified contact info and links
+- ✅ Filter by organizational impact metrics and issue focus
+- ✅ Restrict artist visibility to approved, verified organizations only
+- ✅ Admin users can assess, comment, and approve/reject submissions
+- ✅ Data integrity: unverified organizations invisible to public queries
+
+---
+
+## Enforcement Model
+
+This contract is enforced at multiple layers:
+
+### **Data Layer** - [app/models/](app/models/)
+- Organization interface defines required fields: `name`, `contact`, `website`, `country`, `impact_focus`
+- Score aggregation ensures minimum quality thresholds before visibility gates
+
+### **Permission Layer** - [app/utils/supabase/middleware.ts](app/utils/supabase/middleware.ts)
+- JWT token validation guards `/admin` from unauthenticated access
+- Row Level Security (RLS) policies enforce role-based data visibility
+
+### **Visibility Layer** - [app/admin/page.tsx](app/admin/page.tsx#L1)
+- `status` field gates organization visibility: `approved | rejected | pending`
+- Artist-facing queries filter: `WHERE status = 'approved' AND verified_at IS NOT NULL`
+- Admin view shows all statuses for decision-making
+
+### **Verification Pipeline** - [app/api/metadata/route.ts](app/api/metadata/route.ts)
+- Website metadata fetching validates domain ownership and legitimacy
+- Favicon extraction and HTTP status checking prevents dead links from appearing
+- Failed metadata marks organization as requiring manual review
+
+### **Assessment Layer** - [app/components/ScoringSection/index.tsx](app/components/ScoringSection/index.tsx)
+- 13-criteria rubric enforces structured evaluation before approval
+- Minimum score threshold prevents low-quality orgs from approval
+- Comments required for rejection justify blocking decisions
+
+---
+
 ## Features
 
-### 🎯 **Core Functionality**
-- **Organization Management** - Add, edit, approve/reject climate organizations with inline editing
-- **Intelligent Scoring** - 13-criteria assessment with real-time recommendations and visual progress
-- **Metadata Enrichment** - Automatic website favicon and metadata extraction with loading states
-- **Advanced Filtering & Search** - Multi-criteria filtering, real-time search, and sorting capabilities
-- **Responsive Glass Design** - Modern glass morphism UI optimized for all devices
+**Organization Management**
+- Add, edit, approve/reject climate organizations with inline editing
+- Real-time validation with visual feedback and error handling
+- Inline editing for organization details with validation
+- Status management: approve, reject, or mark as pending
+- Timestamped edits with admin ID tracking
 
-### 🛡️ **Security & Validation**
-- **Real-time Validation** - Field-level validation with visual feedback and error handling
-- **Role-based Access Control** - JWT-based admin authentication with secure routing
-- **Row Level Security** - Supabase RLS for comprehensive data protection
-- **Input Sanitization** - Comprehensive data validation, formatting, and URL validation
+**Assessment & Scoring**
+- 13-criteria assessment with real-time recommendations
+- Structured evaluation enforces quality thresholds before approval
+- Comments system required for rejection decisions
+- Visual progress tracking with score summaries
+- Minimum score threshold prevents low-quality approvals
 
-### 🎨 **User Experience**
-- **Glass Morphism Design** - Modern frosted glass aesthetic with backdrop blur effects
-- **Smooth Animations** - CSS-based transitions and micro-interactions (Framer Motion deprecated)
-- **Regional Theming** - Visual themes and colors based on organization location
-- **Comprehensive Loading States** - Loading indicators, progress bars, and error handling
-- **Accessibility** - ARIA labels, keyboard navigation, and screen reader support
+**Data Integrity & Verification**
+- Automatic website metadata fetching with favicon extraction
+- HTTP status checking prevents dead links from appearing
+- Email validation and parsing with multiple email support
+- Failed metadata marks organization as requiring manual review
+- Verification pipeline enforces domain ownership and legitimacy
+
+**Security & Access Control**
+- JWT-based admin authentication with secure routing
+- Row Level Security (RLS) for database-level data protection
+- Input sanitization with comprehensive data validation
+- Role-based visibility: admin view shows all statuses, artist queries filter to approved + verified only
+
+**Search, Filter & Navigation**
+- Multi-criteria filtering by status, continent, score range, and website status
+- Real-time search across organization names and details
+- Sorting options: by name, score, status, country, or recent activity
+- Filter persistence maintains state across sessions
+
+**User Experience**
+- Glass morphism design with backdrop blur effects
+- Regional theming with colors based on organization location
+- CSS-based animations for transitions and micro-interactions
+- Loading states, progress bars, and error handling
+- ARIA labels, keyboard navigation, and screen reader support
 
 ---
 
@@ -63,7 +136,7 @@ A sophisticated platform to catalog, score, and assess grassroots climate organi
 - **Next.js** with App Router and Server Components
 - **React** with TypeScript for type safety
 - **Tailwind CSS** with custom glass morphism utilities
-- **CSS Animations** - Custom CSS transitions and animations (Framer Motion removed)
+- **CSS Animations** - Custom CSS transitions and animations
 - **Custom Hooks** - Specialized hooks for organizations, scoring, and metadata
 
 ### **Backend**
@@ -193,9 +266,111 @@ project-root/
 
 ---
 
-## Installation
+## Out of Scope
 
-> ⚠️ *Production-ready for private deployment*
+The following are explicitly NOT solved by this project:
+
+- **Organization self-submission** - All organization submissions are manually reviewed and added by admins. Public users cannot submit directly. Ensures verification discipline for each entry.
+- **Automated organization vetting** - Assessment requires human judgment. AI scoring rejected as insufficient for trust decisions.
+- **Real-time campaign analytics** - System tracks what artists choose; impact measurement outside scope.
+- **Multi-language support** - Currently English-only. Localization deferred pending user research.
+- **Bulk data import** - CSV/JSON import deliberately excluded. Maintains verification discipline for each entry.
+
+---
+
+## Architecture Decisions
+
+### **Problem: Real-time data integrity vs. simplicity**
+- **Option A** - Event-driven architecture with message queue (Kafka, Bull)
+- **Option B** - Supabase real-time subscriptions with RLS policies (chosen)
+- **Why B:** Stateless, built-in, enforces security at DB layer. Message queue adds operational complexity without solving the core problem at this scale.
+
+### **Problem: Auth strategy for small team**
+- **Option A** - Custom JWT + session server
+- **Option B** - Firebase Auth
+- **Option C** - Supabase Auth with @supabase/ssr (chosen)
+- **Why C:** PostgreSQL-native, SSR-friendly, RLS integrates seamlessly. Firebase would force NoSQL semantics incompatible with relational verification model.
+
+### **Problem: Metadata freshness without polling**
+- **Option A** - Scheduled cron job (systemd, external service)
+- **Option B** - On-demand fetch with client-side cache
+- **Option C** - Supabase Edge Function on insert/update (chosen)
+- **Why C:** No separate infrastructure, triggered by actual changes, minimal latency. Cron jobs are harder to test and reason about.
+
+### **Problem: Styling consistency at scale**
+- **Option A** - CSS-in-JS (Styled Components, Emotion)
+- **Option B** - Vanilla CSS with design tokens
+- **Option C** - Tailwind CSS with custom CSS variables (chosen)
+- **Why C:** Utility-first scales with team size. CSS-in-JS adds bundle weight. Tailwind + variables balances composition and DRY.
+
+### **What Would Change at Scale**
+- If orgs > 10k: Add Algolia or Elasticsearch for search (Postgres full-text may lag)
+- If admins > 20: Add audit logging + approval workflows
+- If open-sourced: API layer + webhook system for integrations
+
+---
+
+## Known Constraints
+
+### **Case: Dead Link Protection**
+
+**Flow:**
+1. Admin adds organization with website link
+2. Metadata API attempts fetch with 24-hour caching
+3. If fetch fails (404, timeout, unreachable), fallback placeholder generated with domain-based favicon
+4. Organization appears in admin view regardless of metadata fetch success
+5. Public view filters by `approval_status = 'approved'` only
+6. Metadata enrichment (favicons, descriptions) improves UX but doesn't gate visibility
+
+**Trade-off:** Metadata failures don't block workflow. Admins can approve organizations even if website is temporarily unreachable. Artists may encounter broken links if sites go down after approval.
+
+### **Case: Email Validation**
+
+**Technical protection:**
+- Client-side validation: [app/utils/validation.ts](app/utils/validation.ts)
+- Regex: `/^[^\s@]+@[^\s@]+\.[^\s@]+$/`
+- Supports multiple emails (comma/semicolon separated)
+- Warnings if > 5 emails
+
+**User experience:**
+- Form shows red border: "Invalid email format: user@example"
+- Invalid email prevents form submission
+- Email field optional (can be added later)
+
+**Gap:** No database-level constraint. Relies entirely on form validation. Malicious/buggy clients could bypass.
+
+### **Case: Scoring Overwrite Risk**
+
+**Current behavior:**
+- Dropdown scoring interface with 0-2 scale
+- Comments field limited to 1000 characters
+- Save button commits all scores atomically
+- No confirmation prompt when overwriting existing scores
+
+**Gap:** No edit history, timestamps, or admin attribution. Accidental overwrites are silent and unrecoverable. Mentioned as scaling concern in Architecture Decisions but not yet prioritized.
+
+---
+
+## Tech Stack Justifications
+
+**JWT Auth over sessions:**  
+Stateless. Supports distributed clients without server session storage.
+
+**Row Level Security over API-layer authorization:**  
+Enforced at database, so bugs in API logic can't leak data. Single source of truth.
+
+**Supabase over custom backend:**  
+PostgreSQL semantics with instant scaling. Trade: vendor lock-in, but speed of iteration outweighs at team size of 1.
+
+**Tailwind CSS over BEM + vanilla CSS:**  
+Scales faster with small team. Maintenance burden lower. CSS variables bridge customization gaps.
+
+**Next.js App Router over Pages Router:**  
+Server components reduce client-side state. Middleware runs early in request cycle. Server-side auth cleaner.
+
+---
+
+## Installation
 
 1. **Clone the repository:**
    ```bash
@@ -238,66 +413,6 @@ project-root/
 
 ---
 
-## Usage
-
-### **Admin Interface**
-- Manage organization submissions
-- Assign scores using the 13-criteria rubric
-- Approve, reject, or mark organizations as pending
-- Real-time collaboration with other admins
-
-> 🔐 **Admin Access**: Requires Supabase authentication with `admin` role in JWT custom claims.
-
----
-
-## Admin Dashboard
-
-The admin dashboard provides a comprehensive interface for managing climate organizations:
-
-### **Key Features**
-
-#### 📊 **Dashboard Overview**
-- Real-time organization counts by status with color-coded badges
-- Metadata loading progress with visual indicators
-- Quick stats showing strong candidates (21+ score) and continent coverage
-- Compact header design with optimized spacing
-
-#### 🏢 **Organization Management**
-- **Glass Card Layout** - Modern frosted glass cards with regional theming
-- **Inline Editing** - Edit organization details with real-time validation and error feedback
-- **Status Management** - Approve, reject, or set to pending with visual status indicators
-- **Metadata Integration** - Automatic favicon extraction and website validation
-- **Email Processing** - Smart email parsing and validation with multiple email support
-
-#### 🎯 **Scoring Interface**
-- **Streamlined 13-Criteria Assessment** - Clean, focused scoring interface
-- **Visual Progress Tracking** - Progress bars and completion indicators
-- **Smart Recommendations** - Color-coded recommendations based on total scores
-- **Comments System** - Detailed notes with character limits and formatting
-- **Score Summary** - Real-time score calculation with percentage breakdowns
-
-#### 🔍 **Advanced Filtering & Search**
-- **Multi-Status Filtering** - Filter by All, Pending, Approved, Rejected with live counts
-- **Real-time Search** - Instant search across organization names and details
-- **Advanced Filters** - Continent, score range, and website status filtering
-- **Sorting Options** - Sort by name, score, status, country, or recent activity
-- **Filter Persistence** - Maintains filter state across sessions
-
-#### 🌐 **Metadata Enhancement**
-- **Automatic Website Processing** - Favicon extraction and URL validation
-- **Loading Progress Indicators** - Visual feedback for metadata processing
-- **Website Status Validation** - Checks for valid URLs and website accessibility
-- **Image Placeholder Generation** - Fallback images for organizations without websites
-
-#### 🎨 **Design & UX**
-- **Glass Morphism Aesthetic** - Modern frosted glass design with backdrop blur
-- **Regional Color Theming** - Visual themes based on organization's geographic location
-- **Responsive Design** - Optimized for desktop, tablet, and mobile devices
-- **Smooth Animations** - CSS-based transitions and hover effects
-- **Accessibility Features** - ARIA labels, keyboard navigation, and screen reader support
-
----
-
 ## Scoring System
 
 ### **13-Criteria Assessment Framework**
@@ -324,43 +439,9 @@ Organizations are evaluated across 13 key criteria, each scored 0-2:
 - **2 Points** - Clearly meets the criteria
 
 ### **Recommendations**
-- **🟢 21-26 Points** - Strong Candidate (Recommended for approval)
-- **🟡 13-20 Points** - Promising, Needs Follow-Up
-- **🔴 0-12 Points** - Low Priority / Not Suitable
-
----
-
-## Design System
-
-### **Glass Morphism Components**
-- **btn-glass** - Glass button variants with hover effects
-- **panel-glass** - Frosted glass panels with backdrop blur
-- **dropdown-glass** - Beautiful glass dropdown menus
-- **stained-glass** - Subtle color overlays for regional theming
-
-### **Regional Theming**
-Organizations are visually themed based on their geographic location:
-- **North America** - Blue gradient themes
-- **Europe** - Purple and blue themes  
-- **Asia** - Green and teal themes
-- **Africa** - Orange and amber themes
-- **South America** - Red and pink themes
-- **Oceania** - Cyan and blue themes
-- **Middle East** - Yellow and orange themes
-
-### **Validation System**
-- **Real-time Validation** - Instant feedback as users type
-- **Visual Error States** - Red borders and error messages
-- **Warning States** - Yellow borders for formatting suggestions
-- **Success States** - Green indicators for valid inputs
-- **Character Limits** - Live character counting for text fields
-
-### **Performance Optimizations**
-- **Efficient Re-renders** - Optimized state management to prevent unnecessary updates
-- **Lazy Loading** - Dynamic imports for better initial load times
-- **Metadata Caching** - Intelligent caching of website metadata
-- **Debounced Search** - Optimized search performance with debouncing
-- **CSS-only Animations** - Hardware-accelerated animations without JavaScript frameworks
+- **21-26 Points** - Strong Candidate (Recommended for approval)
+- **13-20 Points** - Promising, Needs Follow-Up
+- **0-12 Points** - Low Priority / Not Suitable
 
 ---
 
@@ -394,9 +475,6 @@ The app uses proper fallback font stacks for all custom font variables.
 
 We welcome contributions! Please see our contributing guidelines:
 
-### **Current Contributors**
-- [Ryan Gurley](https://github.com/gurleyryan) - Lead Developer & Architect
-
 ### **How to Contribute**
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -410,21 +488,6 @@ We welcome contributions! Please see our contributing guidelines:
 - Add comprehensive error handling
 - Include proper TypeScript interfaces
 - Test on multiple screen sizes
-
----
-
-## Credits
-
-### **Technologies**
-- [Next.js](https://nextjs.org/) - React framework
-- [Supabase](https://supabase.com/) - Backend-as-a-Service
-- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS
-- [Framer Motion](https://www.framer.com/motion/) - Animation library
-- [TypeScript](https://www.typescriptlang.org/) - Type safety
-- [Phosphor Icons](https://phosphoricons.com/) - Iconography
-
-### **Inspiration**
-- [Music Declares Emergency](https://musicdeclares.net/) - Climate action in the music industry
 
 ---
 
