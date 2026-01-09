@@ -15,6 +15,7 @@ export default function ResetPasswordClient() {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [tokenError, setTokenError] = useState('');
+  const [isExchanging, setIsExchanging] = useState(true);
 
   useEffect(() => {
     const hash = typeof window !== 'undefined' ? window.location.hash : '';
@@ -35,10 +36,18 @@ export default function ResetPasswordClient() {
     }
 
     const exchangePkce = async (codeParam: string) => {
-      const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(codeParam);
-      if (exchangeError) {
-        console.error('Exchange error:', exchangeError);
+      try {
+        const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(codeParam);
+        if (exchangeError) {
+          console.error('Exchange error:', exchangeError);
+          setTokenError('Invalid or expired reset link. Please request a new one.');
+        }
+        // Session is now established if no error
+      } catch (err) {
+        console.error('Exchange exception:', err);
         setTokenError('Invalid or expired reset link. Please request a new one.');
+      } finally {
+        setIsExchanging(false);
       }
     };
 
@@ -56,10 +65,12 @@ export default function ResetPasswordClient() {
 
     // Handle hash-based flow (legacy)
     if (hash && hash.includes('access_token')) {
+      setIsExchanging(false);
       return;
     }
 
     // No valid auth params found
+    setIsExchanging(false);
     setTokenError('Invalid or expired reset link. Please request a new one.');
   }, [searchParams, supabase.auth]);
 
@@ -104,6 +115,22 @@ export default function ResetPasswordClient() {
   };
 
   if (tokenError) {
+    // Show loading while exchange is in progress
+    if (isExchanging) {
+      return (
+        <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: 'var(--background)' }}>
+          <div className="w-full max-w-md">
+            <div className="panel-glass backdrop-blur-xl rounded-lg shadow-lg border border-gray-600/50 dark:border-gray-600/50 p-8 space-y-6">
+              <div>
+                <h1 className="text-3xl font-bold font-mde" style={{ color: 'var(--foreground)' }}>Verifying Link...</h1>
+              </div>
+              <p className="text-sm font-mde" style={{ color: 'var(--foreground)', opacity: 0.7 }}>Please wait while we verify your reset link.</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: 'var(--background)' }}>
         <div className="w-full max-w-md">
