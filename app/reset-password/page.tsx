@@ -1,12 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { createClient } from '@/app/utils/supabase/client';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 export default function ResetPasswordPage() {
   const supabase = createClient();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -16,12 +17,28 @@ export default function ResetPasswordPage() {
   const [tokenError, setTokenError] = useState('');
 
   useEffect(() => {
-    // Check if we have a valid token in the URL
-    const hash = window.location.hash;
+    const hash = typeof window !== 'undefined' ? window.location.hash : '';
+    const token = searchParams.get('token');
+    const type = searchParams.get('type');
+
+    // New Supabase recovery links come as ?token=...&type=recovery (PKCE) and need an exchange
+    const exchangePkce = async (code: string) => {
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      if (error) {
+        setTokenError('Invalid or expired reset link. Please request a new one.');
+      }
+    };
+
+    if (token && type === 'recovery') {
+      void exchangePkce(token);
+      return;
+    }
+
+    // Legacy flow: look for access_token in hash
     if (!hash || !hash.includes('access_token')) {
       setTokenError('Invalid or expired reset link. Please request a new one.');
     }
-  }, []);
+  }, [searchParams, supabase.auth]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
