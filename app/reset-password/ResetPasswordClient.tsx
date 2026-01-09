@@ -20,23 +20,27 @@ export default function ResetPasswordClient() {
   const projectRef = process.env.NEXT_PUBLIC_SUPABASE_URL?.match(/https?:\/\/([^.]+)\.supabase\.co/)?.[1];
   const codeVerifierKey = projectRef ? `sb-${projectRef}-auth-token-code-verifier` : null;
 
-  const syncCodeVerifierFromCookie = () => {
-    if (!codeVerifierKey || typeof document === 'undefined') return;
-    const existing = window.localStorage.getItem(codeVerifierKey);
-    if (existing) return;
+  const readCodeVerifier = () => {
+    if (!codeVerifierKey || typeof document === 'undefined') return null;
 
+    // Prefer localStorage
+    const fromLocal = window.localStorage.getItem(codeVerifierKey);
+    if (fromLocal) return fromLocal;
+
+    // Fallback to sessionStorage
+    const fromSession = window.sessionStorage.getItem(codeVerifierKey);
+    if (fromSession) return fromSession;
+
+    // Last resort: try a non-HttpOnly cookie (if available)
     const cookie = document.cookie
       .split('; ')
       .find((c) => c.startsWith(`${codeVerifierKey}=`));
-
     if (cookie) {
       const [, value] = cookie.split('=');
-      try {
-        window.localStorage.setItem(codeVerifierKey, value);
-      } catch {
-        // ignore storage write errors
-      }
+      return value || null;
     }
+
+    return null;
   };
 
   useEffect(() => {
@@ -58,15 +62,24 @@ export default function ResetPasswordClient() {
       return;
     }
 
-    // Ensure PKCE code verifier is available (cookie -> localStorage) before exchange
-    syncCodeVerifierFromCookie();
+    // Ensure PKCE code verifier is available before exchange
+    const codeVerifier = readCodeVerifier();
+
+    type PkceExchange = (params: { authCode: string; codeVerifier: string }) => Promise<{ error: Error | null }>;
+    const authWithPkce = supabase.auth as unknown as { exchangeCodeForSession: PkceExchange };
 
     const exchangePkce = async (codeParam: string) => {
       try {
-        const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(codeParam);
+        const { error: exchangeError } = codeVerifier
+          ? await authWithPkce.exchangeCodeForSession({ authCode: codeParam, codeVerifier })
+          : await supabase.auth.exchangeCodeForSession(codeParam);
         if (exchangeError) {
           console.error('Exchange error:', exchangeError);
-          setTokenError('Invalid or expired reset link. Please request a new one.');
+          setTokenError(
+            exchangeError.message?.includes('code verifier')
+              ? 'We could not verify this reset link in this browser. Please click the link in the same browser where you requested the reset, or request a new link.'
+              : 'Invalid or expired reset link. Please request a new one.'
+          );
         }
         // Session is now established if no error
       } catch (err) {
