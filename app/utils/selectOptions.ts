@@ -35,7 +35,7 @@ export const getScoringOptions = () => [
   { value: '2', label: '2 - Yes', icon: ClimateIcons.yes, color: '#10b981', bgColor: '#065f46' },
 ];
 
-export const getCountryOptions = () => [
+const COUNTRY_OPTIONS = [
   { value: '', label: 'Select Country', color: '#9ca3af', bgColor: '#374151' },
   // North America
   { value: 'US', label: 'United States', icon: ClimateIcons.unitedStates, color: '#60a5fa', bgColor: '#1e40af' },
@@ -78,6 +78,19 @@ export const getCountryOptions = () => [
   { value: 'SA', label: 'Saudi Arabia', icon: ClimateIcons.saudiArabia, color: '#d97706', bgColor: '#92400e' },
   { value: 'IL', label: 'Israel', icon: ClimateIcons.israel, color: '#d97706', bgColor: '#92400e' },
 ];
+
+// Expose a reusable immutable list for building dynamic filters
+export const getCountryOptions = () => COUNTRY_OPTIONS;
+
+// Quick lookup for country names by ISO code (used in search/filter logic)
+export const COUNTRY_CODE_TO_LABEL: Record<string, string> = COUNTRY_OPTIONS
+  .filter(opt => opt.value)
+  .reduce((acc, opt) => {
+    acc[opt.value] = opt.label;
+    return acc;
+  }, {} as Record<string, string>);
+
+export const getCountryLabel = (code: string): string => COUNTRY_CODE_TO_LABEL[code] || code;
 
 export const getStatusOptions = () => [
   { 

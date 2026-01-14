@@ -4,7 +4,6 @@ import { CustomDropdown } from '../CustomDropdown';
 import { ClimateIcons } from '../Icons';
 import { useTheme } from '../../hooks/useTheme';
 import {
-  getContinentOptions,
   getScoreRangeOptions,
   getSortFieldOptions
 } from '../../utils/selectOptions';
@@ -14,6 +13,7 @@ import Image from 'next/image';
 interface FilterOptions {
   status: 'all' | 'pending' | 'approved' | 'rejected';
   continent: string;
+  country: string;
   scoreRange: string;
 }
 
@@ -51,6 +51,8 @@ interface AdminHeaderProps {
   onSortChange: (options: SortOptions) => void;
   filterOptions: FilterOptions;
   onFilterOptionsChange: (options: FilterOptions) => void;
+  continentOptions: Array<{ value: string; label: string; icon?: React.ReactNode; color?: string; bgColor?: string }>;
+  countryOptions: Array<{ value: string; label: string; icon?: React.ReactNode; color?: string; bgColor?: string }>;
   filteredCount: number;
   totalOrgs: number;
   isSearching?: boolean;
@@ -69,6 +71,8 @@ export function AdminHeader({
   onSortChange,
   filterOptions,
   onFilterOptionsChange,
+  continentOptions,
+  countryOptions,
   filteredCount,
   totalOrgs,
   isSearching = false
@@ -82,6 +86,7 @@ export function AdminHeader({
     onFilterOptionsChange({
       status: 'all',
       continent: 'all',
+      country: 'all',
       scoreRange: 'all',
     });
     onSortChange({ field: 'name', direction: 'asc' });
@@ -90,6 +95,7 @@ export function AdminHeader({
 
   const hasActiveFilters = searchQuery ||
     filterOptions.continent !== 'all' ||
+    filterOptions.country !== 'all' ||
     filterOptions.scoreRange !== 'all' ||
     filter !== 'all';
 
@@ -318,15 +324,16 @@ export function AdminHeader({
 
             {/* Filter and Sort Controls - Two rows on mobile */}
             <div className="space-y-2">
-              {/* Top row: Continent and Score filters */}
+              {/* Top row: Continent and Country filters */}
               <div className="flex gap-2">
                 <div className="flex-1">
                   <CustomDropdown
-                    options={getContinentOptions()}
+                    options={continentOptions}
                     value={filterOptions.continent}
                     onChange={(value) => onFilterOptionsChange({
                       ...filterOptions,
-                      continent: value
+                      continent: value,
+                      country: 'all',
                     })}
                     placeholder="Filter by continent..."
                     colorCoded={true}
@@ -335,6 +342,24 @@ export function AdminHeader({
                   />
                 </div>
 
+                <div className="flex-1">
+                  <CustomDropdown
+                    options={countryOptions}
+                    value={filterOptions.country}
+                    onChange={(value) => onFilterOptionsChange({
+                      ...filterOptions,
+                      country: value,
+                    })}
+                    placeholder="Filter by country..."
+                    colorCoded={false}
+                    className="w-full"
+                    portal={true}
+                  />
+                </div>
+              </div>
+
+              {/* Middle row: Score filter */}
+              <div className="flex gap-2">
                 <div className="flex-1">
                   <CustomDropdown
                     options={getScoreRangeOptions()}
@@ -469,14 +494,31 @@ export function AdminHeader({
               {/* Continent Filter */}
               <div className="min-w-[160px]">
                 <CustomDropdown
-                  options={getContinentOptions()}
+                  options={continentOptions}
                   value={filterOptions.continent}
                   onChange={(value) => onFilterOptionsChange({
                     ...filterOptions,
-                    continent: value
+                    continent: value,
+                    country: 'all',
                   })}
                   placeholder="Filter by continent..."
                   colorCoded={true}
+                  className="w-full"
+                  portal={true}
+                />
+              </div>
+
+              {/* Country Filter */}
+              <div className="min-w-[180px]">
+                <CustomDropdown
+                  options={countryOptions}
+                  value={filterOptions.country}
+                  onChange={(value) => onFilterOptionsChange({
+                    ...filterOptions,
+                    country: value,
+                  })}
+                  placeholder="Filter by country..."
+                  colorCoded={false}
                   className="w-full"
                   portal={true}
                 />

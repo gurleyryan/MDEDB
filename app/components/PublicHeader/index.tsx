@@ -1,11 +1,8 @@
 'use client';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { CustomDropdown } from '../CustomDropdown';
 import { ClimateIcons } from '../Icons';
-import {
-  getContinentOptions,
-  getSortFieldOptions
-} from '../../utils/selectOptions';
+import { getSortFieldOptions } from '../../utils/selectOptions';
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../hooks/useUser';
 import { useTheme } from '../../hooks/useTheme';
@@ -14,6 +11,7 @@ import Image from 'next/image';
 
 interface FilterOptions {
   continent: string;
+  country: string;
 }
 
 interface SortOptions {
@@ -38,6 +36,8 @@ interface PublicHeaderProps {
   onSortChange: (options: SortOptions) => void;
   filterOptions: FilterOptions;
   onFilterOptionsChange: (options: FilterOptions) => void;
+  continentOptions: Array<{ value: string; label: string; icon?: React.ReactNode; color?: string; bgColor?: string }>;
+  countryOptions: Array<{ value: string; label: string; icon?: React.ReactNode; color?: string; bgColor?: string }>;
   isSearching?: boolean;
 }
 
@@ -49,6 +49,8 @@ export function PublicHeader({
   onSortChange,
   filterOptions,
   onFilterOptionsChange,
+  continentOptions,
+  countryOptions,
   isSearching = false
 }: PublicHeaderProps) {
   const router = useRouter();
@@ -61,11 +63,12 @@ export function PublicHeader({
     onSearchChange('');
     onFilterOptionsChange({
       continent: 'all',
+      country: 'all',
     });
     onSortChange({ field: 'name', direction: 'asc' });
   };
 
-  const hasActiveFilters = !!searchQuery || filterOptions.continent !== 'all';
+  const hasActiveFilters = !!searchQuery || filterOptions.continent !== 'all' || filterOptions.country !== 'all';
 
   // Helper function to get appropriate sort toggle label
   const getSortToggleLabel = (field: string, direction: 'asc' | 'desc') => {
@@ -313,14 +316,31 @@ export function PublicHeader({
             {/* Continent Filter */}
             <div className="min-w-[160px]">
               <CustomDropdown
-                options={getContinentOptions()}
+                options={continentOptions}
                 value={filterOptions.continent}
                 onChange={(value) => onFilterOptionsChange({
                   ...filterOptions,
-                  continent: value
+                  continent: value,
+                  country: 'all',
                 })}
                 placeholder="Filter by continent..."
                 colorCoded={true}
+                className="w-full"
+                portal={true}
+              />
+            </div>
+
+            {/* Country Filter */}
+            <div className="min-w-[180px]">
+              <CustomDropdown
+                options={countryOptions}
+                value={filterOptions.country}
+                onChange={(value) => onFilterOptionsChange({
+                  ...filterOptions,
+                  country: value,
+                })}
+                placeholder="Filter by country..."
+                colorCoded={false}
                 className="w-full"
                 portal={true}
               />

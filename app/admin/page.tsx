@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/app/utils/supabase/client';
 import { motion } from 'framer-motion';
@@ -16,6 +16,7 @@ import OrganizationCard from '../components/OrganizationCard';
 import AddOrganizationModal from '../components/AddOrganizationModal';
 import ScoringSection from '../components/ScoringSection';
 import { ClimateIcons } from '../components/Icons';
+import { getCountryLabel } from '../utils/selectOptions';
 import type { OrgWithScore } from '../../models/orgWithScore';
 
 export default function AdminOrgs() {
@@ -67,10 +68,12 @@ export default function AdminOrgs() {
   const [filterOptions, setFilterOptions] = useState<{
     status: 'all' | 'pending' | 'approved' | 'rejected';
     continent: string;
+    country: string;
     scoreRange: string;
   }>({
     status: 'all',
     continent: 'all',
+    country: 'all',
     scoreRange: 'all',
   });
 
@@ -102,6 +105,7 @@ export default function AdminOrgs() {
       processed = processed.filter(org =>
         org.org_name.toLowerCase().includes(query) ||
         org.country_code.toLowerCase().includes(query) ||
+        getCountryLabel(org.country_code)?.toLowerCase().includes(query) ||
         org.type_of_work?.toLowerCase().includes(query) ||
         org.mission_statement?.toLowerCase().includes(query) ||
         org.website?.toLowerCase().includes(query) ||
@@ -109,8 +113,10 @@ export default function AdminOrgs() {
       );
     }
 
-    // Apply continent filter
-    if (filterOptions.continent !== 'all') {
+    // Apply country filter first, then continent fallback
+    if (filterOptions.country !== 'all') {
+      processed = processed.filter(org => org.country_code === filterOptions.country);
+    } else if (filterOptions.continent !== 'all') {
       processed = processed.filter(org => {
         const continent = getOrgContinent(org.country_code);
         return continent === filterOptions.continent;
@@ -205,6 +211,68 @@ export default function AdminOrgs() {
 
     return continentMap[countryCode] || 'Unknown';
   };
+
+  const continentMeta: Record<string, { icon?: React.ReactNode; color?: string; bgColor?: string }> = {
+    'North America': { icon: ClimateIcons.northAmerica, color: '#60a5fa', bgColor: '#1e3a8a' },
+    'South America': { icon: ClimateIcons.southAmerica, color: '#34d399', bgColor: '#065f46' },
+    Europe: { icon: ClimateIcons.europe, color: '#a78bfa', bgColor: '#5b21b6' },
+    Africa: { icon: ClimateIcons.africa, color: '#f59e0b', bgColor: '#92400e' },
+    Asia: { icon: ClimateIcons.asia, color: '#ef4444', bgColor: '#991b1b' },
+    Oceania: { icon: ClimateIcons.oceania, color: '#06b6d4', bgColor: '#0e7490' },
+    'Middle East': { icon: ClimateIcons.middleEast, color: '#d97706', bgColor: '#92400e' },
+  };
+
+  const dynamicContinentOptions = useMemo(() => {
+    const counts = new Map<string, number>();
+    orgs.forEach(org => {
+      const continent = getOrgContinent(org.country_code);
+      if (continent === 'Unknown') return;
+      counts.set(continent, (counts.get(continent) || 0) + 1);
+    });
+
+    const options = Array.from(counts.entries())
+      .map(([continent, count]) => ({
+        value: continent,
+        label: `${continent} (${count})`,
+        ...continentMeta[continent],
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+
+    return [
+      { value: 'all', label: 'All Continents' },
+      ...options,
+    ];
+  }, [orgs]);
+
+  const dynamicCountryOptions = useMemo(() => {
+    const counts = new Map<string, { count: number; continent: string }>();
+    orgs.forEach(org => {
+      const continent = getOrgContinent(org.country_code);
+      if (continent === 'Unknown') return;
+      if (filterOptions.continent !== 'all' && continent !== filterOptions.continent) return;
+
+      const entry = counts.get(org.country_code) || { count: 0, continent };
+      entry.count += 1;
+      counts.set(org.country_code, entry);
+    });
+
+    const options = Array.from(counts.entries())
+      .map(([code, { count, continent }]) => ({
+        value: code,
+        label: `${getCountryLabel(code)} (${count})`,
+        continent,
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+
+    const allLabel = filterOptions.continent === 'all'
+      ? 'All Countries'
+      : `All in ${filterOptions.continent}`;
+
+    return [
+      { value: 'all', label: allLabel },
+      ...options,
+    ];
+  }, [orgs, filterOptions.continent]);
 
   // Get processed organizations
   const filteredOrgs = getProcessedOrgs();
@@ -451,6 +519,8 @@ export default function AdminOrgs() {
           onSortChange={setSortOptions}
           filterOptions={filterOptions}
           onFilterOptionsChange={setFilterOptions}
+          continentOptions={dynamicContinentOptions}
+          countryOptions={dynamicCountryOptions}
           filteredCount={filteredOrgs.length}
           totalOrgs={orgs.length}
           isSearching={isSearching}

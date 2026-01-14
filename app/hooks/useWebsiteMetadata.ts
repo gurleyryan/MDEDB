@@ -114,11 +114,16 @@ export function useWebsiteMetadata() {
       };
       
     } catch (error) {
-      console.error('Error fetching metadata:', error);
-      
-      // Retry logic
+      const isAbort = (error as { name?: string }).name === 'AbortError';
+      if (isAbort) {
+        console.warn(`Metadata fetch aborted after timeout for ${url}`);
+      } else {
+        console.error('Error fetching metadata:', error);
+      }
+
+      // Retry logic (skip retries on abort to avoid noisy loops)
       const currentAttempts = retryAttempts[url] || 0;
-      if (retryCount < MAX_RETRIES && currentAttempts < MAX_RETRIES) {
+      if (!isAbort && retryCount < MAX_RETRIES && currentAttempts < MAX_RETRIES) {
         setRetryAttempts(prev => ({ ...prev, [url]: currentAttempts + 1 }));
         console.log(`Retrying metadata fetch for ${url} (attempt ${retryCount + 1}/${MAX_RETRIES})`);
         
@@ -127,7 +132,7 @@ export function useWebsiteMetadata() {
         return getWebsiteMetadata(url, retryCount + 1);
       }
       
-      // Return fallback metadata after all retries exhausted
+      // Return fallback metadata after retries exhausted or abort
       const domain = url.replace(/^https?:\/\//, '').split('/')[0];
       return {
         title: domain,
