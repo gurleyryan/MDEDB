@@ -130,7 +130,7 @@ export default function HomePage() {
       .sort((a, b) => a.label.localeCompare(b.label));
 
     return [
-      { value: 'all', label: 'All Continents' },
+      { value: 'all', label: 'All Continents', color: '#000000', bgColor: '#ffffff' },
       ...options,
     ];
   }, [orgs]);
@@ -148,9 +148,10 @@ export default function HomePage() {
     });
 
     const options = Array.from(counts.entries())
-      .map(([code, { count }]) => ({
+      .map(([code, { count, continent }]) => ({
         value: code,
         label: `${getCountryLabel(code)} (${count})`,
+        ...continentMeta[continent],
       }))
       .sort((a, b) => a.label.localeCompare(b.label));
 
@@ -159,7 +160,7 @@ export default function HomePage() {
       : `All in ${filterOptions.continent}`;
 
     return [
-      { value: 'all', label: allLabel },
+      { value: 'all', label: allLabel, color: '#000000', bgColor: '#ffffff' },
       ...options,
     ];
   }, [orgs, filterOptions.continent]);

@@ -518,13 +518,13 @@ export function AdminHeader({
                     country: value,
                   })}
                   placeholder="Filter by country..."
-                  colorCoded={false}
+                  colorCoded={true}
                   className="w-full"
                   portal={true}
                 />
               </div>
 
-              {/* Score Range Filter */}
+              {/* Score Filter */}
               <div className="min-w-[160px]">
                 <CustomDropdown
                   options={getScoreRangeOptions()}

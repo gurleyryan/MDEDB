@@ -340,7 +340,7 @@ export function PublicHeader({
                   country: value,
                 })}
                 placeholder="Filter by country..."
-                colorCoded={false}
+                colorCoded={true}
                 className="w-full"
                 portal={true}
               />

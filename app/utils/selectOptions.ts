@@ -12,7 +12,7 @@ export const getContinentOptions = () => [
 ];
 
 export const getScoreRangeOptions = () => [
-  { value: 'all', label: 'All Scores', color: '#d1d5db', bgColor: '#374151' },
+  { value: 'all', label: 'All Scores', color: '#000000', bgColor: '#ffffff' },
   { value: 'strong', label: 'Strong (21-26)', icon: ClimateIcons.strong, color: '#10b981', bgColor: '#065f46' },
   { value: 'promising', label: 'Promising (13-20)', icon: ClimateIcons.promising, color: '#f59e0b', bgColor: '#92400e' },
   { value: 'low', label: 'Low Priority (0-12)', icon: ClimateIcons.low, color: '#ef4444', bgColor: '#991b1b' },

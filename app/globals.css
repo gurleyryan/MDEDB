@@ -746,6 +746,29 @@ body {
     background-color: rgba(55, 65, 81, 0.8) !important;
   }
 
+  /* Dark mode overrides for "All Continents" and "All Countries" options */
+  /* Target white text on white background pattern (which occurs in light mode default) */
+  .dropdown-glass button[style*="color: rgb(0, 0, 0)"] {
+    background: linear-gradient(135deg, #000000, #000000) !important;
+    color: #ffffff !important;
+  }
+
+  .dropdown-glass button[style*="color: rgb(0, 0, 0)"]:hover {
+    background: linear-gradient(135deg, #000000, #000000) !important;
+    color: #ffffff !important;
+  }
+
+  /* Light mode - keep as-is (white bg, black text) */
+  :root.light .dropdown-glass button[style*="color: rgb(0, 0, 0)"] {
+    background: linear-gradient(135deg, #ffffff, #ffffff) !important;
+    color: #000000 !important;
+  }
+
+  :root.light .dropdown-glass button[style*="color: rgb(0, 0, 0)"]:hover {
+    background: linear-gradient(135deg, #ffffff, #ffffff) !important;
+    color: #000000 !important;
+  }
+
   .dropdown-option:hover {
     transform: translateX(4px);
     background-image: linear-gradient(90deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
