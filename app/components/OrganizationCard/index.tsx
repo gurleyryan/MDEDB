@@ -282,8 +282,8 @@ export function OrganizationCard({
             <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-gray-700 via-gray-600 to-gray-700 animate-pulse -z-10">
               <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 via-gray-900/40 to-transparent" />
               <div className="absolute bottom-4 left-4 right-4">
-                <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded animate-pulse mb-2"></div>
-                <div className="h-4 bg-gray-300 dark:bg-gray-600 rounded w-3/4 animate-pulse"></div>
+                <div className="h-4 bg-gray-300 dark:bg-gray-600 animate-pulse mb-2"></div>
+                <div className="h-4 bg-gray-300 dark:bg-gray-600 w-3/4 animate-pulse"></div>
               </div>
             </div>
           ) : metadata?.image && !isPlaceholderUrl(metadata.image) ? (
@@ -363,7 +363,7 @@ export function OrganizationCard({
                   <button
                     type="button"
                     onClick={() => logoInputRef.current?.click()}
-                    className="org-btn-glass org-btn-glass-blue px-3 py-1.5 rounded-md text-xs font-medium hover:shadow-glow-blue flex items-center gap-2"
+                    className="org-btn-glass org-btn-glass-blue px-3 py-1.5  text-xs font-medium hover:shadow-glow-blue flex items-center gap-2"
                   >
                     {ClimateIcons.plus}
                     <span>{editForm.logo ? 'Change Logo' : 'Choose Logo'}</span>
@@ -375,11 +375,11 @@ export function OrganizationCard({
                   value={editForm.logo || ''}
                   onChange={(e) => handleFieldChange('logo', e.target.value)}
                   onBlur={(e) => e.target.value && handleFieldChange('logo', formatUrl(e.target.value))}
-                  className="mt-2 w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
+                  className="mt-2 w-full p-2 bg-white dark:bg-gray-700 border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                   placeholder="Or paste a logo URL"
                 />
                 {editForm.logo && (
-                  <div className="mt-2 w-16 h-16 bg-white/10 rounded flex items-center justify-center overflow-hidden">
+                  <div className="mt-2 w-16 h-16 bg-white/10 flex items-center justify-center overflow-hidden">
                     <img src={editForm.logo} alt="logo preview" className="max-w-full max-h-full object-contain" />
                   </div>
                 )}
@@ -401,7 +401,7 @@ export function OrganizationCard({
                   <button
                     type="button"
                     onClick={() => bannerInputRef.current?.click()}
-                    className="org-btn-glass org-btn-glass-purple px-3 py-1.5 rounded-md text-xs font-medium hover:shadow-glow-purple flex items-center gap-2"
+                    className="org-btn-glass org-btn-glass-purple px-3 py-1.5  text-xs font-medium hover:shadow-glow-purple flex items-center gap-2"
                   >
                     {ClimateIcons.plus}
                     <span>{editForm.banner ? 'Change Banner' : 'Choose Banner'}</span>
@@ -413,11 +413,11 @@ export function OrganizationCard({
                   value={editForm.banner || ''}
                   onChange={(e) => handleFieldChange('banner', e.target.value)}
                   onBlur={(e) => e.target.value && handleFieldChange('banner', formatUrl(e.target.value))}
-                  className="mt-2 w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
+                  className="mt-2 w-full p-2 bg-white dark:bg-gray-700 border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                   placeholder="Or paste a banner URL"
                 />
                 {editForm.banner && (
-                  <div className="mt-2 w-full h-20 bg-white/10 rounded overflow-hidden">
+                  <div className="mt-2 w-full h-20 bg-white/10 overflow-hidden">
                     <img src={editForm.banner} alt="banner preview" className="w-full h-full object-cover" />
                   </div>
                 )}
@@ -435,7 +435,7 @@ export function OrganizationCard({
                       handleFieldChange('website', formatted);
                     }
                   }}
-                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.website ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
+                  className={`w-full p-2 bg-white dark:bg-gray-700 border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.website ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                     }`}
                 />
                 {errors.website && (
@@ -449,7 +449,7 @@ export function OrganizationCard({
                   type="text"
                   value={editForm.email || ''}
                   onChange={(e) => handleFieldChange('email', e.target.value)}
-                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.email ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'}`}
+                  className={`w-full p-2 bg-white dark:bg-gray-700 border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.email ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'}`}
                   placeholder="Multiple emails separated by commas"
                 />
                 {errors.email && (
@@ -469,7 +469,7 @@ export function OrganizationCard({
                       handleFieldChange('country_code', formatted);
                     }
                   }}
-                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.country_code ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
+                  className={`w-full p-2 bg-white dark:bg-gray-700 border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.country_code ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                     }`}
                   maxLength={2}
                 />
@@ -484,7 +484,7 @@ export function OrganizationCard({
                   type="text"
                   value={editForm.type_of_work || ''}
                   onChange={(e) => handleFieldChange('type_of_work', e.target.value)}
-                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.type_of_work ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
+                  className={`w-full p-2 bg-white dark:bg-gray-700 border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.type_of_work ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                     }`}
                 />
                 {errors.type_of_work && (
@@ -501,7 +501,7 @@ export function OrganizationCard({
                     value={editForm.instagram || ''}
                     onChange={(e) => handleFieldChange('instagram', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('instagram', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
+                    className="w-full p-2 bg-white dark:bg-gray-700 border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                     placeholder="https://instagram.com/yourorg"
                   />
                 </div>
@@ -512,7 +512,7 @@ export function OrganizationCard({
                     value={editForm.twitter || ''}
                     onChange={(e) => handleFieldChange('twitter', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('twitter', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
+                    className="w-full p-2 bg-white dark:bg-gray-700 border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                     placeholder="https://x.com/yourorg"
                   />
                 </div>
@@ -523,7 +523,7 @@ export function OrganizationCard({
                     value={editForm.facebook || ''}
                     onChange={(e) => handleFieldChange('facebook', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('facebook', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
+                    className="w-full p-2 bg-white dark:bg-gray-700 border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                     placeholder="https://facebook.com/yourorg"
                   />
                 </div>
@@ -534,7 +534,7 @@ export function OrganizationCard({
                     value={editForm.tiktok || ''}
                     onChange={(e) => handleFieldChange('tiktok', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('tiktok', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
+                    className="w-full p-2 bg-white dark:bg-gray-700 border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                     placeholder="https://tiktok.com/@yourorg"
                   />
                 </div>
@@ -545,7 +545,7 @@ export function OrganizationCard({
                     value={editForm.linkedin || ''}
                     onChange={(e) => handleFieldChange('linkedin', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('linkedin', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
+                    className="w-full p-2 bg-white dark:bg-gray-700 border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                     placeholder="https://linkedin.com/company/yourorg"
                   />
                 </div>
@@ -556,7 +556,7 @@ export function OrganizationCard({
                     value={editForm.youtube || ''}
                     onChange={(e) => handleFieldChange('youtube', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('youtube', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
+                    className="w-full p-2 bg-white dark:bg-gray-700 border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                     placeholder="https://youtube.com/@yourorg"
                   />
                 </div>
@@ -568,7 +568,7 @@ export function OrganizationCard({
                   type="text"
                   value={editForm.years_active || ''}
                   onChange={(e) => handleFieldChange('years_active', e.target.value)}
-                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.years_active ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
+                  className={`w-full p-2 bg-white dark:bg-gray-700 border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.years_active ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                     }`}
                   placeholder="e.g., 2013–present, 2018–2023"
                 />
@@ -583,7 +583,7 @@ export function OrganizationCard({
                   type="text"
                   value={editForm.capacity || ''}
                   onChange={(e) => handleFieldChange('capacity', e.target.value)}
-                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.capacity ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
+                  className={`w-full p-2 bg-white dark:bg-gray-700 border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.capacity ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                     }`}
                 />
                 {errors.capacity && (
@@ -597,7 +597,7 @@ export function OrganizationCard({
               <textarea
                 value={editForm.mission_statement || ''}
                 onChange={(e) => handleFieldChange('mission_statement', e.target.value)}
-                className={`w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${errors.mission_statement ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
+                className={`w-full p-2 bg-white dark:bg-gray-700 border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${errors.mission_statement ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                   }`}
               />
               {errors.mission_statement && (
@@ -610,7 +610,7 @@ export function OrganizationCard({
               <textarea
                 value={editForm.notable_success || ''}
                 onChange={(e) => handleFieldChange('notable_success', e.target.value)}
-                className={`w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${errors.notable_success ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
+                className={`w-full p-2 bg-white dark:bg-gray-700 border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${errors.notable_success ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                   }`}
               />
               {errors.notable_success && (
@@ -623,7 +623,7 @@ export function OrganizationCard({
               <textarea
                 value={editForm.cta_notes || ''}
                 onChange={(e) => handleFieldChange('cta_notes', e.target.value)}
-                className={`w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${errors.cta_notes ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
+                className={`w-full p-2 bg-white dark:bg-gray-700 border text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${errors.cta_notes ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                   }`}
               />
               {errors.cta_notes && (
@@ -640,12 +640,12 @@ export function OrganizationCard({
               <div className="flex items-start gap-3 flex-1 min-w-[200px] basis-0">
                 {/* Favicon */}
                 {(org.logo || org.website) && (
-                  <div className="w-8 h-8 rounded-lg flex-shrink-0 bg-white/10 p-1">
+                  <div className="w-8 h-8  flex-shrink-0 bg-white/10 p-1">
                     {org.logo ? (
                       <img
                         src={org.logo}
                         alt=""
-                        className="w-full h-full rounded object-cover"
+                        className="w-full h-full object-cover"
                         onError={(e) => {
                           if (org.website) {
                             e.currentTarget.src = getGoogleFaviconUrl(org.website);
@@ -655,12 +655,12 @@ export function OrganizationCard({
                         }}
                       />
                     ) : isMetadataLoading ? (
-                      <div className="w-full h-full bg-gray-600 rounded animate-pulse"></div>
+                      <div className="w-full h-full bg-gray-600 animate-pulse"></div>
                     ) : metadata?.favicon && !isPlaceholderUrl(metadata.favicon) ? (
                       <img
                         src={metadata.favicon}
                         alt=""
-                        className="w-full h-full rounded"
+                        className="w-full h-full "
                         onError={(e) => {
                           if (org.website) {
                             e.currentTarget.src = getGoogleFaviconUrl(org.website!);
@@ -674,7 +674,7 @@ export function OrganizationCard({
                         <img
                           src={getGoogleFaviconUrl(org.website)}
                           alt=""
-                          className="w-full h-full rounded"
+                          className="w-full h-full "
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
                           }}
@@ -797,14 +797,14 @@ export function OrganizationCard({
                           return (
                             <div className="flex items-center gap-2 flex-shrink-0">
                               {org.is_strategic && (
-                                <span className="px-2 py-1 rounded text-xs font-bold whitespace-nowrap text-amber-200 bg-amber-800 flex items-center gap-1">
+                                <span className="px-2 py-1 text-xs font-bold whitespace-nowrap text-amber-200 bg-amber-800 flex items-center gap-1">
                                   {ClimateIcons.strategic} Strategic
                                 </span>
                               )}
-                              <span className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
+                              <span className={`px-2 py-1 text-xs font-bold whitespace-nowrap ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
                                 {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
                               </span>
-                              <span className={`px-2 py-1 rounded text-xs font-bold capitalize whitespace-nowrap ${getStatusColor(org.approval_status)}`}>
+                              <span className={`px-2 py-1 text-xs font-bold capitalize whitespace-nowrap ${getStatusColor(org.approval_status)}`}>
                                 {org.approval_status}
                               </span>
                             </div>
@@ -903,7 +903,7 @@ export function OrganizationCard({
                                       </span>
                                     ))
                                   ) : (
-                                    <span className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
+                                    <span className="text-green-400 bg-green-500/20 px-2 py-1 cursor-help text-xs flex-shrink-0"
                                       title={`All emails: ${emails.join(', ')}`}>{emails.length} emails</span>
                                   )}
                                 </div>
@@ -925,14 +925,14 @@ export function OrganizationCard({
                                 {/* Badges group */}
                                 <span className="flex gap-2">
                                   {org.is_strategic && (
-                                    <span className="px-2 py-1 rounded text-xs font-bold whitespace-nowrap text-amber-200 bg-amber-800 flex items-center gap-1">
+                                    <span className="px-2 py-1 text-xs font-bold whitespace-nowrap text-amber-200 bg-amber-800 flex items-center gap-1">
                                       {ClimateIcons.strategic} Strategic
                                     </span>
                                   )}
-                                  <span className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
+                                  <span className={`px-2 py-1 text-xs font-bold whitespace-nowrap ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
                                     {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
                                   </span>
-                                  <span className={`px-2 py-1 rounded text-xs font-bold capitalize whitespace-nowrap ${getStatusColor(org.approval_status)}`}>
+                                  <span className={`px-2 py-1 text-xs font-bold capitalize whitespace-nowrap ${getStatusColor(org.approval_status)}`}>
                                     {org.approval_status}
                                   </span>
                                 </span>
@@ -1001,7 +1001,7 @@ export function OrganizationCard({
                                         </span>
                                       ))
                                     ) : (
-                                      <span className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
+                                      <span className="text-green-400 bg-green-500/20 px-2 py-1 cursor-help text-xs flex-shrink-0"
                                         title={`All emails: ${emails.join(', ')}`}>{emails.length} emails</span>
                                     )}
                                   </div>
@@ -1077,7 +1077,7 @@ export function OrganizationCard({
                                       </span>
                                     ))
                                   ) : (
-                                    <span className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
+                                    <span className="text-green-400 bg-green-500/20 px-2 py-1 cursor-help text-xs flex-shrink-0"
                                       title={`All emails: ${emails.join(', ')}`}>{emails.length} emails</span>
                                   )}
                                 </div>
@@ -1147,7 +1147,7 @@ export function OrganizationCard({
                                         </span>
                                       ))
                                     ) : (
-                                      <span className="text-green-400 bg-green-500/20 px-2 py-1 rounded cursor-help text-xs flex-shrink-0"
+                                      <span className="text-green-400 bg-green-500/20 px-2 py-1 cursor-help text-xs flex-shrink-0"
                                         title={`All emails: ${emails.join(', ')}`}>{emails.length} emails</span>
                                     )}
                                   </div>
@@ -1177,7 +1177,7 @@ export function OrganizationCard({
               )}
 
               {org.notable_success && (
-                <div className="notable-success-block relative z-10 p-2 bg-foreground border-l-2 border-mde-green-60 rounded-r text-sm">
+                <div className="notable-success-block relative z-10 p-2 bg-foreground border-l-2 border-mde-green-60  text-sm">
                   <div className="flex items-start gap-2">
                     <span className="text-foreground font-medium flex-shrink-0 mt-0.5">
                       {ClimateIcons.trophy}
@@ -1190,7 +1190,7 @@ export function OrganizationCard({
               )}
 
               {org.cta_notes && (
-                <div className="p-2 bg-mde-yellow-15 border-l-2 border-mde-yellow-60 rounded-r text-sm">
+                <div className="p-2 bg-mde-yellow-15 border-l-2 border-mde-yellow-60  text-sm">
                   <div className="flex items-start gap-2 flex-wrap">
                     <span className="text-foreground font-medium flex-shrink-0 mt-0.5">
                       {ClimateIcons.announcement}
@@ -1207,7 +1207,7 @@ export function OrganizationCard({
                           href={url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="org-btn-glass org-btn-glass-mde-blue whitespace-nowrap px-3 py-1.5 rounded-md text-xs font-medium hover:shadow-glow-mde-blue flex items-center justify-center gap-1 flex-shrink-0 text-foreground hover:text-[#f7ed6a] transition-colors ml-auto w-full sm:w-auto"
+                          className="org-btn-glass org-btn-glass-mde-blue whitespace-nowrap px-3 py-1.5  text-xs font-medium hover:shadow-glow-mde-blue flex items-center justify-center gap-1 flex-shrink-0 text-foreground hover:text-[#f7ed6a] transition-colors ml-auto w-full sm:w-auto"
                           title={label}
                         >
                           {ClimateIcons.website}
@@ -1292,7 +1292,7 @@ export function OrganizationCard({
                 {isEditing ? (
                   <>
                     <label
-                      className="px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start cursor-pointer border"
+                      className="px-4 py-2.5  text-sm font-medium flex items-center gap-2 transition-all duration-200 flex-1 sm:flex-initial justify-center sm:justify-start cursor-pointer border"
                       style={{
                         backgroundColor: 'var(--background)',
                         borderColor: 'var(--glass-border)',
@@ -1313,7 +1313,7 @@ export function OrganizationCard({
                     <button
                       onClick={handleSave}
                       disabled={updatingId === org.id || Object.keys(errors).length > 0}
-                      className="org-btn-glass org-btn-glass-green px-4 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50 flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
+                      className="org-btn-glass org-btn-glass-green px-4 py-2.5  text-sm font-medium disabled:opacity-50 flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200  flex-1 sm:flex-initial justify-center sm:justify-start"
                     >
                       {ClimateIcons.save}
                       <span className="transition-opacity duration-200">
@@ -1323,7 +1323,7 @@ export function OrganizationCard({
 
                     <button
                       onClick={handleCancel}
-                      className="org-btn-glass px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
+                      className="org-btn-glass px-4 py-2.5  text-sm font-medium flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200  flex-1 sm:flex-initial justify-center sm:justify-start"
                     >
                       {ClimateIcons.cancel}
                       <span className="transition-opacity duration-200">Cancel</span>
@@ -1334,7 +1334,7 @@ export function OrganizationCard({
                     <button
                       onClick={startEdit}
                       onMouseDown={(e) => e.preventDefault()}
-                      className="org-btn-glass org-btn-glass-blue px-4 py-2.5 rounded-lg text-sm font-medium hover:shadow-glow-blue flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
+                      className="org-btn-glass org-btn-glass-blue px-4 py-2.5  text-sm font-medium hover:shadow-glow-blue flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200  flex-1 sm:flex-initial justify-center sm:justify-start"
                     >
                       {ClimateIcons.edit}
                       <span className="transition-opacity duration-200">Edit Info</span>
@@ -1343,7 +1343,7 @@ export function OrganizationCard({
                     <button
                       onClick={() => onExpand(org.id)}
                       onMouseDown={(e) => e.preventDefault()}
-                      className="org-btn-glass org-btn-glass-purple px-4 py-2.5 rounded-lg text-sm font-medium hover:shadow-glow-purple flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start"
+                      className="org-btn-glass org-btn-glass-purple px-4 py-2.5  text-sm font-medium hover:shadow-glow-purple flex items-center gap-2 hover:translate-y-[-1px] transition-all duration-200  flex-1 sm:flex-initial justify-center sm:justify-start"
                     >
                       {ClimateIcons.scoring}
                       <span className="transition-opacity duration-200">

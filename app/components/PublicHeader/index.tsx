@@ -114,7 +114,7 @@ export function PublicHeader({
                     else if (role === 'admin') router.push('/admin');
                     else if (role === 'org') router.push('/org');
                   }}
-                  className="btn-glass w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 rounded-none rounded-tl-lg sm:rounded-lg text-xs sm:text-sm font-medium flex items-center justify-center sm:gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  className="btn-glass w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium flex items-center justify-center sm:gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
                   {role === 'admin' ? ClimateIcons.approved : role === 'artist' ? ClimateIcons.trophy : ClimateIcons.guide}
                   <span className="hidden sm:inline">{role === 'artist' ? 'Artist' : role === 'admin' ? 'Admin' : 'Org'} Dashboard</span>
@@ -123,7 +123,7 @@ export function PublicHeader({
                 {/* Top-right: Hamburger */}
                 <button
                   onClick={() => setIsMobileCollapsed(!isMobileCollapsed)}
-                  className="sm:hidden btn-glass w-8 h-8 rounded-none rounded-tr-lg text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors flex items-center justify-center"
+                  className="sm:hidden btn-glass w-8 h-8 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors flex items-center justify-center"
                   title={isMobileCollapsed ? 'Show filters' : 'Hide filters'}
                   aria-label={isMobileCollapsed ? 'Show filters' : 'Hide filters'}
                 >
@@ -133,7 +133,7 @@ export function PublicHeader({
                 {/* Bottom-left: Theme */}
                 <button
                   onClick={toggleTheme}
-                  className="btn-glass w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 rounded-none rounded-bl-lg sm:rounded-lg text-xs sm:text-sm font-medium flex items-center justify-center sm:gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  className="btn-glass w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium flex items-center justify-center sm:gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                   title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
                 >
                   {theme === 'light' ? ClimateIcons.moon : ClimateIcons.sun}
@@ -146,7 +146,7 @@ export function PublicHeader({
                     logout();
                     router.push('/');
                   }}
-                  className="btn-glass text-gray-600 dark:text-gray-300 w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 rounded-none rounded-br-lg sm:rounded-lg text-xs sm:text-sm font-medium hover:text-gray-900 dark:hover:text-white transition-colors flex items-center justify-center sm:gap-2"
+                  className="btn-glass text-gray-600 dark:text-gray-300 w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium hover:text-gray-900 dark:hover:text-white transition-colors flex items-center justify-center sm:gap-2"
                 >
                   {ClimateIcons.logout}
                   <span className="hidden sm:inline">Logout</span>
@@ -155,7 +155,7 @@ export function PublicHeader({
             ) : (
               <div className="grid grid-cols-2 grid-rows-2 gap-0 sm:flex sm:gap-2 sm:w-auto sm:h-auto flex-shrink-0">
                 {/* Top-left: MDEUS Logo for logged-out users */}
-                <div className="w-11 h-10 sm:w-auto sm:h-10 flex items-center justify-center sm:gap-2 rounded-none rounded-tl-lg sm:rounded-lg bg-transparent hover:bg-white/10 dark:hover:bg-black/10 transition-colors">
+                <div className="w-11 h-10 sm:w-auto sm:h-10 flex items-center justify-center sm:gap-2 bg-transparent hover:bg-white/10 dark:hover:bg-black/10 transition-colors">
                   <a 
                     href="https://www.musicdeclares.net/us/campaigns/mde-us-amplify-program"
                     target="_blank"
@@ -177,7 +177,7 @@ export function PublicHeader({
                 {/* Top-right: Hamburger */}
                 <button
                   onClick={() => setIsMobileCollapsed(!isMobileCollapsed)}
-                  className="sm:hidden btn-glass w-8 h-8 rounded-none rounded-tr-lg text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors flex items-center justify-center"
+                  className="sm:hidden btn-glass w-8 h-8 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors flex items-center justify-center"
                   title={isMobileCollapsed ? 'Show filters' : 'Hide filters'}
                   aria-label={isMobileCollapsed ? 'Show filters' : 'Hide filters'}
                 >
@@ -187,7 +187,7 @@ export function PublicHeader({
                 {/* Bottom-left: Theme */}
                 <button
                   onClick={toggleTheme}
-                  className="btn-glass w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 rounded-none rounded-bl-lg sm:rounded-lg text-xs sm:text-sm font-medium flex items-center justify-center sm:gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  className="btn-glass w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium flex items-center justify-center sm:gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                   title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
                 >
                   {theme === 'light' ? ClimateIcons.moon : ClimateIcons.sun}
@@ -197,7 +197,7 @@ export function PublicHeader({
                 {/* Bottom-right: Login */}
                 <button
                   onClick={() => router.push('/login')}
-                  className="btn-glass w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 rounded-none rounded-br-lg sm:rounded-lg text-xs sm:text-sm font-medium flex items-center justify-center sm:gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  className="btn-glass w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium flex items-center justify-center sm:gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
                   {ClimateIcons.login}
                   <span className="hidden sm:inline">Login</span>
@@ -230,7 +230,7 @@ export function PublicHeader({
           {isEmbedded && (
             <button
               onClick={() => setIsMobileCollapsed(!isMobileCollapsed)}
-              className="sm:hidden btn-glass w-8 h-8 rounded-lg text-black dark:text-white hover:text-gray-700 dark:hover:text-gray-300 transition-colors flex items-center justify-center mt-3"
+              className="sm:hidden btn-glass w-8 h-8  text-black dark:text-white hover:text-gray-700 dark:hover:text-gray-300 transition-colors flex items-center justify-center mt-3"
               title={isMobileCollapsed ? 'Show filters' : 'Hide filters'}
               aria-label={isMobileCollapsed ? 'Show filters' : 'Hide filters'}
             >
@@ -263,21 +263,21 @@ export function PublicHeader({
             placeholder="Search organizations..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 panel-glass border border-gray-600/50 dark:border-gray-600/50 rounded-lg placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-[#f7ed6a]/70 focus:ring-1 focus:ring-[#f7ed6a]/30 transition-all duration-200"
+            className="w-full pl-10 pr-4 py-2 panel-glass border border-gray-600/50 dark:border-gray-600/50  placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-[#f7ed6a]/70 focus:ring-1 focus:ring-[#f7ed6a]/30 transition-all duration-200"
           />
 
           {/* Search Loading Bar */}
           {isSearching && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-300 dark:bg-gray-700 rounded-b-lg overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 search-progress-bar animate-pulse rounded-b-lg"></div>
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-300 dark:bg-gray-700 overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 search-progress-bar animate-pulse"></div>
             </div>
           )}
 
           {/* Metadata Loading Bar */}
           {metadataProgress && metadataProgress.loading > 0 && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-300 dark:bg-gray-700 rounded-b-lg overflow-hidden">
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-300 dark:bg-gray-700 overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 transition-all duration-500 ease-out rounded-b-lg"
+                className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 transition-all duration-500 ease-out"
                 style={{
                   width: `${metadataProgress.percentage}%`,
                   boxShadow: '0 0 8px rgba(16, 185, 129, 0.4)'
@@ -289,7 +289,7 @@ export function PublicHeader({
           {/* Metadata Progress Text */}
           {metadataProgress && metadataProgress.loading > 0 && (
             <div className="absolute -bottom-5 right-0 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-emerald-400 animate-pulse"></div>
               <span>Loading metadata: {metadataProgress.loaded}/{metadataProgress.total}</span>
             </div>
           )}
@@ -303,7 +303,7 @@ export function PublicHeader({
             {hasActiveFilters && (
               <button
                 onClick={clearAllFilters}
-                className="btn-glass text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-lg text-xs transition-all duration-200 flex items-center gap-1 ml-2"
+                className="btn-glass text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white px-3 py-2  text-xs transition-all duration-200 flex items-center gap-1 ml-2"
               >
                 {ClimateIcons.cancel}
                 <span>Clear Filters</span>
@@ -370,7 +370,7 @@ export function PublicHeader({
                 ...sortOptions,
                 direction: sortOptions.direction === 'asc' ? 'desc' : 'asc'
               })}
-              className={`btn-glass px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 min-w-[80px] justify-center ${sortOptions.direction === 'asc'
+              className={`btn-glass px-3 py-2 text-sm font-medium transition-all duration-200 flex items-center gap-1 min-w-[80px] justify-center ${sortOptions.direction === 'asc'
                   ? 'btn-glass-blue text-blue-300'
                   : 'btn-glass-purple text-purple-300'
                 }`}

@@ -46,7 +46,7 @@ export function ScoringSection({
     <div className="scoring-section" >
       {isExpanded && (
         <div
-          className="panel-glass border-t p-6 rounded-b-2xl backdrop-blur-md stained-glass overflow-visible transition-all duration-200 ease-out"
+          className="panel-glass border-t p-6 backdrop-blur-md stained-glass overflow-visible transition-all duration-200 ease-out"
           style={{
             backgroundColor: 'var(--org-glass-bg)',
             borderColor: 'var(--org-glass-border)',
@@ -65,9 +65,9 @@ export function ScoringSection({
               {/* Compact Progress Indicator */}
               <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--foreground, #9ca3af)' }}>
                 <span>{scoredCriteria}/{SCORING_CRITERIA.length}</span>
-                <div className="w-16 h-1.5 bg-gray-800/60 rounded-full overflow-hidden">
+                <div className="w-16 h-1.5 bg-gray-800/60  overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-300"
+                    className="h-full bg-gradient-to-r from-blue-500 to-purple-500  transition-all duration-300"
                     style={{ width: `${(scoredCriteria / SCORING_CRITERIA.length) * 100}%` }}
                   />
                 </div>
@@ -79,7 +79,7 @@ export function ScoringSection({
               {/* Recommendation Badge */}
               {totalScore !== null && totalScore > 0 && (
                 <div 
-                  className={`flex items-center gap-1 px-1 py-1 rounded-lg text-xs font-medium flex-shrink-0 scoring-badge
+                  className={`flex items-center gap-1 px-1 py-1  text-xs font-medium flex-shrink-0 scoring-badge
                     ${totalScore >= 21 ? 'scoring-badge-strong' :
                       totalScore >= 13 ? 'scoring-badge-promising' :
                       'scoring-badge-low'
@@ -100,7 +100,7 @@ export function ScoringSection({
               <div className="flex flex-col-reverse sm:flex-row items-center gap-2 flex-1 min-w-0 justify-end">
                 {totalScore !== null && (
                   <div 
-                    className={`px-1 py-1 rounded-lg text-sm font-bold backdrop-blur-sm border scoring-total-badge
+                    className={`px-1 py-1  text-sm font-bold backdrop-blur-sm border scoring-total-badge
                       ${totalScore >= 21 ? 'scoring-total-strong' :
                         totalScore >= 13 ? 'scoring-total-promising' :
                         'scoring-total-low'
@@ -114,7 +114,7 @@ export function ScoringSection({
                 <button
                   onClick={handleSave}
                   disabled={savingScores === orgId}
-                  className="px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 hover:translate-y-[-1px] scoring-save-btn"
+                  className="px-4 py-2  text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 hover:translate-y-[-1px] scoring-save-btn"
                   style={{
                     backgroundColor: 'var(--org-glass-bg)',
                     borderColor: 'var(--org-glass-border)',
@@ -142,7 +142,7 @@ export function ScoringSection({
           </div>
 
           {/* Compact Scoring Guide */}
-          <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+          <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 ">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {ClimateIcons.guide}
@@ -150,15 +150,15 @@ export function ScoringSection({
               </div>
               <div className="flex items-center gap-4 text-xs">
                 <div className="flex items-center gap-1">
-                  <span className="w-4 h-4 bg-red-600 text-white rounded text-center text-xs font-bold flex items-center justify-center">0</span>
+                  <span className="w-4 h-4 bg-red-600 text-white  text-center text-xs font-bold flex items-center justify-center">0</span>
                   <span style={{ color: 'var(--foreground, #9ca3af)' }}>No</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="w-4 h-4 bg-yellow-600 text-white rounded text-center text-xs font-bold flex items-center justify-center">1</span>
+                  <span className="w-4 h-4 bg-yellow-600 text-white  text-center text-xs font-bold flex items-center justify-center">1</span>
                   <span style={{ color: 'var(--foreground, #9ca3af)' }}>Unclear</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="w-4 h-4 bg-green-600 text-white rounded text-center text-xs font-bold flex items-center justify-center">2</span>
+                  <span className="w-4 h-4 bg-green-600 text-white  text-center text-xs font-bold flex items-center justify-center">2</span>
                   <span style={{ color: 'var(--foreground, #9ca3af)' }}>Yes</span>
                 </div>
               </div>
@@ -177,7 +177,7 @@ export function ScoringSection({
               return (
                 <div
                   key={criterion.key}
-                  className={`scoring-criterion-card rounded-lg p-3 border ${
+                  className={`scoring-criterion-card  p-3 border ${
                     currentScore !== undefined 
                       ? currentScore === 2 
                         ? 'border-green-500/30 bg-green-500/5' 
@@ -197,7 +197,7 @@ export function ScoringSection({
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1 min-w-0 pr-2">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="criterion-number text-xs px-1.5 py-0.5 rounded font-mono flex-shrink-0">
+                        <span className="criterion-number text-xs px-1.5 py-0.5  font-mono flex-shrink-0">
                           {index + 1}
                         </span>
                         <h5 className="criterion-title font-medium text-sm">
@@ -229,7 +229,7 @@ export function ScoringSection({
                       
                       {/* Compact Score Indicator */}
                       {currentScore !== undefined && (
-                        <div className={`text-xs font-bold px-1.5 py-0.5 rounded-full ${
+                        <div className={`text-xs font-bold px-1.5 py-0.5  ${
                           currentScore === 0 ? 'text-red-200 bg-red-800/50' :
                           currentScore === 1 ? 'text-yellow-200 bg-yellow-800/50' : 
                           'text-green-200 bg-green-800/50'
@@ -251,7 +251,7 @@ export function ScoringSection({
               return (
                 <div
                   key={criterion.key}
-                  className={`scoring-criterion-card rounded-lg p-3 border ${
+                  className={`scoring-criterion-card  p-3 border ${
                     currentScore !== undefined 
                       ? currentScore === 2 
                         ? 'border-green-500/30 bg-green-500/5' 
@@ -270,7 +270,7 @@ export function ScoringSection({
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1 min-w-0 pr-2">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="criterion-number text-xs px-1.5 py-0.5 rounded font-mono flex-shrink-0">
+                        <span className="criterion-number text-xs px-1.5 py-0.5  font-mono flex-shrink-0">
                           {actualIndex + 1}
                         </span>
                         <h5 className="criterion-title font-medium text-sm">
@@ -299,7 +299,7 @@ export function ScoringSection({
                       />
                       
                       {currentScore !== undefined && (
-                        <div className={`text-xs font-bold px-1.5 py-0.5 rounded-full ${
+                        <div className={`text-xs font-bold px-1.5 py-0.5  ${
                           currentScore === 0 ? 'text-red-200 bg-red-800/50' :
                           currentScore === 1 ? 'text-yellow-200 bg-yellow-800/50' : 
                           'text-green-200 bg-green-800/50'
@@ -315,7 +315,7 @@ export function ScoringSection({
 
             {/* Additional Notes - Spans 2 columns under 11th and 12th criteria */}
             <div 
-              className="comments-section rounded-lg p-3 border"
+              className="comments-section  p-3 border"
               style={{ 
                 backgroundColor: 'var(--org-glass-bg)', 
                 borderColor: 'var(--org-glass-border)'
@@ -334,7 +334,7 @@ export function ScoringSection({
               <textarea
                 value={scores?.comments || ''}
                 onChange={(e) => onScoreUpdate(orgId, 'comments', e.target.value)}
-                className="w-full p-2.5 border rounded focus:outline-none h-20 resize-none transition-all duration-200 text-xs leading-relaxed"
+                className="w-full p-2.5 border  focus:outline-none h-20 resize-none transition-all duration-200 text-xs leading-relaxed"
                 style={{ 
                   backgroundColor: 'var(--org-glass-bg)', 
                   borderColor: 'var(--org-glass-border)',
@@ -369,7 +369,7 @@ export function ScoringSection({
               return (
                 <div
                   key={criterion.key}
-                  className={`scoring-criterion-card rounded-lg p-3 border ${
+                  className={`scoring-criterion-card  p-3 border ${
                     currentScore !== undefined 
                       ? currentScore === 2 
                         ? 'border-green-500/30 bg-green-500/5' 
@@ -388,7 +388,7 @@ export function ScoringSection({
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1 min-w-0 pr-2">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs px-1.5 py-0.5 rounded font-mono flex-shrink-0" style={{ backgroundColor: 'var(--org-glass-border)', color: 'var(--foreground, #9ca3af)' }}>
+                        <span className="text-xs px-1.5 py-0.5  font-mono flex-shrink-0" style={{ backgroundColor: 'var(--org-glass-border)', color: 'var(--foreground, #9ca3af)' }}>
                           {actualIndex + 1}
                         </span>
                         <h5 className="font-medium text-sm" style={{ color: 'var(--foreground)' }}>
@@ -417,7 +417,7 @@ export function ScoringSection({
                       />
                       
                       {currentScore !== undefined && (
-                        <div className={`text-xs font-bold px-1.5 py-0.5 rounded-full ${
+                        <div className={`text-xs font-bold px-1.5 py-0.5  ${
                           currentScore === 0 ? 'text-red-200 bg-red-800/50' :
                           currentScore === 1 ? 'text-yellow-200 bg-yellow-800/50' : 
                           'text-green-200 bg-green-800/50'

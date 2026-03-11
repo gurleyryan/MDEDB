@@ -195,7 +195,7 @@ export default function HomePage() {
     return (
       <div className="min-h-screen page-glass-bg text-gray-900 dark:text-white flex items-center justify-center transition-colors duration-300">
         <div className="text-center">
-          <div className="animate-spin h-12 w-12 border-4 border-blue-400 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <div className="loading-spinner animate-spin h-12 w-12 border-4 border-blue-400 border-t-transparent mx-auto mb-4"></div>
           <p className="text-lg">Loading organizations...</p>
         </div>
       </div>
@@ -211,7 +211,7 @@ export default function HomePage() {
           <p className="text-gray-300 mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500 transition-colors"
+            className="bg-blue-600 text-white px-4 py-2 hover:bg-blue-500 transition-colors"
           >
             Retry
           </button>
@@ -277,7 +277,7 @@ export default function HomePage() {
       {showScrollTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full backdrop-blur-2xl  flex items-center justify-center transition-all duration-200 group scroll-to-top-btn"
+          className="fixed bottom-6 right-6 z-50 w-16 h-16 backdrop-blur-2xl  flex items-center justify-center transition-all duration-200 group scroll-to-top-btn"
           title="Scroll to top"
           aria-label="Scroll to top"
         >

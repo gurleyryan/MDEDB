@@ -142,7 +142,7 @@ export function AdminHeader({
               {/* Top-left: Add Org */}
               <button
                 onClick={onAddNew}
-                className="btn-glass btn-glass-green w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 rounded-none rounded-tl-lg sm:rounded-lg text-xs sm:text-sm font-medium flex items-center justify-center sm:gap-2 hover:shadow-glow-green transition-all duration-200"
+                className="btn-glass btn-glass-green w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium flex items-center justify-center sm:gap-2 hover:shadow-glow-green transition-all duration-200"
               >
                 {ClimateIcons.plus}
                 <span className="hidden sm:inline">Add Organization</span>
@@ -151,7 +151,7 @@ export function AdminHeader({
               {/* Top-right: Hamburger */}
               <button
                 onClick={() => setIsMobileCollapsed(!isMobileCollapsed)}
-                className="sm:hidden btn-glass w-8 h-8 rounded-none rounded-tr-lg text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors flex items-center justify-center"
+                className="sm:hidden btn-glass w-8 h-8 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors flex items-center justify-center"
                 title={isMobileCollapsed ? 'Show filters' : 'Hide filters'}
                 aria-label={isMobileCollapsed ? 'Show filters' : 'Hide filters'}
               >
@@ -161,7 +161,7 @@ export function AdminHeader({
               {/* Bottom-left: Theme */}
               <button
                 onClick={toggleTheme}
-                className="btn-glass w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 rounded-none rounded-bl-lg sm:rounded-lg text-xs sm:text-sm font-medium flex items-center justify-center sm:gap-1 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                className="btn-glass w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 text-xs sm:text-sm font-medium flex items-center justify-center sm:gap-1 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                 title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
               >
                 {theme === 'light' ? ClimateIcons.moon : ClimateIcons.sun}
@@ -171,7 +171,7 @@ export function AdminHeader({
               {/* Bottom-right: Logout */}
               <button
                 onClick={onLogout}
-                className="btn-glass text-gray-700 dark:text-gray-300 w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 rounded-none rounded-br-lg sm:rounded-lg text-xs sm:text-sm font-medium hover:text-gray-900 dark:hover:text-white transition-colors flex items-center justify-center sm:gap-2"
+                className="btn-glass text-gray-700 dark:text-gray-300 w-8 h-8 sm:w-auto sm:h-10 px-1 sm:px-3 py-1 sm:py-2 sm: text-xs sm:text-sm font-medium hover:text-gray-900 dark:hover:text-white transition-colors flex items-center justify-center sm:gap-2"
               >
                 {ClimateIcons.logout}
                 <span className="hidden sm:inline">Logout</span>
@@ -221,21 +221,21 @@ export function AdminHeader({
             placeholder="Search organizations..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 panel-glass border border-gray-600/50 dark:border-gray-600/50 rounded-lg placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all duration-200"
+            className="w-full pl-10 pr-4 py-2 panel-glass border border-gray-600/50 dark:border-gray-600/50  placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all duration-200"
           />
 
           {/* Search Loading Bar */}
           {isSearching && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-300 dark:bg-gray-700 rounded-b-lg overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 search-progress-bar animate-pulse rounded-b-lg"></div>
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-300 dark:bg-gray-700 overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 search-progress-bar animate-pulse "></div>
             </div>
           )}
 
           {/* Metadata Loading Bar */}
           {metadataProgress && metadataProgress.loading > 0 && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-300 dark:bg-gray-700 rounded-b-lg overflow-hidden">
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-300 dark:bg-gray-700 overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 transition-all duration-500 ease-out rounded-b-lg"
+                className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500 transition-all duration-500 ease-out "
                 style={{
                   width: `${metadataProgress.percentage}%`,
                   boxShadow: '0 0 8px rgba(16, 185, 129, 0.4)'
@@ -247,7 +247,7 @@ export function AdminHeader({
           {/* Metadata Progress Text */}
           {metadataProgress && metadataProgress.loading > 0 && (
             <div className="absolute -bottom-5 right-0 text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-emerald-400 animate-pulse"></div>
               <span>Loading metadata: {metadataProgress.loaded}/{metadataProgress.total}</span>
             </div>
           )}
@@ -262,7 +262,7 @@ export function AdminHeader({
               <button
                 onClick={() => onFilterChange('approved')}
                 onMouseDown={(e) => e.preventDefault()} // Prevent focus auto-scroll
-                className={`flex items-center gap-1 px-2 py-2 rounded-lg transition-all duration-200 text-xs ${filter === 'approved'
+                className={`flex items-center gap-1 px-2 py-2  transition-all duration-200 text-xs ${filter === 'approved'
                     ? 'bg-green-500/20 text-green-300 border border-green-500/30'
                     : 'hover:bg-green-500/10 hover:text-green-300'
                   }`}
@@ -274,7 +274,7 @@ export function AdminHeader({
               <button
                 onClick={() => onFilterChange('pending')}
                 onMouseDown={(e) => e.preventDefault()} // Prevent focus auto-scroll
-                className={`flex items-center gap-1 px-2 py-2 rounded-lg transition-all duration-200 text-xs ${filter === 'pending'
+                className={`flex items-center gap-1 px-2 py-2  transition-all duration-200 text-xs ${filter === 'pending'
                     ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
                     : 'hover:bg-yellow-500/10 hover:text-yellow-300'
                   }`}
@@ -286,7 +286,7 @@ export function AdminHeader({
               <button
                 onClick={() => onFilterChange('rejected')}
                 onMouseDown={(e) => e.preventDefault()} // Prevent focus auto-scroll
-                className={`flex items-center gap-1 px-2 py-2 rounded-lg transition-all duration-200 text-xs ${filter === 'rejected'
+                className={`flex items-center gap-1 px-2 py-2  transition-all duration-200 text-xs ${filter === 'rejected'
                     ? 'bg-red-500/20 text-red-300 border border-red-500/30'
                     : 'hover:bg-red-500/10 hover:text-red-300'
                   }`}
@@ -299,7 +299,7 @@ export function AdminHeader({
               <button
                 onClick={() => onFilterChange('all')}
                 onMouseDown={(e) => e.preventDefault()} // Prevent focus auto-scroll
-                className={`flex items-center gap-1 px-2 py-2 rounded-lg transition-all duration-200 text-xs ${filter === 'all'
+                className={`flex items-center gap-1 px-2 py-2  transition-all duration-200 text-xs ${filter === 'all'
                     ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
                     : 'hover:bg-blue-500/10 hover:text-blue-300'
                   }`}
@@ -315,7 +315,7 @@ export function AdminHeader({
               {hasActiveFilters && (
                 <button
                   onClick={clearAllFilters}
-                  className="btn-glass text-gray-400 hover:text-white px-2 py-2 rounded-lg text-xs transition-all duration-200 flex items-center gap-1"
+                  className="btn-glass text-gray-400 hover:text-white px-2 py-2  text-xs transition-all duration-200 flex items-center gap-1"
                 >
                   {ClimateIcons.cancel}
                 </button>
@@ -401,7 +401,7 @@ export function AdminHeader({
                     ...sortOptions,
                     direction: sortOptions.direction === 'asc' ? 'desc' : 'asc'
                   })}
-                  className={`btn-glass px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 min-w-[80px] justify-center ${sortOptions.direction === 'asc'
+                  className={`btn-glass px-3 py-2  text-sm font-medium transition-all duration-200 flex items-center gap-1 min-w-[80px] justify-center ${sortOptions.direction === 'asc'
                       ? 'btn-glass-blue text-blue-300'
                       : 'btn-glass-purple text-purple-300'
                     }`}
@@ -428,7 +428,7 @@ export function AdminHeader({
               <button
                 onClick={() => onFilterChange('approved')}
                 onMouseDown={(e) => e.preventDefault()} // Prevent focus auto-scroll
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${filter === 'approved'
+                className={`flex items-center gap-2 px-3 py-2  transition-all duration-200 ${filter === 'approved'
                     ? 'bg-green-500/20 text-green-300 border border-green-500/30'
                     : 'hover:bg-green-500/10 hover:text-green-300'
                   }`}
@@ -440,7 +440,7 @@ export function AdminHeader({
               <button
                 onClick={() => onFilterChange('pending')}
                 onMouseDown={(e) => e.preventDefault()} // Prevent focus auto-scroll
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${filter === 'pending'
+                className={`flex items-center gap-2 px-3 py-2  transition-all duration-200 ${filter === 'pending'
                     ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
                     : 'hover:bg-yellow-500/10 hover:text-yellow-300'
                   }`}
@@ -452,7 +452,7 @@ export function AdminHeader({
               <button
                 onClick={() => onFilterChange('rejected')}
                 onMouseDown={(e) => e.preventDefault()} // Prevent focus auto-scroll
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${filter === 'rejected'
+                className={`flex items-center gap-2 px-3 py-2  transition-all duration-200 ${filter === 'rejected'
                     ? 'bg-red-500/20 text-red-300 border border-red-500/30'
                     : 'hover:bg-red-500/10 hover:text-red-300'
                   }`}
@@ -465,7 +465,7 @@ export function AdminHeader({
               <button
                 onClick={() => onFilterChange('all')}
                 onMouseDown={(e) => e.preventDefault()} // Prevent focus auto-scroll
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 ${filter === 'all'
+                className={`flex items-center gap-2 px-3 py-2  transition-all duration-200 ${filter === 'all'
                     ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
                     : 'hover:bg-blue-500/10 hover:text-blue-300'
                   }`}
@@ -483,7 +483,7 @@ export function AdminHeader({
               {hasActiveFilters && (
                 <button
                   onClick={clearAllFilters}
-                  className="btn-glass text-gray-400 hover:text-white px-3 py-2 rounded-lg text-xs transition-all duration-200 flex items-center gap-1 ml-2"
+                  className="btn-glass text-gray-400 hover:text-white px-3 py-2  text-xs transition-all duration-200 flex items-center gap-1 ml-2"
                 >
                   {ClimateIcons.cancel}
                   <span>Clear Filters</span>
@@ -567,7 +567,7 @@ export function AdminHeader({
                   ...sortOptions,
                   direction: sortOptions.direction === 'asc' ? 'desc' : 'asc'
                 })}
-                className={`btn-glass px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 min-w-[80px] justify-center ${sortOptions.direction === 'asc'
+                className={`btn-glass px-3 py-2  text-sm font-medium transition-all duration-200 flex items-center gap-1 min-w-[80px] justify-center ${sortOptions.direction === 'asc'
                     ? 'btn-glass-blue text-blue-300'
                     : 'btn-glass-purple text-purple-300'
                   }`}

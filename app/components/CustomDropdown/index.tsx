@@ -330,7 +330,7 @@ export function CustomDropdown({
   const dropdownMenu = (
     <div
       ref={dropdownMenuRef}
-      className="dropdown-glass rounded-lg overflow-hidden"
+      className="dropdown-glass overflow-hidden"
       style={
         portal && dropdownPos
           ? {

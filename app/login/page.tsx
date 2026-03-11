@@ -24,7 +24,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: 'var(--background)' }}>
       <div className="w-full max-w-md">
-        <div className="panel-glass backdrop-blur-xl rounded-lg shadow-lg border border-gray-600/50 dark:border-gray-600/50 p-8 space-y-6">
+        <div className="panel-glass backdrop-blur-xl shadow-lg border border-gray-600/50 dark:border-gray-600/50 p-8 space-y-6">
           <div>
             <h1 className="text-3xl font-bold font-mde" style={{ color: 'var(--foreground)' }}>Admin Login</h1>
             <p className="text-sm" style={{ color: 'var(--foreground)', opacity: 0.7 }}>Sign in to manage organizations</p>
@@ -41,7 +41,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-2 panel-glass border border-gray-600/50 dark:border-gray-600/50 rounded-lg placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all duration-200"
+                className="w-full px-4 py-2 panel-glass border border-gray-600/50 dark:border-gray-600/50 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all duration-200"
                 style={{ color: 'var(--foreground)' }}
               />
             </div>
@@ -56,20 +56,20 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-2 panel-glass border border-gray-600/50 dark:border-gray-600/50 rounded-lg placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all duration-200"
+                className="w-full px-4 py-2 panel-glass border border-gray-600/50 dark:border-gray-600/50 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all duration-200"
                 style={{ color: 'var(--foreground)' }}
               />
             </div>
 
             {error && (
-              <div className="panel-glass border border-red-500/50 rounded-lg p-3">
+              <div className="panel-glass border border-red-500/50 p-3">
                 <p className="text-red-500 text-sm font-mde">{error}</p>
               </div>
             )}
 
             <button
               type="submit"
-              className="w-full panel-glass border border-gray-600/50 dark:border-gray-600/50 font-medium font-mde py-2 px-4 rounded-lg transition-all duration-200 hover:border-[#f7ed6a] hover:text-[#f7ed6a]"
+              className="w-full panel-glass border border-gray-600/50 dark:border-gray-600/50 font-medium font-mde py-2 px-4 transition-all duration-200 hover:border-[#f7ed6a] hover:text-[#f7ed6a]"
               style={{ color: 'var(--foreground)' }}
             >
               Sign In

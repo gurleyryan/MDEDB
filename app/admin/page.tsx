@@ -415,7 +415,7 @@ export default function AdminOrgs() {
     return (
       <div className="min-h-screen page-glass-bg text-gray-900 dark:text-white flex items-center justify-center transition-colors duration-300">
         <div className="text-center">
-          <div className="animate-spin h-12 w-12 border-4 border-blue-400 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <div className="loading-spinner animate-spin h-12 w-12 border-4 border-blue-400 border-t-transparent mx-auto mb-4"></div>
           <p className="text-lg">Loading organizations...</p>
         </div>
       </div>
@@ -431,7 +431,7 @@ export default function AdminOrgs() {
           <p className="text-gray-300 mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500 transition-colors"
+            className="bg-blue-600 text-white px-4 py-2 hover:bg-blue-500 transition-colors"
           >
             Retry
           </button>
@@ -636,7 +636,7 @@ export default function AdminOrgs() {
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-500 transition-colors"
+                    className="bg-blue-600 text-white px-4 py-2 font-medium hover:bg-blue-500 transition-colors"
                   >
                     Clear Search
                   </button>
@@ -644,7 +644,7 @@ export default function AdminOrgs() {
                 {filter === 'all' && (
                   <button
                     onClick={() => setShowAddForm(true)}
-                    className="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-500 transition-colors"
+                    className="bg-green-600 text-white px-4 py-2font-medium hover:bg-green-500 transition-colors"
                   >
                     ➕ Add Your First Organization
                   </button>
@@ -658,45 +658,89 @@ export default function AdminOrgs() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="mt-8 p-4 bg-gray-800/50 rounded-lg border border-gray-700"
+              className="mt-8 border p-4 md:p-5"
+              style={{
+                background: 'linear-gradient(135deg, var(--org-glass-bg), color-mix(in srgb, var(--background) 72%, transparent))',
+                borderColor: 'var(--org-glass-border)',
+                boxShadow: '0 12px 30px rgba(0, 0, 0, 0.08)'
+              }}
             >
-              <h3 className="text-lg font-semibold mb-3 text-gray-200">
-                📊 Results Summary
+              <h3
+                className="mb-4 text-lg font-semibold"
+                style={{ color: 'var(--foreground)' }}
+              >
+                Results Summary
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-6 gap-4 text-sm">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-400">{filteredOrgs.length}</div>
-                  <div className="text-gray-400">Showing</div>
+                <div
+                  className="border px-3 py-4 text-center"
+                  style={{
+                    background: 'color-mix(in srgb, rgb(var(--mde-blue-rgb)) 10%, var(--background))',
+                    borderColor: 'color-mix(in srgb, rgb(var(--mde-blue-rgb)) 22%, var(--org-glass-border))'
+                  }}
+                >
+                  <div className="text-2xl font-bold" style={{ color: 'rgb(var(--mde-blue-rgb))' }}>{filteredOrgs.length}</div>
+                  <div style={{ color: 'color-mix(in srgb, var(--foreground) 65%, transparent)' }}>Showing</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-400">
+                <div
+                  className="border px-3 py-4 text-center"
+                  style={{
+                    background: 'color-mix(in srgb, rgb(var(--mde-green-rgb)) 10%, var(--background))',
+                    borderColor: 'color-mix(in srgb, rgb(var(--mde-green-rgb)) 22%, var(--org-glass-border))'
+                  }}
+                >
+                  <div className="text-2xl font-bold" style={{ color: 'rgb(var(--mde-green-rgb))' }}>
                     {filteredOrgs.filter(org => org.website).length}
                   </div>
-                  <div className="text-gray-400">With Websites</div>
+                  <div style={{ color: 'color-mix(in srgb, var(--foreground) 65%, transparent)' }}>With Websites</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-400">
+                <div
+                  className="border px-3 py-4 text-center"
+                  style={{
+                    background: 'color-mix(in srgb, rgb(var(--mde-pink-rgb)) 9%, var(--background))',
+                    borderColor: 'color-mix(in srgb, rgb(var(--mde-pink-rgb)) 22%, var(--org-glass-border))'
+                  }}
+                >
+                  <div className="text-2xl font-bold" style={{ color: 'rgb(var(--mde-pink-rgb))' }}>
                     {filteredOrgs.filter(org => org.alignment_score !== null && org.alignment_score !== undefined).length}
                   </div>
-                  <div className="text-gray-400">Scored</div>
+                  <div style={{ color: 'color-mix(in srgb, var(--foreground) 65%, transparent)' }}>Scored</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-400">
+                <div
+                  className="border px-3 py-4 text-center"
+                  style={{
+                    background: 'color-mix(in srgb, rgb(var(--mde-yellow-rgb)) 12%, var(--background))',
+                    borderColor: 'color-mix(in srgb, rgb(var(--mde-yellow-rgb)) 24%, var(--org-glass-border))'
+                  }}
+                >
+                  <div className="text-2xl font-bold" style={{ color: 'rgb(var(--mde-yellow-rgb))' }}>
                     {filteredOrgs.filter(org => org.alignment_score && org.alignment_score >= 21).length}
                   </div>
-                  <div className="text-gray-400">Strong Candidates</div>
+                  <div style={{ color: 'color-mix(in srgb, var(--foreground) 65%, transparent)' }}>Strong Candidates</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-cyan-400">
+                <div
+                  className="border px-3 py-4 text-center"
+                  style={{
+                    background: 'color-mix(in srgb, rgb(var(--mde-blue-rgb)) 8%, var(--background))',
+                    borderColor: 'color-mix(in srgb, rgb(var(--mde-blue-rgb)) 18%, var(--org-glass-border))'
+                  }}
+                >
+                  <div className="text-2xl font-bold" style={{ color: 'rgb(var(--mde-blue-rgb))' }}>
                     {loadedCount}/{totalCount}
                   </div>
-                  <div className="text-gray-400">Metadata Loaded</div>
+                  <div style={{ color: 'color-mix(in srgb, var(--foreground) 65%, transparent)' }}>Metadata Loaded</div>
                 </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-yellow-400">
+                <div
+                  className="border px-3 py-4 text-center"
+                  style={{
+                    background: 'color-mix(in srgb, rgb(var(--mde-green-rgb)) 8%, var(--background))',
+                    borderColor: 'color-mix(in srgb, rgb(var(--mde-green-rgb)) 18%, var(--org-glass-border))'
+                  }}
+                >
+                  <div className="text-2xl font-bold" style={{ color: 'rgb(var(--mde-green-rgb))' }}>
                     {new Set(filteredOrgs.map(org => getOrgContinent(org.country_code))).size}
                   </div>
-                  <div className="text-gray-400">Continents</div>
+                  <div style={{ color: 'color-mix(in srgb, var(--foreground) 65%, transparent)' }}>Continents</div>
                 </div>
               </div>
             </motion.div>
@@ -715,7 +759,7 @@ export default function AdminOrgs() {
         {showScrollTop && (
           <button
             onClick={scrollToTop}
-            className="fixed bottom-6 right-6 z-50 w-16 h-16 rounded-full backdrop-blur-2xl flex items-center justify-center transition-all duration-200 group scroll-to-top-btn"
+            className="fixed bottom-6 right-6 z-50 w-16 h-16 backdrop-blur-2xl flex items-center justify-center transition-all duration-200 group scroll-to-top-btn"
             title="Scroll to top"
             aria-label="Scroll to top"
           >

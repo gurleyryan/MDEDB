@@ -158,7 +158,7 @@ export default function ResetPasswordClient() {
       return (
         <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: 'var(--background)' }}>
           <div className="w-full max-w-md">
-            <div className="panel-glass backdrop-blur-xl rounded-lg shadow-lg border border-gray-600/50 dark:border-gray-600/50 p-8 space-y-6">
+            <div className="panel-glass backdrop-blur-xl  shadow-lg border border-gray-600/50 dark:border-gray-600/50 p-8 space-y-6">
               <div>
                 <h1 className="text-3xl font-bold font-mde" style={{ color: 'var(--foreground)' }}>Verifying Link...</h1>
               </div>
@@ -172,26 +172,26 @@ export default function ResetPasswordClient() {
     return (
       <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: 'var(--background)' }}>
         <div className="w-full max-w-md">
-          <div className="panel-glass backdrop-blur-xl rounded-lg shadow-lg border border-gray-600/50 dark:border-gray-600/50 p-8 space-y-6">
+          <div className="panel-glass backdrop-blur-xl  shadow-lg border border-gray-600/50 dark:border-gray-600/50 p-8 space-y-6">
             <div>
               <h1 className="text-3xl font-bold font-mde" style={{ color: 'var(--foreground)' }}>Reset Password</h1>
             </div>
             
-            <div className="panel-glass border border-red-500/50 rounded-lg p-4">
+            <div className="panel-glass border border-red-500/50  p-4">
               <p className="text-red-500 font-mde">{tokenError}</p>
             </div>
 
             <div className="space-y-3">
               <Link
                 href="/forgot-password"
-                className="block w-full text-center panel-glass border border-gray-600/50 dark:border-gray-600/50 font-medium font-mde py-2 px-4 rounded-lg transition-all duration-200 hover:border-[#f7ed6a] hover:text-[#f7ed6a]"
+                className="block w-full text-center panel-glass border border-gray-600/50 dark:border-gray-600/50 font-medium font-mde py-2 px-4  transition-all duration-200 hover:border-[#f7ed6a] hover:text-[#f7ed6a]"
                 style={{ color: 'var(--foreground)' }}
               >
                 Request a New Reset Link
               </Link>
               <Link
                 href="/login"
-                className="block w-full text-center panel-glass border border-gray-600/50 dark:border-gray-600/50 font-medium font-mde py-2 px-4 rounded-lg transition-all duration-200 hover:border-[#f7ed6a] hover:text-[#f7ed6a]"
+                className="block w-full text-center panel-glass border border-gray-600/50 dark:border-gray-600/50 font-medium font-mde py-2 px-4  transition-all duration-200 hover:border-[#f7ed6a] hover:text-[#f7ed6a]"
                 style={{ color: 'var(--foreground)' }}
               >
                 Back to Login
@@ -206,7 +206,7 @@ export default function ResetPasswordClient() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: 'var(--background)' }}>
       <div className="w-full max-w-md">
-        <div className="panel-glass backdrop-blur-xl rounded-lg shadow-lg border border-gray-600/50 dark:border-gray-600/50 p-8 space-y-6">
+        <div className="panel-glass backdrop-blur-xl  shadow-lg border border-gray-600/50 dark:border-gray-600/50 p-8 space-y-6">
           <div>
             <h1 className="text-3xl font-bold font-mde" style={{ color: 'var(--foreground)' }}>Set New Password</h1>
             <p className="text-sm font-mde" style={{ color: 'var(--foreground)', opacity: 0.7 }}>Enter a new password for your account</p>
@@ -223,7 +223,7 @@ export default function ResetPasswordClient() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-2 panel-glass border border-gray-600/50 dark:border-gray-600/50 rounded-lg placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all duration-200"
+                className="w-full px-4 py-2 panel-glass border border-gray-600/50 dark:border-gray-600/50  placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all duration-200"
                 style={{ color: 'var(--foreground)' }}
               />
             </div>
@@ -238,19 +238,19 @@ export default function ResetPasswordClient() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className="w-full px-4 py-2 panel-glass border border-gray-600/50 dark:border-gray-600/50 rounded-lg placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all duration-200"
+                className="w-full px-4 py-2 panel-glass border border-gray-600/50 dark:border-gray-600/50  placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:border-blue-500/50 transition-all duration-200"
                 style={{ color: 'var(--foreground)' }}
               />
             </div>
 
             {message && (
-              <div className="panel-glass border border-green-500/50 rounded-lg p-3">
+              <div className="panel-glass border border-green-500/50  p-3">
                 <p className="text-green-500 text-sm font-mde">{message}</p>
               </div>
             )}
 
             {error && (
-              <div className="panel-glass border border-red-500/50 rounded-lg p-3">
+              <div className="panel-glass border border-red-500/50  p-3">
                 <p className="text-red-500 text-sm font-mde">{error}</p>
               </div>
             )}
@@ -258,7 +258,7 @@ export default function ResetPasswordClient() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full panel-glass border border-gray-600/50 dark:border-gray-600/50 font-medium font-mde py-2 px-4 rounded-lg transition-all duration-200 hover:border-[#f7ed6a] hover:text-[#f7ed6a] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-600/50 disabled:hover:text-[var(--foreground)]"
+              className="w-full panel-glass border border-gray-600/50 dark:border-gray-600/50 font-medium font-mde py-2 px-4  transition-all duration-200 hover:border-[#f7ed6a] hover:text-[#f7ed6a] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-600/50 disabled:hover:text-[var(--foreground)]"
               style={{ color: 'var(--foreground)' }}
             >
               {loading ? 'Updating...' : 'Update Password'}

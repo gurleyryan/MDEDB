@@ -174,7 +174,7 @@ export function AddOrganizationModal({
       onClick={handleClose}
     >
       <div
-        className="add-org-modal-panel rounded-2xl w-full max-w-2xl shadow-2xl transform scale-100 flex flex-col"
+        className="add-org-modal-panel w-full max-w-2xl shadow-2xl transform scale-100 flex flex-col"
         style={{
           transition: 'transform 0.15s ease-out, opacity 0.15s ease-out',
           opacity: 1,
@@ -212,7 +212,7 @@ export function AddOrganizationModal({
                   value={formData.org_name || ''}
                   onChange={(e) => handleFieldChange('org_name', e.target.value)}
                   onBlur={() => handleFieldBlur('org_name')}
-                  className={`w-full p-3 bg-white dark:bg-black border rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors font-body ${errors.org_name
+                  className={`w-full p-3 bg-white dark:bg-black border  text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors font-body ${errors.org_name
                       ? 'border-red-500 focus:border-red-400'
                       : warnings.org_name
                         ? 'border-yellow-500 focus:border-yellow-400'
@@ -239,7 +239,7 @@ export function AddOrganizationModal({
                   value={formData.country_code || ''}
                   onChange={(e) => handleFieldChange('country_code', e.target.value.toUpperCase())}
                   onBlur={() => handleFieldBlur('country_code')}
-                  className={`w-full p-3 bg-white dark:bg-black border rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors font-body uppercase ${errors.country_code
+                  className={`w-full p-3 bg-white dark:bg-black border  text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors font-body uppercase ${errors.country_code
                       ? 'border-red-500 focus:border-red-400'
                       : warnings.country_code
                         ? 'border-yellow-500 focus:border-yellow-400'
@@ -267,7 +267,7 @@ export function AddOrganizationModal({
                   value={formData.website || ''}
                   onChange={(e) => handleFieldChange('website', e.target.value)}
                   onBlur={() => handleFieldBlur('website')}
-                  className={`w-full p-3 bg-white dark:bg-black border rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors font-body ${errors.website
+                  className={`w-full p-3 bg-white dark:bg-black border  text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors font-body ${errors.website
                       ? 'border-red-500 focus:border-red-400'
                       : warnings.website
                         ? 'border-yellow-500 focus:border-yellow-400'
@@ -289,7 +289,7 @@ export function AddOrganizationModal({
                   value={formData.email || ''}
                   onChange={(e) => handleFieldChange('email', e.target.value)}
                   onBlur={() => handleFieldBlur('email')}
-                  className={`w-full p-3 bg-white dark:bg-black border rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors h-24 resize-none ${errors.email
+                  className={`w-full p-3 bg-white dark:bg-black border  text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors h-24 resize-none ${errors.email
                       ? 'border-red-500 focus:border-red-400'
                       : warnings.email
                         ? 'border-yellow-500 focus:border-yellow-400'
@@ -315,7 +315,7 @@ export function AddOrganizationModal({
                   value={formData.type_of_work || ''}
                   onChange={(e) => handleFieldChange('type_of_work', e.target.value)}
                   onBlur={() => handleFieldBlur('type_of_work')}
-                  className={`w-full p-3 bg-white dark:bg-black border rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.type_of_work
+                  className={`w-full p-3 bg-white dark:bg-black border  text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.type_of_work
                       ? 'border-red-500 focus:border-red-400'
                       : warnings.type_of_work
                         ? 'border-yellow-500 focus:border-yellow-400'
@@ -332,7 +332,7 @@ export function AddOrganizationModal({
                   value={formData.years_active || ''}
                   onChange={(e) => handleFieldChange('years_active', e.target.value)}
                   onBlur={() => handleFieldBlur('years_active')}
-                  className={`w-full p-3 bg-white dark:bg-black border rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.years_active
+                  className={`w-full p-3 bg-white dark:bg-black border  text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.years_active
                       ? 'border-red-500 focus:border-red-400'
                       : warnings.years_active
                         ? 'border-yellow-500 focus:border-yellow-400'
@@ -350,7 +350,7 @@ export function AddOrganizationModal({
                 value={formData.capacity || ''}
                 onChange={(e) => handleFieldChange('capacity', e.target.value)}
                 onBlur={() => handleFieldBlur('capacity')}
-                className={`w-full p-3 bg-white dark:bg-black border rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.capacity
+                className={`w-full p-3 bg-white dark:bg-black border  text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.capacity
                     ? 'border-red-500 focus:border-red-400'
                     : warnings.capacity
                       ? 'border-yellow-500 focus:border-yellow-400'
@@ -372,7 +372,7 @@ export function AddOrganizationModal({
               <textarea
                 value={formData.mission_statement}
                 onChange={(e) => setFormData({ ...formData, mission_statement: e.target.value })}
-                className="w-full p-3 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-gray-500 dark:focus:border-gray-400 focus:outline-none transition-colors font-body resize-none"
+                className="w-full p-3 bg-white dark:bg-black border border-gray-300 dark:border-gray-700  text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-gray-500 dark:focus:border-gray-400 focus:outline-none transition-colors font-body resize-none"
                 rows={4}
                 placeholder="Enter the organization's mission statement"
               />
@@ -384,7 +384,7 @@ export function AddOrganizationModal({
                 value={formData.notable_success || ''}
                 onChange={(e) => handleFieldChange('notable_success', e.target.value)}
                 onBlur={() => handleFieldBlur('notable_success')}
-                className={`w-full p-3 bg-white dark:bg-black border rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${errors.notable_success
+                className={`w-full p-3 bg-white dark:bg-black border  text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${errors.notable_success
                     ? 'border-red-500 focus:border-red-400'
                     : warnings.notable_success
                       ? 'border-yellow-500 focus:border-yellow-400'
@@ -406,7 +406,7 @@ export function AddOrganizationModal({
                 value={formData.cta_notes || ''}
                 onChange={(e) => handleFieldChange('cta_notes', e.target.value)}
                 onBlur={() => handleFieldBlur('cta_notes')}
-                className={`w-full p-3 bg-white dark:bg-black border rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${errors.cta_notes
+                className={`w-full p-3 bg-white dark:bg-black border  text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${errors.cta_notes
                     ? 'border-red-500 focus:border-red-400'
                     : warnings.cta_notes
                       ? 'border-yellow-500 focus:border-yellow-400'
@@ -423,7 +423,7 @@ export function AddOrganizationModal({
             </div>
 
             <div
-              className="rounded-lg border p-3 flex items-center justify-between"
+              className=" border p-3 flex items-center justify-between"
               style={{
                 backgroundColor: 'var(--background)',
                 borderColor: 'var(--glass-border)'
@@ -452,7 +452,7 @@ export function AddOrganizationModal({
                   <button
                     key={status}
                     type="button"
-                    className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors border
+                    className={`flex-1 px-4 py-2  font-medium transition-colors border
                       ${formData.approval_status === status
                         ? status === 'approved'
                           ? 'bg-green-600 text-white'
@@ -472,12 +472,12 @@ export function AddOrganizationModal({
           </form>
         </div>
         {/* Action Buttons - Always visible at the bottom */}
-        <div className="add-org-modal-footer flex gap-3 p-4 pt-0 rounded-b-2xl">
+        <div className="add-org-modal-footer flex gap-3 p-4 pt-0">
           <button
             type="button"
             onClick={handleClose}
             disabled={isSubmitting}
-            className="add-org-secondary-button flex-1 px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            className="add-org-secondary-button flex-1 px-6 py-2  font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {ClimateIcons.cancel}
             <span>Cancel</span>
@@ -486,11 +486,11 @@ export function AddOrganizationModal({
             type="button"
             onClick={handleSubmit}
             disabled={isSubmitting || !formData.org_name?.trim() || !formData.country_code?.trim()}
-            className="flex-1 px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg font-medium hover:shadow-glow-green transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="flex-1 px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white  font-medium hover:shadow-glow-green transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
               <>
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <div className="loading-spinner w-4 h-4 border-2 border-white/30 border-t-white animate-spin"></div>
                 Adding...
               </>
             ) : (
