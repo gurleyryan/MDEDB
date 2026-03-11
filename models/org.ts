@@ -24,6 +24,7 @@ export interface Org {
   youtube?: string;
   tags?: string[];
   approval_status: 'pending' | 'approved' | 'rejected' | 'under_review';
+  is_strategic?: boolean;
   created_at?: string;
   updated_at?: string;
   created_by?: string;

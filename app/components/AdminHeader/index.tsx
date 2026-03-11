@@ -18,7 +18,7 @@ interface FilterOptions {
 }
 
 interface SortOptions {
-  field: 'name' | 'score' | 'status' | 'country' | 'recent' | 'website';
+  field: 'name' | 'score' | 'status' | 'country' | 'recent' | 'website' | 'strategic';
   direction: 'asc' | 'desc';
 }
 
@@ -337,6 +337,7 @@ export function AdminHeader({
                     })}
                     placeholder="Filter by continent..."
                     colorCoded={true}
+                    flatColorInDarkMode={true}
                     className="w-full"
                     portal={true}
                   />
@@ -370,6 +371,7 @@ export function AdminHeader({
                     })}
                     placeholder="Filter by score..."
                     colorCoded={true}
+                    flatColorInDarkMode={true}
                     className="w-full"
                     portal={true}
                   />
@@ -503,6 +505,7 @@ export function AdminHeader({
                   })}
                   placeholder="Filter by continent..."
                   colorCoded={true}
+                  flatColorInDarkMode={true}
                   className="w-full"
                   portal={true}
                 />
@@ -519,6 +522,7 @@ export function AdminHeader({
                   })}
                   placeholder="Filter by country..."
                   colorCoded={true}
+                  flatColorInDarkMode={true}
                   className="w-full"
                   portal={true}
                 />
@@ -535,6 +539,7 @@ export function AdminHeader({
                   })}
                   placeholder="Filter by score..."
                   colorCoded={true}
+                  flatColorInDarkMode={true}
                   className="w-full"
                   portal={true}
                 />

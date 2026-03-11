@@ -46,7 +46,7 @@ export function ScoringSection({
     <div className="scoring-section" >
       {isExpanded && (
         <div
-          className="panel-glass border-t p-6 rounded-b-2xl backdrop-blur-md stained-glass overflow-hidden transition-all duration-200 ease-out"
+          className="panel-glass border-t p-6 rounded-b-2xl backdrop-blur-md stained-glass overflow-visible transition-all duration-200 ease-out"
           style={{
             backgroundColor: 'var(--org-glass-bg)',
             borderColor: 'var(--org-glass-border)',
@@ -177,7 +177,7 @@ export function ScoringSection({
               return (
                 <div
                   key={criterion.key}
-                  className={`scoring-criterion-card rounded-lg p-3 border transition-all duration-200 ${
+                  className={`scoring-criterion-card rounded-lg p-3 border ${
                     currentScore !== undefined 
                       ? currentScore === 2 
                         ? 'border-green-500/30 bg-green-500/5' 
@@ -224,6 +224,7 @@ export function ScoringSection({
                         options={getScoringOptions()}
                         colorCoded={true}
                         className="min-w-[70px] text-center font-mono text-xs"
+                        portal={false}
                       />
                       
                       {/* Compact Score Indicator */}
@@ -250,7 +251,7 @@ export function ScoringSection({
               return (
                 <div
                   key={criterion.key}
-                  className={`scoring-criterion-card rounded-lg p-3 border transition-all duration-200 ${
+                  className={`scoring-criterion-card rounded-lg p-3 border ${
                     currentScore !== undefined 
                       ? currentScore === 2 
                         ? 'border-green-500/30 bg-green-500/5' 
@@ -294,6 +295,7 @@ export function ScoringSection({
                         options={getScoringOptions()}
                         colorCoded={true}
                         className="min-w-[70px] text-center font-mono text-xs"
+                        portal={false}
                       />
                       
                       {currentScore !== undefined && (
@@ -313,7 +315,7 @@ export function ScoringSection({
 
             {/* Additional Notes - Spans 2 columns under 11th and 12th criteria */}
             <div 
-              className="comments-section rounded-lg p-3 border transition-colors duration-200"
+              className="comments-section rounded-lg p-3 border"
               style={{ 
                 backgroundColor: 'var(--org-glass-bg)', 
                 borderColor: 'var(--org-glass-border)'
@@ -367,7 +369,7 @@ export function ScoringSection({
               return (
                 <div
                   key={criterion.key}
-                  className={`scoring-criterion-card rounded-lg p-3 border transition-all duration-200 ${
+                  className={`scoring-criterion-card rounded-lg p-3 border ${
                     currentScore !== undefined 
                       ? currentScore === 2 
                         ? 'border-green-500/30 bg-green-500/5' 
@@ -411,6 +413,7 @@ export function ScoringSection({
                         options={getScoringOptions()}
                         colorCoded={true}
                         className="min-w-[70px] text-center font-mono text-xs"
+                        portal={false}
                       />
                       
                       {currentScore !== undefined && (

@@ -37,7 +37,8 @@ export function AddOrganizationModal({
     cta_notes: '',
     years_active: '',
     capacity: '',
-    approval_status: 'pending'
+    approval_status: 'pending',
+    is_strategic: false
   });
   console.log('Modal rendered');
   const [errors, setErrors] = useState<FormErrors>({});
@@ -105,6 +106,7 @@ export function AddOrganizationModal({
     const validationErrors: FormErrors = {};
     allFields.forEach(field => {
       const value = formData[field];
+      if (typeof value === 'boolean') return;
       const stringValue = Array.isArray(value) ? value.join(', ') : value || '';
       const validation = validateField(field, stringValue);
       if (!validation.isValid) {
@@ -138,7 +140,8 @@ export function AddOrganizationModal({
         cta_notes: '',
         years_active: '',
         capacity: '',
-        approval_status: 'pending'
+        approval_status: 'pending',
+        is_strategic: false
       });
       setErrors({});
       setWarnings({});
@@ -171,7 +174,7 @@ export function AddOrganizationModal({
       onClick={handleClose}
     >
       <div
-        className="bg-gray-800 rounded-2xl w-full max-w-2xl shadow-2xl transform scale-100 flex flex-col"
+        className="add-org-modal-panel rounded-2xl w-full max-w-2xl shadow-2xl transform scale-100 flex flex-col"
         style={{
           transition: 'transform 0.15s ease-out, opacity 0.15s ease-out',
           opacity: 1,
@@ -183,25 +186,25 @@ export function AddOrganizationModal({
         <div className="flex-1 overflow-y-auto p-4 sm:p-6">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+            <h2 className="add-org-modal-title text-2xl font-bold flex items-center gap-2">
               {ClimateIcons.plus}
               <span>Add New Organization</span>
             </h2>
             <button
               onClick={handleClose}
               disabled={isSubmitting}
-              className="text-gray-400 hover:text-white transition-colors disabled:opacity-50 p-1"
+              className="add-org-close-button transition-colors disabled:opacity-50 p-1"
               title="Close modal"
             >
               {ClimateIcons.cancel}
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="add-org-form space-y-6">
             {/* Required Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Organization Name *
                 </label>
                 <input
@@ -209,11 +212,11 @@ export function AddOrganizationModal({
                   value={formData.org_name || ''}
                   onChange={(e) => handleFieldChange('org_name', e.target.value)}
                   onBlur={() => handleFieldBlur('org_name')}
-                  className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors font-body ${errors.org_name
+                  className={`w-full p-3 bg-white dark:bg-black border rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors font-body ${errors.org_name
                       ? 'border-red-500 focus:border-red-400'
                       : warnings.org_name
                         ? 'border-yellow-500 focus:border-yellow-400'
-                        : 'border-gray-600 focus:border-blue-500'
+                        : 'border-gray-300 dark:border-gray-700 focus:border-gray-500 dark:focus:border-gray-400'
                     }`}
                   placeholder="Enter organization name"
                   required
@@ -227,20 +230,20 @@ export function AddOrganizationModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Country Code *
-                  <span className="text-gray-400 text-xs ml-1">(2 letters, e.g., US, CA, GB)</span>
+                  <span className="text-gray-500 dark:text-gray-400 text-xs ml-1">(2 letters, e.g., US, CA, GB)</span>
                 </label>
                 <input
                   type="text"
                   value={formData.country_code || ''}
                   onChange={(e) => handleFieldChange('country_code', e.target.value.toUpperCase())}
                   onBlur={() => handleFieldBlur('country_code')}
-                  className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors font-body uppercase ${errors.country_code
+                  className={`w-full p-3 bg-white dark:bg-black border rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors font-body uppercase ${errors.country_code
                       ? 'border-red-500 focus:border-red-400'
                       : warnings.country_code
                         ? 'border-yellow-500 focus:border-yellow-400'
-                        : 'border-gray-600 focus:border-blue-500'
+                        : 'border-gray-300 dark:border-gray-700 focus:border-gray-500 dark:focus:border-gray-400'
                     }`}
                   placeholder="US"
                   maxLength={2}
@@ -258,17 +261,17 @@ export function AddOrganizationModal({
             {/* Contact Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Website</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Website</label>
                 <input
                   type="url"
                   value={formData.website || ''}
                   onChange={(e) => handleFieldChange('website', e.target.value)}
                   onBlur={() => handleFieldBlur('website')}
-                  className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors font-body ${errors.website
+                  className={`w-full p-3 bg-white dark:bg-black border rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors font-body ${errors.website
                       ? 'border-red-500 focus:border-red-400'
                       : warnings.website
                         ? 'border-yellow-500 focus:border-yellow-400'
-                        : 'border-gray-600 focus:border-blue-500'
+                        : 'border-gray-300 dark:border-gray-700 focus:border-gray-500 dark:focus:border-gray-400'
                     }`}
                   placeholder="https://example.org"
                 />
@@ -281,16 +284,16 @@ export function AddOrganizationModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
                 <textarea
                   value={formData.email || ''}
                   onChange={(e) => handleFieldChange('email', e.target.value)}
                   onBlur={() => handleFieldBlur('email')}
-                  className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors h-24 resize-none ${errors.email
+                  className={`w-full p-3 bg-white dark:bg-black border rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors h-24 resize-none ${errors.email
                       ? 'border-red-500 focus:border-red-400'
                       : warnings.email
                         ? 'border-yellow-500 focus:border-yellow-400'
-                        : 'border-gray-600 focus:border-blue-500'
+                        : 'border-gray-300 dark:border-gray-700 focus:border-gray-500 dark:focus:border-gray-400'
                     }`}
                   placeholder="contact@example.org (multiple emails separated by commas or line breaks)"
                 />
@@ -306,34 +309,34 @@ export function AddOrganizationModal({
             {/* Organization Details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Type of Work</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Type of Work</label>
                 <input
                   type="text"
                   value={formData.type_of_work || ''}
                   onChange={(e) => handleFieldChange('type_of_work', e.target.value)}
                   onBlur={() => handleFieldBlur('type_of_work')}
-                  className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors ${errors.type_of_work
+                  className={`w-full p-3 bg-white dark:bg-black border rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.type_of_work
                       ? 'border-red-500 focus:border-red-400'
                       : warnings.type_of_work
                         ? 'border-yellow-500 focus:border-yellow-400'
-                        : 'border-gray-600 focus:border-blue-500'
+                        : 'border-gray-300 dark:border-gray-700 focus:border-gray-500 dark:focus:border-gray-400'
                     }`}
                   placeholder="e.g., Advocacy, Education, Direct Action"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Years Active</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Years Active</label>
                 <input
                   type="text"
                   value={formData.years_active || ''}
                   onChange={(e) => handleFieldChange('years_active', e.target.value)}
                   onBlur={() => handleFieldBlur('years_active')}
-                  className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors ${errors.years_active
+                  className={`w-full p-3 bg-white dark:bg-black border rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.years_active
                       ? 'border-red-500 focus:border-red-400'
                       : warnings.years_active
                         ? 'border-yellow-500 focus:border-yellow-400'
-                        : 'border-gray-600 focus:border-blue-500'
+                        : 'border-gray-300 dark:border-gray-700 focus:border-gray-500 dark:focus:border-gray-400'
                     }`}
                   placeholder="e.g., 2013–present, 2018–2023"
                 />
@@ -341,17 +344,17 @@ export function AddOrganizationModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Capacity</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Capacity</label>
               <input
                 type="text"
                 value={formData.capacity || ''}
                 onChange={(e) => handleFieldChange('capacity', e.target.value)}
                 onBlur={() => handleFieldBlur('capacity')}
-                className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors ${errors.capacity
+                className={`w-full p-3 bg-white dark:bg-black border rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.capacity
                     ? 'border-red-500 focus:border-red-400'
                     : warnings.capacity
                       ? 'border-yellow-500 focus:border-yellow-400'
-                      : 'border-gray-600 focus:border-blue-500'
+                      : 'border-gray-300 dark:border-gray-700 focus:border-gray-500 dark:focus:border-gray-400'
                   }`}
                 placeholder="e.g., 20-50 volunteers, Small team"
               />
@@ -365,27 +368,27 @@ export function AddOrganizationModal({
 
             {/* Long Text Fields */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Mission Statement</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Mission Statement</label>
               <textarea
                 value={formData.mission_statement}
                 onChange={(e) => setFormData({ ...formData, mission_statement: e.target.value })}
-                className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none transition-colors font-body resize-none"
+                className="w-full p-3 bg-white dark:bg-black border border-gray-300 dark:border-gray-700 rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:border-gray-500 dark:focus:border-gray-400 focus:outline-none transition-colors font-body resize-none"
                 rows={4}
                 placeholder="Enter the organization's mission statement"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Notable Success</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Notable Success</label>
               <textarea
                 value={formData.notable_success || ''}
                 onChange={(e) => handleFieldChange('notable_success', e.target.value)}
                 onBlur={() => handleFieldBlur('notable_success')}
-                className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${errors.notable_success
+                className={`w-full p-3 bg-white dark:bg-black border rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${errors.notable_success
                     ? 'border-red-500 focus:border-red-400'
                     : warnings.notable_success
                       ? 'border-yellow-500 focus:border-yellow-400'
-                      : 'border-gray-600 focus:border-blue-500'
+                      : 'border-gray-300 dark:border-gray-700 focus:border-gray-500 dark:focus:border-gray-400'
                   }`}
                 placeholder="Describe a key achievement or success story"
               />
@@ -398,16 +401,16 @@ export function AddOrganizationModal({
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">CTA Notes</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">CTA Notes</label>
               <textarea
                 value={formData.cta_notes || ''}
                 onChange={(e) => handleFieldChange('cta_notes', e.target.value)}
                 onBlur={() => handleFieldBlur('cta_notes')}
-                className={`w-full p-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${errors.cta_notes
+                className={`w-full p-3 bg-white dark:bg-black border rounded-lg text-black dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${errors.cta_notes
                     ? 'border-red-500 focus:border-red-400'
                     : warnings.cta_notes
                       ? 'border-yellow-500 focus:border-yellow-400'
-                      : 'border-gray-600 focus:border-blue-500'
+                      : 'border-gray-300 dark:border-gray-700 focus:border-gray-500 dark:focus:border-gray-400'
                   }`}
                 placeholder="Notes about call-to-action or how people can get involved"
               />
@@ -419,9 +422,29 @@ export function AddOrganizationModal({
               )}
             </div>
 
+            <div
+              className="rounded-lg border p-3 flex items-center justify-between"
+              style={{
+                backgroundColor: 'var(--background)',
+                borderColor: 'var(--glass-border)'
+              }}
+            >
+              <div className="flex items-center gap-2 text-sm font-medium" style={{ color: 'var(--foreground)' }}>
+                <span className="text-amber-400">{ClimateIcons.strategic}</span>
+                <span>Strategic Partner</span>
+              </div>
+              <input
+                type="checkbox"
+                checked={!!formData.is_strategic}
+                onChange={(e) => setFormData(prev => ({ ...prev, is_strategic: e.target.checked }))}
+                className="h-4 w-4 accent-amber-500 cursor-pointer disabled:cursor-not-allowed"
+                disabled={isSubmitting}
+              />
+            </div>
+
             {/* Initial Status - Updated with CustomDropdown */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Initial Status
               </label>
               <div className="flex gap-3">
@@ -429,14 +452,14 @@ export function AddOrganizationModal({
                   <button
                     key={status}
                     type="button"
-                    className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors
+                    className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors border
                       ${formData.approval_status === status
                         ? status === 'approved'
                           ? 'bg-green-600 text-white'
                           : status === 'rejected'
                             ? 'bg-red-600 text-white'
                             : 'bg-yellow-500 text-gray-900'
-                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}
+                        : 'add-org-status-inactive'}
                     `}
                     onClick={() => setFormData({ ...formData, approval_status: status as 'pending' | 'approved' | 'rejected' })}
                     disabled={isSubmitting}
@@ -449,12 +472,12 @@ export function AddOrganizationModal({
           </form>
         </div>
         {/* Action Buttons - Always visible at the bottom */}
-        <div className="flex gap-3 p-4 pt-0 border-t border-gray-700 bg-gray-800 rounded-b-2xl">
+        <div className="add-org-modal-footer flex gap-3 p-4 pt-0 rounded-b-2xl">
           <button
             type="button"
             onClick={handleClose}
             disabled={isSubmitting}
-            className="flex-1 px-6 py-2 bg-gray-600 text-white rounded-lg font-medium hover:bg-gray-500 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            className="add-org-secondary-button flex-1 px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {ClimateIcons.cancel}
             <span>Cancel</span>

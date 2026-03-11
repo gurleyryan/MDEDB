@@ -161,7 +161,8 @@ export function OrganizationCard({
       facebook: org.facebook || '',
       tiktok: org.tiktok || '',
       linkedin: org.linkedin || '',
-      youtube: org.youtube || ''
+      youtube: org.youtube || '',
+      is_strategic: !!org.is_strategic
     });
     setErrors({});
     onEdit(org); // Restore this call to set editing state
@@ -190,6 +191,7 @@ export function OrganizationCard({
     const validationErrors: Record<string, string> = {};
 
     Object.entries(editForm).forEach(([key, value]) => {
+      if (typeof value === 'boolean') return; // boolean fields don't need string validation
       const stringValue = Array.isArray(value) ? value.join(', ') : value || '';
       const validation = validateField(key, stringValue);
       if (!validation.isValid && validation.error) {
@@ -249,7 +251,7 @@ export function OrganizationCard({
 
   return (
     <div
-      className={`font-mde organization-card org-panel-glass backdrop-blur-sm transition-all duration-300 stained-glass ${getRegionalTheme(org.country_code)} ${isExpanded || isEditing ? 'expanded-card' : ''
+      className={`font-mde organization-card org-panel-glass transition-[border-color,box-shadow,background-color] duration-300 stained-glass ${getRegionalTheme(org.country_code)} ${isExpanded || isEditing ? 'expanded-card' : ''
         }`}
       style={{
         overflow: 'visible',
@@ -330,14 +332,14 @@ export function OrganizationCard({
       <div className={`p-6 backdrop-blur relative org-panel-glass`}>
         {isEditing ? (
           // Edit Mode
-          <div className="space-y-4 mb-6">
+          <div className="org-edit-form space-y-4 mb-6 text-gray-900 dark:text-gray-100">
             <div>
-              <label className="block text-xs  mb-1">Organization Name</label>
+              <label className="block text-xs text-gray-700 dark:text-gray-300 mb-1">Organization Name</label>
               <input
                 type="text"
                 value={editForm.org_name || ''}
                 onChange={(e) => handleFieldChange('org_name', e.target.value)}
-                className={`w-full p-2 bg-white dark:bg-gray-700 border text-xl font-bold focus:outline-none ${errors.org_name ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
+                className={`w-full p-2 bg-white dark:bg-gray-700 border text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-xl font-bold focus:outline-none transition-colors ${errors.org_name ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                   }`}
               />
               {errors.org_name && (
@@ -348,7 +350,7 @@ export function OrganizationCard({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Logo upload + preview */}
               <div>
-                <label className="block text-xs  mb-1">Logo</label>
+                <label className="block text-xs text-gray-700 dark:text-gray-300 mb-1">Logo</label>
                 <div className="flex items-center gap-3">
                   {/* Hidden native input; triggered by button */}
                   <input
@@ -366,14 +368,14 @@ export function OrganizationCard({
                     {ClimateIcons.plus}
                     <span>{editForm.logo ? 'Change Logo' : 'Choose Logo'}</span>
                   </button>
-                  {uploading.logo && <span className=" text-xs">Uploading…</span>}
+                  {uploading.logo && <span className="text-xs text-gray-700 dark:text-gray-300">Uploading…</span>}
                 </div>
                 <input
                   type="url"
                   value={editForm.logo || ''}
                   onChange={(e) => handleFieldChange('logo', e.target.value)}
                   onBlur={(e) => e.target.value && handleFieldChange('logo', formatUrl(e.target.value))}
-                  className="mt-2 w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none border-gray-300 dark:border-gray-600 focus:border-mde-blue"
+                  className="mt-2 w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                   placeholder="Or paste a logo URL"
                 />
                 {editForm.logo && (
@@ -386,7 +388,7 @@ export function OrganizationCard({
 
               {/* Banner upload + preview */}
               <div>
-                <label className="block text-xs  mb-1">Banner</label>
+                <label className="block text-xs text-gray-700 dark:text-gray-300 mb-1">Banner</label>
                 <div className="flex items-center gap-3">
                   {/* Hidden native input; triggered by button */}
                   <input
@@ -404,14 +406,14 @@ export function OrganizationCard({
                     {ClimateIcons.plus}
                     <span>{editForm.banner ? 'Change Banner' : 'Choose Banner'}</span>
                   </button>
-                  {uploading.banner && <span className=" text-xs">Uploading…</span>}
+                  {uploading.banner && <span className="text-xs text-gray-700 dark:text-gray-300">Uploading…</span>}
                 </div>
                 <input
                   type="url"
                   value={editForm.banner || ''}
                   onChange={(e) => handleFieldChange('banner', e.target.value)}
                   onBlur={(e) => e.target.value && handleFieldChange('banner', formatUrl(e.target.value))}
-                  className="mt-2 w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none border-gray-300 dark:border-gray-600 focus:border-mde-blue"
+                  className="mt-2 w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                   placeholder="Or paste a banner URL"
                 />
                 {editForm.banner && (
@@ -422,7 +424,7 @@ export function OrganizationCard({
                 {errors.banner && <p className="text-red-400 text-xs mt-1">{errors.banner}</p>}
               </div>
               <div>
-                <label className="block text-xs  mb-1">Website</label>
+                <label className="block text-xs text-gray-700 dark:text-gray-300 mb-1">Website</label>
                 <input
                   type="url"
                   value={editForm.website || ''}
@@ -433,7 +435,7 @@ export function OrganizationCard({
                       handleFieldChange('website', formatted);
                     }
                   }}
-                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none ${errors.website ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
+                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.website ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                     }`}
                 />
                 {errors.website && (
@@ -442,12 +444,12 @@ export function OrganizationCard({
               </div>
 
               <div>
-                <label className="block text-xs  mb-1">Email</label>
+                <label className="block text-xs text-gray-700 dark:text-gray-300 mb-1">Email</label>
                 <input
                   type="text"
                   value={editForm.email || ''}
                   onChange={(e) => handleFieldChange('email', e.target.value)}
-                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none ${errors.email ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'}`}
+                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.email ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'}`}
                   placeholder="Multiple emails separated by commas"
                 />
                 {errors.email && (
@@ -456,7 +458,7 @@ export function OrganizationCard({
               </div>
 
               <div>
-                <label className="block text-xs  mb-1">Country Code</label>
+                <label className="block text-xs text-gray-700 dark:text-gray-300 mb-1">Country Code</label>
                 <input
                   type="text"
                   value={editForm.country_code || ''}
@@ -467,7 +469,7 @@ export function OrganizationCard({
                       handleFieldChange('country_code', formatted);
                     }
                   }}
-                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none ${errors.country_code ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
+                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.country_code ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                     }`}
                   maxLength={2}
                 />
@@ -477,12 +479,12 @@ export function OrganizationCard({
               </div>
 
               <div>
-                <label className="block text-xs  mb-1">Type of Work</label>
+                <label className="block text-xs text-gray-700 dark:text-gray-300 mb-1">Type of Work</label>
                 <input
                   type="text"
                   value={editForm.type_of_work || ''}
                   onChange={(e) => handleFieldChange('type_of_work', e.target.value)}
-                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none ${errors.type_of_work ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
+                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.type_of_work ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                     }`}
                 />
                 {errors.type_of_work && (
@@ -493,80 +495,80 @@ export function OrganizationCard({
               {/* Social links */}
               <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs  mb-1">Instagram</label>
+                  <label className="block text-xs text-gray-700 dark:text-gray-300 mb-1">Instagram</label>
                   <input
                     type="url"
                     value={editForm.instagram || ''}
                     onChange={(e) => handleFieldChange('instagram', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('instagram', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none border-gray-300 dark:border-gray-600 focus:border-mde-blue"
+                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                     placeholder="https://instagram.com/yourorg"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs  mb-1">X (Twitter)</label>
+                  <label className="block text-xs text-gray-700 dark:text-gray-300 mb-1">X (Twitter)</label>
                   <input
                     type="url"
                     value={editForm.twitter || ''}
                     onChange={(e) => handleFieldChange('twitter', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('twitter', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none border-gray-300 dark:border-gray-600 focus:border-mde-blue"
+                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                     placeholder="https://x.com/yourorg"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs  mb-1">Facebook</label>
+                  <label className="block text-xs text-gray-700 dark:text-gray-300 mb-1">Facebook</label>
                   <input
                     type="url"
                     value={editForm.facebook || ''}
                     onChange={(e) => handleFieldChange('facebook', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('facebook', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none border-gray-300 dark:border-gray-600 focus:border-mde-blue"
+                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                     placeholder="https://facebook.com/yourorg"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs  mb-1">TikTok</label>
+                  <label className="block text-xs text-gray-700 dark:text-gray-300 mb-1">TikTok</label>
                   <input
                     type="url"
                     value={editForm.tiktok || ''}
                     onChange={(e) => handleFieldChange('tiktok', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('tiktok', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none border-gray-300 dark:border-gray-600 focus:border-mde-blue"
+                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                     placeholder="https://tiktok.com/@yourorg"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs  mb-1">LinkedIn</label>
+                  <label className="block text-xs text-gray-700 dark:text-gray-300 mb-1">LinkedIn</label>
                   <input
                     type="url"
                     value={editForm.linkedin || ''}
                     onChange={(e) => handleFieldChange('linkedin', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('linkedin', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none border-gray-300 dark:border-gray-600 focus:border-mde-blue"
+                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                     placeholder="https://linkedin.com/company/yourorg"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs  mb-1">YouTube</label>
+                  <label className="block text-xs text-gray-700 dark:text-gray-300 mb-1">YouTube</label>
                   <input
                     type="url"
                     value={editForm.youtube || ''}
                     onChange={(e) => handleFieldChange('youtube', e.target.value)}
                     onBlur={(e) => e.target.value && handleFieldChange('youtube', formatUrl(e.target.value))}
-                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none border-gray-300 dark:border-gray-600 focus:border-mde-blue"
+                    className="w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors border-gray-300 dark:border-gray-600 focus:border-mde-blue"
                     placeholder="https://youtube.com/@yourorg"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs  mb-1">Years Active</label>
+                <label className="block text-xs text-gray-700 dark:text-gray-300 mb-1">Years Active</label>
                 <input
                   type="text"
                   value={editForm.years_active || ''}
                   onChange={(e) => handleFieldChange('years_active', e.target.value)}
-                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none ${errors.years_active ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
+                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.years_active ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                     }`}
                   placeholder="e.g., 2013–present, 2018–2023"
                 />
@@ -576,12 +578,12 @@ export function OrganizationCard({
               </div>
 
               <div>
-                <label className="block text-xs  mb-1">Capacity</label>
+                <label className="block text-xs text-gray-700 dark:text-gray-300 mb-1">Capacity</label>
                 <input
                   type="text"
                   value={editForm.capacity || ''}
                   onChange={(e) => handleFieldChange('capacity', e.target.value)}
-                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none ${errors.capacity ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
+                  className={`w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors ${errors.capacity ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                     }`}
                 />
                 {errors.capacity && (
@@ -591,11 +593,11 @@ export function OrganizationCard({
             </div>
 
             <div>
-              <label className="block text-xs  mb-1">Mission Statement</label>
+              <label className="block text-xs text-gray-700 dark:text-gray-300 mb-1">Mission Statement</label>
               <textarea
                 value={editForm.mission_statement || ''}
                 onChange={(e) => handleFieldChange('mission_statement', e.target.value)}
-                className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none h-20 resize-none ${errors.mission_statement ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
+                className={`w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${errors.mission_statement ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                   }`}
               />
               {errors.mission_statement && (
@@ -604,11 +606,11 @@ export function OrganizationCard({
             </div>
 
             <div>
-              <label className="block text-xs  mb-1">Notable Success</label>
+              <label className="block text-xs text-gray-700 dark:text-gray-300 mb-1">Notable Success</label>
               <textarea
                 value={editForm.notable_success || ''}
                 onChange={(e) => handleFieldChange('notable_success', e.target.value)}
-                className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none h-20 resize-none ${errors.notable_success ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
+                className={`w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${errors.notable_success ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                   }`}
               />
               {errors.notable_success && (
@@ -617,11 +619,11 @@ export function OrganizationCard({
             </div>
 
             <div>
-              <label className="block text-xs  mb-1">CTA Notes</label>
+              <label className="block text-xs text-gray-700 dark:text-gray-300 mb-1">CTA Notes</label>
               <textarea
                 value={editForm.cta_notes || ''}
                 onChange={(e) => handleFieldChange('cta_notes', e.target.value)}
-                className={`w-full p-2 bg-white dark:bg-gray-700 border rounded  text-sm focus:outline-none h-20 resize-none ${errors.cta_notes ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
+                className={`w-full p-2 bg-white dark:bg-gray-700 border rounded text-sm text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none transition-colors h-20 resize-none ${errors.cta_notes ? 'border-mde-red' : 'border-gray-300 dark:border-gray-600 focus:border-mde-blue'
                   }`}
               />
               {errors.cta_notes && (
@@ -794,6 +796,11 @@ export function OrganizationCard({
                         if (!(hasWebsite && hasEmail && !hasYears) && !isPublic) {
                           return (
                             <div className="flex items-center gap-2 flex-shrink-0">
+                              {org.is_strategic && (
+                                <span className="px-2 py-1 rounded text-xs font-bold whitespace-nowrap text-amber-200 bg-amber-800 flex items-center gap-1">
+                                  {ClimateIcons.strategic} Strategic
+                                </span>
+                              )}
                               <span className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
                                 {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
                               </span>
@@ -917,6 +924,11 @@ export function OrganizationCard({
                               <div className="flex flex-col sm:flex-row-reverse items-end gap-2 min-w-0 w-full">
                                 {/* Badges group */}
                                 <span className="flex gap-2">
+                                  {org.is_strategic && (
+                                    <span className="px-2 py-1 rounded text-xs font-bold whitespace-nowrap text-amber-200 bg-amber-800 flex items-center gap-1">
+                                      {ClimateIcons.strategic} Strategic
+                                    </span>
+                                  )}
                                   <span className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ${getAlignmentScoreColor(org.alignment_score ?? undefined)}`}>
                                     {org.alignment_score !== undefined && org.alignment_score !== null ? org.alignment_score : 'N/A'}
                                   </span>
@@ -1240,6 +1252,7 @@ export function OrganizationCard({
                     options={getStatusOptions()}
                     colorCoded={true}
                     className="w-full min-w-[100px] text-xs status-dropdown"
+                    portal={false}
                   />
                 </div>
               </div>
@@ -1278,6 +1291,25 @@ export function OrganizationCard({
               <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
                 {isEditing ? (
                   <>
+                    <label
+                      className="px-4 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition-all duration-200 shadow-lg flex-1 sm:flex-initial justify-center sm:justify-start cursor-pointer border"
+                      style={{
+                        backgroundColor: 'var(--background)',
+                        borderColor: 'var(--glass-border)',
+                        color: 'var(--foreground)'
+                      }}
+                      title="Strategic Partner"
+                    >
+                      <span className="text-amber-400">{ClimateIcons.strategic}</span>
+                      <span>Strategic</span>
+                      <input
+                        type="checkbox"
+                        checked={!!editForm.is_strategic}
+                        onChange={(e) => setEditForm(prev => ({ ...prev, is_strategic: e.target.checked }))}
+                        className="h-4 w-4 accent-amber-500 cursor-pointer"
+                      />
+                    </label>
+
                     <button
                       onClick={handleSave}
                       disabled={updatingId === org.id || Object.keys(errors).length > 0}

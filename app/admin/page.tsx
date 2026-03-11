@@ -62,7 +62,7 @@ export default function AdminOrgs() {
   // New organizational tool states
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOptions, setSortOptions] = useState<{
-    field: 'name' | 'score' | 'status' | 'country' | 'recent' | 'website';
+    field: 'name' | 'score' | 'status' | 'country' | 'recent' | 'website' | 'strategic';
     direction: 'asc' | 'desc';
   }>({ field: 'name', direction: 'asc' });
 
@@ -186,6 +186,12 @@ export default function AdminOrgs() {
           const hasWebsiteA = !!a.website;
           const hasWebsiteB = !!b.website;
           comparison = hasWebsiteA === hasWebsiteB ? 0 : hasWebsiteA ? 1 : -1;
+          break;
+        }
+        case 'strategic': {
+          const isStrategicA = a.is_strategic ? 1 : 0;
+          const isStrategicB = b.is_strategic ? 1 : 0;
+          comparison = isStrategicA - isStrategicB;
           break;
         }
         default:

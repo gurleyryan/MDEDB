@@ -325,6 +325,7 @@ export function PublicHeader({
                 })}
                 placeholder="Filter by continent..."
                 colorCoded={true}
+                flatColorInDarkMode={true}
                 className="w-full"
                 portal={true}
               />
@@ -341,6 +342,7 @@ export function PublicHeader({
                 })}
                 placeholder="Filter by country..."
                 colorCoded={true}
+                flatColorInDarkMode={true}
                 className="w-full"
                 portal={true}
               />

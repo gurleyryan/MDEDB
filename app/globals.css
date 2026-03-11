@@ -544,25 +544,12 @@ body {
     color: rgb(var(--org-mde-green-rgb));
   }
 
-  /* Organization dropdown adapts to theme but preserves color coding */
+  /* Organization dropdowns follow app theme */
   .organization-card .dropdown-glass,
   .organization-card .dropdown-glass>div,
   .organization-card div.dropdown-glass {
-    background-color: var(--org-glass-bg);
-    border-color: var(--org-glass-border);
-  }
-
-  /* Dropdown options without color coding adapt to theme */
-  .organization-card .dropdown-glass button:not([style*="background"]),
-  .organization-card div.dropdown-glass button:not([style*="background"]) {
-    background-color: var(--org-glass-bg);
-    color: var(--foreground);
-  }
-
-  /* Dropdown options on hover without color coding */
-  .organization-card .dropdown-glass button:not([style*="background"]):hover,
-  .organization-card div.dropdown-glass button:not([style*="background"]):hover {
-    background-color: var(--glass-bg);
+    background-color: var(--background);
+    border-color: var(--glass-border);
   }
 
   /* Theme-aware text color for buttons */
@@ -595,6 +582,117 @@ body {
     opacity: 0.7;
   }
 
+  /* Edit Info form should follow app class-based theme toggle (not OS media dark mode) */
+  :root.light .organization-card .org-edit-form input[type="text"],
+  :root.light .organization-card .org-edit-form input[type="url"],
+  :root.light .organization-card .org-edit-form input[type="email"],
+  :root.light .organization-card .org-edit-form textarea,
+  :root.light .organization-card .org-edit-form select {
+    background-color: #ffffff !important;
+    color: #111827 !important;
+    border-color: rgba(17, 24, 39, 0.2) !important;
+  }
+
+  :root.light .organization-card .org-edit-form input::placeholder,
+  :root.light .organization-card .org-edit-form textarea::placeholder {
+    color: #6b7280 !important;
+    opacity: 1;
+  }
+
+  :root.light .organization-card .org-edit-form label {
+    color: #374151 !important;
+    opacity: 1;
+  }
+
+  :root.dark .organization-card .org-edit-form input[type="text"],
+  :root.dark .organization-card .org-edit-form input[type="url"],
+  :root.dark .organization-card .org-edit-form input[type="email"],
+  :root.dark .organization-card .org-edit-form textarea,
+  :root.dark .organization-card .org-edit-form select {
+    background-color: #000000 !important;
+    color: #f3f4f6 !important;
+    border-color: rgba(255, 255, 255, 0.16) !important;
+  }
+
+  :root.dark .organization-card .org-edit-form input[type="text"]:focus,
+  :root.dark .organization-card .org-edit-form input[type="url"]:focus,
+  :root.dark .organization-card .org-edit-form input[type="email"]:focus,
+  :root.dark .organization-card .org-edit-form textarea:focus,
+  :root.dark .organization-card .org-edit-form select:focus {
+    border-color: #737373 !important;
+    box-shadow: none;
+  }
+
+  :root.dark .organization-card .org-edit-form input::placeholder,
+  :root.dark .organization-card .org-edit-form textarea::placeholder {
+    color: #9ca3af !important;
+    opacity: 1;
+  }
+
+  :root.dark .organization-card .org-edit-form label {
+    color: #d1d5db !important;
+    opacity: 1;
+  }
+
+  /* Add Organization modal uses app theme variables directly */
+  .add-org-modal-panel {
+    background-color: var(--background) !important;
+    color: var(--foreground) !important;
+    border: 1px solid var(--glass-border) !important;
+  }
+
+  .add-org-modal-title,
+  .add-org-close-button {
+    color: var(--foreground) !important;
+  }
+
+  .add-org-modal-footer {
+    background-color: var(--background) !important;
+    border-top: 1px solid var(--glass-border) !important;
+  }
+
+  .add-org-form label {
+    color: var(--foreground) !important;
+    opacity: 0.7;
+  }
+
+  .add-org-form input[type="text"],
+  .add-org-form input[type="url"],
+  .add-org-form input[type="email"],
+  .add-org-form textarea,
+  .add-org-form select {
+    background-color: var(--background) !important;
+    color: var(--foreground) !important;
+    border-color: var(--glass-border) !important;
+  }
+
+  .add-org-form input[type="text"]:focus,
+  .add-org-form input[type="url"]:focus,
+  .add-org-form input[type="email"]:focus,
+  .add-org-form textarea:focus,
+  .add-org-form select:focus {
+    border-color: #737373 !important;
+    box-shadow: none;
+  }
+
+  .add-org-form input::placeholder,
+  .add-org-form textarea::placeholder {
+    color: var(--foreground) !important;
+    opacity: 0.5;
+  }
+
+  .add-org-secondary-button,
+  .add-org-status-inactive {
+    background-color: var(--background) !important;
+    color: var(--foreground) !important;
+    border-color: var(--glass-border) !important;
+  }
+
+  .add-org-secondary-button:hover,
+  .add-org-status-inactive:hover {
+    background-color: color-mix(in srgb, var(--background) 85%, var(--foreground) 15%) !important;
+  }
+
   /* Organization card placeholder text */
   .organization-card input::placeholder,
   .organization-card textarea::placeholder {
@@ -604,47 +702,42 @@ body {
 
   /* General text content within organization cards - let Tailwind handle theme-aware text colors */
 
-  /* Scoring section components always dark but preserve color coding */
+  /* Scoring section dropdown trigger follows app theme */
   .scoring-section .btn-glass:not([style*="color"]),
   .scoring-section .btn-glass-purple {
-    background-color: var(--org-glass-bg) !important;
-    border-color: var(--org-glass-border) !important;
+    background-color: var(--background) !important;
+    border-color: var(--glass-border) !important;
   }
 
-  /* Force all CustomDropdown buttons in scoring section to stay dark */
+  /* Force scoring dropdown triggers to use theme surfaces */
   .scoring-section button.btn-glass {
-    background-color: var(--org-glass-bg) !important;
-    border-color: var(--org-glass-border) !important;
+    background-color: var(--background) !important;
+    border-color: var(--glass-border) !important;
   }
 
   /* Only override text color if no inline color styling */
   .scoring-section button.btn-glass:not([style*="color"]) {
-    color: #e5e7eb !important;
+    color: var(--foreground) !important;
   }
 
   .scoring-section .dropdown-glass,
   .scoring-section .dropdown-glass>div,
   .scoring-section div.dropdown-glass {
-    background-color: var(--org-glass-bg) !important;
-    border-color: var(--org-glass-border) !important;
+    background-color: var(--background) !important;
+    border-color: var(--glass-border) !important;
   }
 
-  /* Dropdown options without color coding stay dark */
-  .scoring-section .dropdown-glass button:not([style*="background"]),
-  .scoring-section div.dropdown-glass button:not([style*="background"]) {
-    background-color: var(--org-glass-bg) !important;
-    color: #e5e7eb !important;
-  }
-
-  /* Dropdown options on hover without color coding */
-  .scoring-section .dropdown-glass button:not([style*="background"]):hover,
-  .scoring-section div.dropdown-glass button:not([style*="background"]):hover {
-    background-color: rgba(55, 65, 81, 0.8) !important;
+  .scoring-section .dropdown-glass button[style*="background"],
+  .scoring-section div.dropdown-glass button[style*="background"],
+  .scoring-section .dropdown-glass button[style*="background"]:hover,
+  .scoring-section div.dropdown-glass button[style*="background"]:hover {
+    opacity: 1 !important;
+    filter: none !important;
   }
 
   /* Don't override text color in scoring dropdowns to preserve color coding */
   .scoring-section .btn-glass:not([style*="color"]) {
-    color: #e5e7eb !important;
+    color: var(--foreground) !important;
   }
 
   .scoring-section .btn-glass-purple {
@@ -725,48 +818,25 @@ body {
     animation: fadeIn 0.1s ease-out;
   }
 
-  /* Make ALL dropdown menus consistently dark regardless of theme */
+  /* Dropdown menus follow app theme */
   .dropdown-glass,
   div.dropdown-glass {
-    background-color: rgba(5, 5, 5, 0.95) !important;
-    border-color: rgba(255, 255, 255, 0.08) !important;
+    background-color: var(--background) !important;
+    border-color: var(--glass-border) !important;
     box-shadow:
-      0 32px 64px rgba(0, 0, 0, 0.8),
-      0 0 0 1px rgba(255, 255, 255, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+      0 32px 64px var(--glass-shadow),
+      0 0 0 1px var(--glass-border),
+      inset 0 1px 0 var(--glass-border) !important;
   }
 
   /* Dropdown option base styling for all dropdowns */
   .dropdown-glass button:not([style*="background"]) {
-    background-color: rgba(5, 5, 5, 0.95) !important;
-    color: #e5e7eb !important;
+    background-color: var(--background) !important;
+    color: var(--foreground) !important;
   }
 
   .dropdown-glass button:not([style*="background"]):hover {
-    background-color: rgba(55, 65, 81, 0.8) !important;
-  }
-
-  /* Dark mode overrides for "All Continents" and "All Countries" options */
-  /* Target white text on white background pattern (which occurs in light mode default) */
-  .dropdown-glass button[style*="color: rgb(0, 0, 0)"] {
-    background: linear-gradient(135deg, #000000, #000000) !important;
-    color: #ffffff !important;
-  }
-
-  .dropdown-glass button[style*="color: rgb(0, 0, 0)"]:hover {
-    background: linear-gradient(135deg, #000000, #000000) !important;
-    color: #ffffff !important;
-  }
-
-  /* Light mode - keep as-is (white bg, black text) */
-  :root.light .dropdown-glass button[style*="color: rgb(0, 0, 0)"] {
-    background: linear-gradient(135deg, #ffffff, #ffffff) !important;
-    color: #000000 !important;
-  }
-
-  :root.light .dropdown-glass button[style*="color: rgb(0, 0, 0)"]:hover {
-    background: linear-gradient(135deg, #ffffff, #ffffff) !important;
-    color: #000000 !important;
+    background-color: color-mix(in srgb, var(--background) 86%, var(--foreground) 14%) !important;
   }
 
   .dropdown-option:hover {
@@ -946,14 +1016,13 @@ body {
     position: relative;
     z-index: auto;
     overflow: visible;
-    transition: all 0.15s ease-out;
+    transition: border-color 0.15s ease-out, box-shadow 0.15s ease-out, background-color 0.15s ease-out;
     /* Add margin to prevent edge cutoff */
     margin: 2px;
   }
 
   .organization-card:hover {
-    transform: translateY(-1px) scale(1.005);
-    transition: all 0.1s ease-out;
+    box-shadow: none;
   }
 
   .organization-card::before,
@@ -976,7 +1045,7 @@ body {
 
 /* Remove hover effects when expanded */
 .organization-card.expanded-card:hover {
-  transform: translateY(-2px) scale(1.01);
+  transform: none;
 }
 
 /* Regional theming for expanded cards - removed shadows */
@@ -988,7 +1057,6 @@ body {
 
 .organization-card.north-america:hover {
   border-color: rgba(59, 130, 246, 0.5);
-  transform: translateY(-2px) scale(1.01);
 }
 
 .organization-card.south-america {
@@ -997,7 +1065,6 @@ body {
 
 .organization-card.south-america:hover {
   border-color: rgba(16, 185, 129, 0.5);
-  transform: translateY(-2px) scale(1.01);
 }
 
 .organization-card.europe {
@@ -1006,7 +1073,6 @@ body {
 
 .organization-card.europe:hover {
   border-color: rgba(147, 51, 234, 0.5);
-  transform: translateY(-2px) scale(1.01);
 }
 
 .organization-card.africa {
@@ -1015,7 +1081,6 @@ body {
 
 .organization-card.africa:hover {
   border-color: rgba(249, 115, 22, 0.5);
-  transform: translateY(-2px) scale(1.01);
 }
 
 .organization-card.asia {
@@ -1024,7 +1089,6 @@ body {
 
 .organization-card.asia:hover {
   border-color: rgba(239, 68, 68, 0.5);
-  transform: translateY(-2px) scale(1.01);
 }
 
 .organization-card.oceania {
@@ -1033,7 +1097,6 @@ body {
 
 .organization-card.oceania:hover {
   border-color: rgba(6, 182, 212, 0.5);
-  transform: translateY(-2px) scale(1.01);
 }
 
 .organization-card.middle-east {
@@ -1042,7 +1105,6 @@ body {
 
 .organization-card.middle-east:hover {
   border-color: rgba(217, 119, 6, 0.5);
-  transform: translateY(-2px) scale(1.01);
 }
 
 /* ============================================
@@ -1550,10 +1612,6 @@ body {
   border-color: var(--org-glass-border);
 }
 
-.scoring-section .scoring-criterion-card:not([style*="background"]):hover {
-  border-color: var(--org-glass-border);
-  opacity: 0.9;
-}
 
 /* Theme-aware text styling for scoring criteria */
 .scoring-section .scoring-criterion-card .criterion-number {
@@ -2454,12 +2512,6 @@ body {
   /* Reduced padding */
 }
 
-.comments-section:hover {
-  background: linear-gradient(135deg,
-      rgba(31, 41, 55, 0.4),
-      rgba(17, 24, 39, 0.5),
-      rgba(31, 41, 55, 0.4));
-}
 
 /* Enhanced description text with tighter spacing */
 .scoring-criterion-card p {
@@ -2536,19 +2588,6 @@ body {
 /* Ensure proper spacing and alignment */
 .scoring-criteria-grid {
   align-items: start;
-}
-
-/* Enhanced hover effects with subtle movement */
-.scoring-criterion-card:hover {
-  transform: translateY(-0.5px);
-  /* Reduced movement */
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-  /* Reduced shadow */
-}
-
-.comments-section:hover {
-  transform: translateY(-0.5px);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* Grid alignment enhancement */

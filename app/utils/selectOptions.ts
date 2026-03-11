@@ -27,6 +27,7 @@ export const getSortFieldOptions = () => [
   { value: 'country', label: 'Country', icon: ClimateIcons.country, color: '#a78bfa', bgColor: '#5b21b6' },
   { value: 'recent', label: 'Recently Added', icon: ClimateIcons.recent, color: '#06b6d4', bgColor: '#0e7490' },
   { value: 'website', label: 'Has Website', icon: ClimateIcons.website, color: '#ef4444', bgColor: '#991b1b' },
+  { value: 'strategic', label: 'Strategic', icon: ClimateIcons.strategic, color: '#f59e0b', bgColor: '#78350f' },
 ];
 
 export const getScoringOptions = () => [
