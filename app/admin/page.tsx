@@ -17,6 +17,7 @@ import AddOrganizationModal from '../components/AddOrganizationModal';
 import ScoringSection from '../components/ScoringSection';
 import { ClimateIcons } from '../components/Icons';
 import { getCountryLabel } from '../utils/selectOptions';
+import { countries, continents } from 'countries-list';
 import type { OrgWithScore } from '../../models/orgWithScore';
 
 export default function AdminOrgs() {
@@ -197,19 +198,17 @@ export default function AdminOrgs() {
     return processed;
   };
 
-  // Helper function to get continent from country code
-  const getOrgContinent = (countryCode: string): string => {
-    const continentMap: Record<string, string> = {
-      'US': 'North America', 'CA': 'North America', 'MX': 'North America',
-      'BR': 'South America', 'AR': 'South America', 'CL': 'South America', 'CO': 'South America',
-      'GB': 'Europe', 'FR': 'Europe', 'DE': 'Europe', 'IT': 'Europe', 'ES': 'Europe', 'NL': 'Europe',
-      'JP': 'Asia', 'CN': 'Asia', 'IN': 'Asia', 'KR': 'Asia', 'TH': 'Asia', 'VN': 'Asia',
-      'NG': 'Africa', 'ZA': 'Africa', 'KE': 'Africa', 'GH': 'Africa', 'EG': 'Africa', 'MA': 'Africa',
-      'AE': 'Middle East', 'SA': 'Middle East', 'IL': 'Middle East', 'TR': 'Middle East',
-      'AU': 'Oceania', 'NZ': 'Oceania'
-    };
+  // Countries-list groups Middle East under 'AS' (Asia); apply override for regional grouping
+  const MIDDLE_EAST_CODES = new Set([
+    'AE', 'SA', 'IL', 'TR', 'JO', 'LB', 'IQ', 'IR', 'KW', 'QA', 'BH', 'OM', 'YE', 'SY', 'PS'
+  ]);
 
-    return continentMap[countryCode] || 'Unknown';
+  // Automatic continent lookup — works for all 249 ISO country codes
+  const getOrgContinent = (countryCode: string): string => {
+    if (MIDDLE_EAST_CODES.has(countryCode)) return 'Middle East';
+    const country = countries[countryCode as keyof typeof countries];
+    if (!country) return 'Other';
+    return continents[country.continent as keyof typeof continents] || 'Other';
   };
 
   const continentMeta: Record<string, { icon?: React.ReactNode; color?: string; bgColor?: string }> = {
@@ -220,13 +219,13 @@ export default function AdminOrgs() {
     Asia: { icon: ClimateIcons.asia, color: '#ef4444', bgColor: '#991b1b' },
     Oceania: { icon: ClimateIcons.oceania, color: '#06b6d4', bgColor: '#0e7490' },
     'Middle East': { icon: ClimateIcons.middleEast, color: '#d97706', bgColor: '#92400e' },
+    Other: { color: '#9ca3af', bgColor: '#374151' },
   };
 
   const dynamicContinentOptions = useMemo(() => {
     const counts = new Map<string, number>();
     orgs.forEach(org => {
       const continent = getOrgContinent(org.country_code);
-      if (continent === 'Unknown') return;
       counts.set(continent, (counts.get(continent) || 0) + 1);
     });
 
@@ -248,7 +247,6 @@ export default function AdminOrgs() {
     const counts = new Map<string, { count: number; continent: string }>();
     orgs.forEach(org => {
       const continent = getOrgContinent(org.country_code);
-      if (continent === 'Unknown') return;
       if (filterOptions.continent !== 'all' && continent !== filterOptions.continent) return;
 
       const entry = counts.get(org.country_code) || { count: 0, continent };

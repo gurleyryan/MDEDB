@@ -1,4 +1,5 @@
 import { ClimateIcons } from '../components/Icons';
+import { countries } from 'countries-list';
 
 export const getContinentOptions = () => [
   { value: 'all', label: 'All Continents', icon: ClimateIcons.climate, color: '#d1d5db', bgColor: '#374151' },
@@ -82,15 +83,9 @@ const COUNTRY_OPTIONS = [
 // Expose a reusable immutable list for building dynamic filters
 export const getCountryOptions = () => COUNTRY_OPTIONS;
 
-// Quick lookup for country names by ISO code (used in search/filter logic)
-export const COUNTRY_CODE_TO_LABEL: Record<string, string> = COUNTRY_OPTIONS
-  .filter(opt => opt.value)
-  .reduce((acc, opt) => {
-    acc[opt.value] = opt.label;
-    return acc;
-  }, {} as Record<string, string>);
-
-export const getCountryLabel = (code: string): string => COUNTRY_CODE_TO_LABEL[code] || code;
+// Automatic country name lookup via countries-list (covers all 249 ISO codes)
+export const getCountryLabel = (code: string): string =>
+  countries[code as keyof typeof countries]?.name || code;
 
 export const getStatusOptions = () => [
   { 
