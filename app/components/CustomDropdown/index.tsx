@@ -111,7 +111,7 @@ export function CustomDropdown({
             backgroundColor: hexToRgba(option.bgColor, state === 'button' ? 0.16 : state === 'selected' ? 0.22 : state === 'hovered' ? 0.18 : 0.14),
           }
         : {
-            background: `linear-gradient(135deg, ${hexToRgba(option.bgColor, fromAlpha)}, ${hexToRgba(option.bgColor, toAlpha)})`,
+            backgroundImage: `linear-gradient(135deg, ${hexToRgba(option.bgColor, fromAlpha)}, ${hexToRgba(option.bgColor, toAlpha)})`,
           }),
       color: resolvedTextColor,
       borderColor: hexToRgba(resolvedTextColor.startsWith('#') ? resolvedTextColor : option.color, state === 'button' ? 0.28 : 0.2),
