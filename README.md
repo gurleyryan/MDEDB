@@ -392,7 +392,7 @@ Server components reduce client-side state. Middleware runs early in request cyc
    Create a `.env` file with your Supabase credentials:
    ```env
    NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
    ```
 
 4. **Set up Supabase:**
@@ -458,7 +458,7 @@ Organizations are evaluated across 13 key criteria, each scored 0-2:
 2. Go to [Vercel](https://vercel.com/) and import your repository.
 3. Set the following environment variables in the Vercel dashboard:
    - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 4. Click "Deploy".
 
 > **Note:**  

@@ -85,7 +85,7 @@ npm run lint       # ESLint check
 ```
 
 ### Key Environment Variables
-- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (public)
+- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (public)
 - Database RLS policies **must match** role checks in hooks
 
 ## Common Pitfalls to Avoid
