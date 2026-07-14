@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Outfit, IBM_Plex_Sans, Space_Mono, Karla } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next"
-import { SpeedInsights } from '@vercel/speed-insights/next';
+import Script from "next/script";
 import { ThemeProvider } from "./components/ThemeProvider";
 import "./globals.css";
 
@@ -71,8 +70,13 @@ export default function RootLayout({
         <ThemeProvider>
           {children}
         </ThemeProvider>
-        <Analytics />
-        <SpeedInsights />
+        {/* Umami analytics */}
+        <Script
+          defer
+          src="https://analytics.musicdeclares.net/script.js"
+          data-website-id="7661287a-ea55-4f62-a6c3-8d7d17e0eeff"
+          data-domains="orgdb.musicdeclares.net"
+        />
       </body>
     </html>
   );

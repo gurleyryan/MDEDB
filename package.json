@@ -6,17 +6,17 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --ignore-pattern .next --ignore-pattern node_modules --ignore-pattern package-lock.json --ignore-pattern references/**"
+    "lint": "eslint . --ignore-pattern .next --ignore-pattern .open-next --ignore-pattern .wrangler --ignore-pattern node_modules --ignore-pattern package-lock.json --ignore-pattern references/**",
+    "build:worker": "opennextjs-cloudflare build",
+    "preview": "opennextjs-cloudflare build && wrangler dev",
+    "deploy": "opennextjs-cloudflare build && wrangler deploy"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",
     "@supabase/ssr": "^0.9.0",
     "@supabase/supabase-js": "^2.99.1",
-    "@vercel/analytics": "^2.0.0",
-    "@vercel/speed-insights": "^2.0.0",
     "cheerio": "^1.2.0",
     "countries-list": "^3.3.0",
-    "env": "^0.0.2",
     "framer-motion": "^12.35.2",
     "next": "^16.1.6",
     "react": "^19.2.4",
@@ -28,11 +28,13 @@
     "@eslint/js": "^9.39.2",
     "@eslint/json": "^1.1.0",
     "@eslint/markdown": "^7.5.1",
+    "@opennextjs/cloudflare": "^1.0.0",
     "@tailwindcss/postcss": "^4.2.1",
     "@types/node": "^25.4.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.27",
+    "esbuild": "^0.25.0",
     "eslint": "^9.39.2",
     "eslint-config-next": "^16.1.6",
     "eslint-plugin-react": "^7.37.5",
@@ -40,6 +42,7 @@
     "postcss": "^8.5.8",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.57.0"
+    "typescript-eslint": "^8.57.0",
+    "wrangler": "^4.0.0"
   }
 }

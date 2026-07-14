@@ -1,0 +1,18 @@
+name = "orgdb"
+main = ".open-next/worker.js"
+compatibility_date = "2025-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Music Declares Emergency Cloudflare account (shared with mde-router).
+account_id = "9c90dd65bc5bad75ad21f6b71838cc41"
+
+assets = { directory = ".open-next/assets", binding = "ASSETS" }
+
+# Declared explicitly to silence wrangler's "enabled by default" deploy warnings.
+workers_dev = true
+preview_urls = false
+
+# NEXT_PUBLIC_* vars are inlined at build time from .env (local) or the
+# environment Variables (CI). MDEDB has no server-side runtime secret.
+#
+# Single production environment; there is no [env.staging] block.
