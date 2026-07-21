@@ -5,9 +5,9 @@
 [![Built with Next.js](https://img.shields.io/badge/Built%20with-Next.js-black?logo=next.js)](https://nextjs.org/)
 [![Powered by Supabase](https://img.shields.io/badge/Powered%20by-Supabase-green?logo=supabase)](https://supabase.com/)
 [![Styled with Tailwind](https://img.shields.io/badge/Styled%20with-Tailwind%20CSS-blue?logo=tailwindcss)](https://tailwindcss.com/)
-[![Status: In Development](https://img.shields.io/badge/status-deployed-green)](https://mdedb.vercel.app/)
+[![Status: In Development](https://img.shields.io/badge/status-deployed-green)](https://orgdb.musicdeclares.net/)
 [![AGPL v3 License](https://img.shields.io/badge/license-AGPL--3.0-blue)](LICENSE)
-[![AMPLIFY](https://img.shields.io/badge/AMPLIFY-Climate%20Action?logo=https%3A%2F%2Fmdedb.vercel.app%2Flogo.png&color=%2369bd45)](https://www.musicdeclares.net/us/campaigns/mde-us-amplify-program)
+[![AMPLIFY](https://img.shields.io/badge/AMPLIFY-Climate%20Action?logo=https%3A%2F%2orgdb.musicdeclares.net%2Flogo.png&color=%2369bd45)](https://amplify.musicdeclares.net/)
 
 ## Table of Contents
 
@@ -411,10 +411,10 @@ Server components reduce client-side state. Middleware runs early in request cyc
    - Login page: `http://localhost:3000/login`
 
 ### **Production Deployment**
-- **Vercel** - Optimized for Next.js deployment
+- **Cloudflare Workers** (via OpenNext) - Next.js hosting
 - **Supabase** - Database and authentication hosting
-- **Environment Variables** - Secure credential management
-- **Domain Configuration** - Custom domain setup
+- **Environment Variables** - Secure credential management (see Deployment)
+- **Domain Configuration** - Custom domain via Cloudflare
 
 ---
 
@@ -452,14 +452,27 @@ Organizations are evaluated across 13 key criteria, each scored 0-2:
 
 ## Deployment
 
-### Deploying to Vercel
+### Deploying to Cloudflare Workers
 
-1. Push your code to GitHub.
-2. Go to [Vercel](https://vercel.com/) and import your repository.
-3. Set the following environment variables in the Vercel dashboard:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
-4. Click "Deploy".
+Hosted on **Cloudflare Workers** via [OpenNext](https://opennext.js.org/cloudflare), in the Music Declares Emergency Cloudflare account. There is a single production Worker, `orgdb`, at `orgdb.musicdeclares.net`.
+
+**CI/CD** (`.github/workflows/deploy.yml`): pushing to `main` deploys production automatically. You can also redeploy `main` manually from the Actions tab ("Run workflow").
+
+**Configuration** lives in the `production` GitHub Environment (Settings, then Environments):
+
+- **Secret**: `CLOUDFLARE_API_TOKEN` (org-level; a token with Workers Scripts, Edit, on the MDE account)
+- **Variables**: `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (the production Supabase project)
+
+These variables are public (inlined into the client bundle). MDEDB has no server-side secret; all access uses the publishable key and Row Level Security. The Worker's URL must be in the Supabase project's Auth redirect allow-list.
+
+**Local commands:**
+
+```bash
+npm run dev       # Next.js dev server (localhost:3000)
+npm run preview   # build and serve on the workerd runtime (localhost:8787)
+```
+
+Point `.env` at a **non-production** Supabase (your own dev project, per the Installation steps) so local work never touches production. Next.js loads `.env` at build time to inline the `NEXT_PUBLIC_*` values. Because `.env` holds non-production values, deploy through CI rather than from your machine: running `npm run deploy` locally would inline your `.env` values into the **production** Worker. CI injects the production Environment's variables.
 
 > **Note:**  
 > Make sure your Supabase database and authentication are fully configured before deploying.

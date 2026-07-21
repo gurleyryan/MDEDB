@@ -82,6 +82,11 @@ See [scoring.ts](../app/utils/scoring.ts) for full criteria descriptions and con
 npm run dev        # Next.js with Turbopack (port 3000)
 npm run build      # Production build
 npm run lint       # ESLint check
+npm run preview    # Build for Cloudflare Workers and serve on workerd (localhost:8787)
+
+# .env should point at a non-production Supabase (your own dev project).
+# Deploys go through CI: push to main deploys production (orgdb). Do not deploy
+# locally; npm run deploy would push your local .env values to the production Worker.
 ```
 
 ### Key Environment Variables

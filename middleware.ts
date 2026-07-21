@@ -1,7 +1,10 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { updateSession } from '@/app/utils/supabase/middleware'
 
-export async function proxy(request: NextRequest) {
+// Uses the classic `middleware.ts` convention (not Next 16's `proxy.ts`) so it
+// runs on the Edge runtime. OpenNext on Cloudflare Workers does not support
+// Node.js middleware, which is what `proxy.ts` defaults to in Next 16.
+export async function middleware(request: NextRequest) {
   // Allow all API routes to proceed without auth checks
   if (request.nextUrl.pathname.startsWith('/api/')) {
     return NextResponse.next()

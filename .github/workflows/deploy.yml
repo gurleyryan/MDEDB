@@ -1,0 +1,36 @@
+name: Deploy
+
+# Push to main deploys MDEDB to production (the `orgdb` Worker in the MDE
+# Cloudflare account). Use "Run workflow" to redeploy the current main manually.
+#
+# Config lives in the `production` GitHub Environment (Settings -> Environments):
+#   - Secret:    CLOUDFLARE_API_TOKEN  (org-level; Workers Scripts -> Edit)
+#   - Variables: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+#                (inlined into the public client bundle, so they are not secret)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  production:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Deploy to production
+        run: npm run deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
